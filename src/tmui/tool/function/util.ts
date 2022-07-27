@@ -18,7 +18,7 @@ export default preview;
 * @param {Number} length - 单个数组长度
 * @return {Array}  arr - 分组后的新数组
 */
-export function splitData(oArr = [], length = 1) {
+export function splitData(oArr:Array<any> = [], length = 1) {
 	let arr:Array<any> = [];
 	let minArr:Array<any> = [];
 	oArr.forEach(c => {
@@ -143,7 +143,7 @@ export function callPhone(phoneNumber = '') {
  * @param {Array<string>} scanType ['barCode', 'qrCode', 'datamatrix','datamatrix']
  * @returns Promise 成功返回相关数据结构
  */
- export function scanCode(onlyFromCamera = true, scanType = ['barCode', 'qrCode', 'datamatrix','datamatrix']){
+ export function scanCode(onlyFromCamera = true, scanType = ['barCode', 'qrCode', 'datamatrix','datamatrix']):Promise<string|UniApp.ScanCodeSuccessRes>{
 	// #ifdef H5
 	return Promise.reject('不支持H5');
 	// #endif
@@ -162,7 +162,7 @@ export function callPhone(phoneNumber = '') {
  * @param {String} data 
  * @returns Promise true/false
  */
- export function setClipboardData(data:string){
+ export function setClipboardData(data:string):Promise<string|boolean>{
 
 	// #ifndef H5
 	return new Promise((rs,rj)=>{
@@ -199,7 +199,7 @@ export function callPhone(phoneNumber = '') {
  * 获取剪切板内容
  * @returns Promise 剪切板内容
  */
- export function getClipboardData(){
+ export function getClipboardData():Promise<boolean|string>{
 	// #ifndef H5
 	return new Promise((rs, rj) => {
 		uni.getClipboardData({
@@ -285,19 +285,20 @@ export function callPhone(phoneNumber = '') {
  * 取url参数
  * @param {string} uri 网址
  * @param {string} key 字段
- * @returns string|undefined
+ * @returns string
  */
-function getQueryString(url:string,key:string):string|undefined {
+export function getQueryString(url:string,key:string):string {
   var query_string = url.substring(url.indexOf("?")); 
-  if (!query_string) return undefined;
+  if (!query_string) return "";
   var re = /[?&]?([^=]+)=([^&]*)/g;
   var tokens:any;
   while (tokens = re.exec(query_string)) {
     if (decodeURIComponent(tokens[1]) === key) {
       return decodeURIComponent(tokens[2]);
+	  break;
     }
   }
-  return undefined;
+  return "";
 }
 
 export function getUid (length=12){
@@ -541,4 +542,42 @@ export function isDate(s:string|number|Date){
 	let d = new Date(s);
 	if(d.toString() == 'Invalid Date') return false;
 	return true;
+}
+/**
+ * 显示信息
+ * @param word 标题
+ * @param mask 不允许穿透
+ * @param icon 图标
+ */
+export function toast(word:string,mask:boolean=true,icon:any='none'){
+	uni.showToast({
+		mask:mask,
+		title:word,
+		icon:icon
+	})
+}
+/**
+ * 获取屏幕窗口安全高度和宽度
+ * 注意是针对种屏幕的统一计算，统一高度，不再让uni获取有效高度而烦恼。
+ * 请一定要在onMounted或者onLoad中调用，否则不准确在h5端。
+ * @return {height,width}
+ */
+export function getWindow(){
+	let appsys = uni.getWindowInfo();
+	let height = appsys.windowHeight;
+	// #ifdef H5
+	// 由于在h5端根本无法判断当前是使用了nav还是没有使用。只能判断当前dom了。
+	if (document.querySelector('.uni-page-head')) {
+		height -=44
+	}
+	// #endif
+	// #ifdef APP
+	// 如果存在导航栏？
+	if(appsys.safeArea.top>0){
+		height = appsys.screenHeight
+	}else{
+		height = appsys.safeArea.height-appsys.statusBarHeight-44+appsys.safeAreaInsets.bottom
+	}
+	// #endif
+	return {height:height,width:appsys.windowWidth};
 }

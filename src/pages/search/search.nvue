@@ -1,0 +1,40 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<!-- 顶部搜索栏 -->
+		<tm-navbar :rightWidth="50" :leftWidth="100">
+			<template v-slot:default>
+				<view class="index-input" style="width: 600rpx;">
+					<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
+							backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
+						}" :focus="inputFocus"></tm-input>
+				</view>
+			</template>
+		</tm-navbar>
+
+
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmInput from "@/tmui/components/tm-input/tm-input.vue"
+	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
+	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import {
+		useTmpiniaStore
+	} from '@/tmui/tool/lib/tmpinia'
+	import {
+		computed,
+		ref
+	} from "vue"
+	
+	//store
+	const store = useTmpiniaStore()
+	//聚焦
+	const inputFocus=ref(true)
+</script>
+
+<style lang="scss" scoped>
+	
+</style>

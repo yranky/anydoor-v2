@@ -1,20 +1,11 @@
 <template>
-	<view>
+	<tm-app ref="app" color="whiteBg">
 		
-	</view>
+	</tm-app>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				
-			}
-		},
-		methods: {
-			
-		}
-	}
+<script setup lang="ts">
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 </script>
 
 <style>

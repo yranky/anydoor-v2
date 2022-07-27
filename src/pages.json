@@ -23,17 +23,29 @@
 		"path": "pages/lesson/lesson",
 		"style": {
 			"navigationBarTitleText": "课程表",
-			"enablePullDownRefresh": false
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
 		}
 
 	}, {
 		"path": "pages/community/community",
 		"style": {
 			"navigationBarTitleText": "社区",
-			"enablePullDownRefresh": false
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
 		}
 
-	}],
+	}    ,{
+            "path" : "pages/search/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "搜索",
+                "enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+            }
+            
+        }
+    ],
 	"subPackages": [
 
 	],

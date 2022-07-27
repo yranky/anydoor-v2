@@ -1,40 +1,184 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<!-- 顶部搜索栏 -->
-		<view class="index-navbar-box fixed l-0 t-0">
-			<tm-sheet _class="index-navbar flex flex-row flex-nowrap" :margin="[0,0]" :padding="[0,0]" :style="{
-				paddingTop:statusBarHeight
+		<view class="bg" :style="{
+			backgroundImage:headerBg
+		}">
+			<!-- 顶部搜索栏 -->
+			<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
+				backgroundColor:navbarBg
 			}">
-				<text class="index-day" :style="{
-					color:store.tmStore.dark?'rgba(252, 252, 252, 1.0)':'rgba(34, 34, 34, 1.0)',
-					lineHeight:'60rpx'
-				}">星期三</text>
-				<view class="index-input flex-1">
-					<tm-input prefix="tmicon-search" searchLabel=""></tm-input>
-				</view>
-				<view class="index-icons flex flex-row flex-nowrap">
-					<view class="index-icon">
-						<tm-icon name="tmicon-scan" fontSize="40"></tm-icon>
+				<tm-sheet _class="index-navbar flex flex-row flex-nowrap" :margin="[0,0]" :padding="[0,0]" :style="{
+					paddingTop:statusBarHeight
+				}" transprent>
+					<text class="index-day" :style="{
+						color:store.tmStore.dark?'rgba(252, 252, 252, 1.0)':'rgba(34, 34, 34, 1.0)',
+						lineHeight:'60rpx'
+					}">南华大学</text>
+					<view class="index-input flex-1">
+						<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
+								backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
+							}" disabled @click="toSearch"></tm-input>
 					</view>
-				</view>
+					<view class="index-icons flex flex-row flex-nowrap">
+						<view class="index-icon">
+							<tm-icon name="tmicon-scan" :fontSize="40"></tm-icon>
+						</view>
+					</view>
+				</tm-sheet>
+			</view>
+			<!-- 填充占位元素 -->
+			<view :style="{width:'100%',height:statusBarHeight,marginTop:'60rpx'}"></view>
+			<!-- 轮播 -->
+			<tm-sheet class="index-carousel-box round-5" :padding="[0,0]" :margin="[35,35]" transprent>
+				<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
+					:list="swiperList" align="left"></tm-carousel>
 			</tm-sheet>
 		</view>
-		<!-- 填充占位元素 -->
-		<view :style="{width:'100%',height:statusBarHeight,marginTop:'60rpx'}"></view>
-		<!-- 轮播 -->
-		<tm-sheet class="index-carousel-box" :padding="[0,0]" :margin="[35,35]">
-			<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="300"
-				:list="swiperList" align="left"></tm-carousel>
+
+		<!-- 全局提醒组件 -->
+		<tm-alert class=" round-5" :shadow="2" text :content="[{
+			        icon: 'tmicon-alert',
+			        content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻' },{
+			        icon: 'tmicon-alert',
+			        content: '2222222222222222' }]" color="primary" :closable="false" :height="80"></tm-alert>
+
+		<!-- 功能列表 -->
+		<tm-sheet :padding="[0,0]" :margin="[0,0]" class=" round-5">
+			<tm-scrollx :width="750" :height="140" color="primary">
+				<tm-grid :col="menuList.length" :width="150*menuList.length">
+					<tm-grid-item v-for="(item,index) in menuList" :key="index" :height="140" :count="item.count">
+						<tm-image :width="110" :height="79" :src="item.path"></tm-image>
+						<tm-text :font-size="24" :label="item.title"></tm-text>
+					</tm-grid-item>
+				</tm-grid>
+			</tm-scrollx>
 		</tm-sheet>
+
+		<!-- 今日课程 -->
+		<tm-sheet :padding="[0,0]" :margin="[10,15]" class=" round-5">
+			<view class="lesson-tips flex flex-nowrap flex-row">
+				<anydoor-text text="7/24 周三" class="flex-1" lineHeight="50" :fontSize="30" color="primary2" :lines="1"
+					bold style="margin:0 20rpx"></anydoor-text>
+				<anydoor-text class="flex-2" text="111" :fontSize="25" lineHeight="50" color="grey" :lines="1"
+					style="margin:0 20rpx;text-align: right;"></anydoor-text>
+			</view>
+			<anydoor-index-lesson time="第1-2节" lessonName="高等数学A2" lessonRoom="xxx楼701"></anydoor-index-lesson>
+			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+			</anydoor-index-lesson>
+			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+			</anydoor-index-lesson>
+			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+			</anydoor-index-lesson>
+			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+			</anydoor-index-lesson>
+			<tm-divider align="center" label="今天没课~~~"></tm-divider>
+		</tm-sheet>
+
+		<!-- 通知 -->
+		<tm-sheet :padding="[0,10]" :margin="[15,15]" class=" round-5">
+			<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"></anydoor-label>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+			</anydoorNewsItem>
+
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+			</anydoorNewsItem>
+
+			<anydoorNewsItem
+				video="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+			</anydoorNewsItem>
+		</tm-sheet>
+
+		<!-- 新闻 -->
+		<tm-sheet :padding="[0,10]" :margin="[15,15]" class=" round-5">
+			<anydoor-label labelText="新闻" rectColor="primary" :actionFontSize="27"></anydoor-label>
+			<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1" :style="{
+				margin:'0 30rpx'
+			}">
+			</tm-tabs>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+			</anydoorNewsItem>
+		</tm-sheet>
+
 	</tm-app>
+
 </template>
 <script lang="ts" setup>
+	import {
+		onReady,
+		onPageScroll
+	} from "@dcloudio/uni-app"
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import tmInput from "@/tmui/components/tm-input/tm-input.vue"
 	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
 	import tmText from "@/tmui/components/tm-text/tm-text"
 	import tmCarousel from "@/tmui/components/tm-carousel/tm-carousel"
+	import tmScrollx from "@/tmui/components/tm-scrollx/tm-scrollx.vue"
+	import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
+	import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
+	import tmImage from "@/tmui/components/tm-image/tm-image.vue"
+	import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+	import tmAlert from "@/tmui/components/tm-alert/tm-alert.vue"
+	import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
 	import {
 		useTmpiniaStore
 	} from '@/tmui/tool/lib/tmpinia'
@@ -44,24 +188,228 @@
 		computedClass,
 		computedStyle,
 		computedDark,
-	} from "@/tmui/tool/lib/minxs";
+	} from "@/tmui/tool/lib/minxs"
 	import {
-		computed
+		computed,
+		ref
 	} from "vue"
-	import theme from "@/tmui/tool/theme/theme";
+	import theme from "@/tmui/tool/theme/theme"
+
+	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
+	import anydoorIndexLesson from "@/components/anydoor-index-lesson/anydoor-index-lesson.vue"
+	import anydoorNewsItem from "@/components/anydoor-news-item/anydoor-news-item.vue"
+
+	import {
+		getCurrentInstance
+	} from "vue"
+	const {
+		proxy
+	} = getCurrentInstance();
+
+	import {
+		throttle
+	} from "lodash"
+
+	import {
+		colortool
+	} from "@/tmui/tool/theme/theme"
+
+	// #ifdef APP-NVUE
+	//bindingx
+	// const BindingX = uni.requireNativePlugin('bindingx')
+	// function getEl(el) {
+	// 	if (typeof el === 'string' || typeof el === 'number') return el;
+	// 	if (WXEnvironment) {
+	// 		return el.ref;
+	// 	} else {
+	// 		return el instanceof HTMLElement ? el : el.$el;
+	// 	}
+	// }
+	// onReady(() => {
+	// const element = getEl(proxy.$refs.scrollItem)
+	// domModule.getComponentRect(element, (ret) => {
+	// 	console.log(ret);
+	// 	//渲染完成后获取节点DOM信息，用于计算动画每次的移动距离
+	// 	this.earyMove = ((ret.size.width - 30) / 2).toFixed(2)
+	// })
+	// console.log(element)
+	// BindingX.bind({
+	// 	eventType: "scroll",
+	// 	anchor: element,
+	// 	props: [{
+	// 		element: getEl(proxy.$refs.navbar),
+	// 		property: "background-color",
+	// 		expression: 'rgba(255,255,255, 1-abs(y)/100)'
+	// 	}]
+	// })
+	// })
+	// #endif
+	//临界值
+	const num = 70
+	const pageScrollY = ref(0);
+	const navbarBg = computed(() => {
+		if (store.tmStore.dark) return "rgba(0, 0, 0, 1)"
+		else {
+			return `rgba(255, 255, 255, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
+		}
+	})
+	//头部颜色
+	const headerBg = computed(() => {
+		if (store.tmStore.dark) return "rgba(0, 0, 0, 1)"
+		else {
+			const color = theme.getColor("primary")
+			// console.log(colortool.hsvaToRgba(store.tmStore.))
+			return `linear-gradient(to bottom, rgba(${color.rgba['r']},${color.rgba['g']},${color.rgba['b']},${0.4-pageScrollY.value / num <0?0:0.4-pageScrollY.value / num}), rgba(102, 255, 0, 0))`
+		}
+	})
+
+	//页面滚动
+	onPageScroll((e) => {
+		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
+	})
 	//store
 	const store = useTmpiniaStore()
 	//navbarHeight
 	const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
-
 	//轮播图
-	const swiperList = ["https://picsum.photos/200/300?id=43335", {
-			url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-			img: "https://picsum.photos/200/300?id=43335",
-			type: "video"
-		},
+	const swiperList = ["https://picsum.photos/200/300?id=43335",
+		"https://picsum.photos/200/300?id=433",
+		"https://picsum.photos/200/300?id=433",
 		"https://picsum.photos/200/300?id=433"
 	]
+
+
+	const menuList = ref([{
+			path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
+			title: "天猫新品",
+			count: "热销"
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
+			title: "今日爆款",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
+			title: "天猫国际",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
+			title: "飞猪旅行",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
+			title: "天猫超市",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
+			title: "冬奥公益",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
+			title: "飞猪旅行",
+			count: 99
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
+			title: "天猫超市",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
+			title: "冬奥公益",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
+			title: "天猫新品",
+			count: 6
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
+			title: "今日爆款",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
+			title: "天猫国际",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
+			title: "飞猪旅行",
+			count: 0
+		},
+		{
+			path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
+			title: "天猫超市",
+			count: 0
+		},
+	])
+
+	const newsTab = ref([{
+			key: "1",
+			title: "选项1"
+		},
+		{
+			key: "2",
+			title: "选项2"
+		},
+		{
+			key: "3",
+			title: "选项3"
+		},
+		{
+			key: "4",
+			title: "选项4"
+		},
+		{
+			key: "5",
+			title: "选项4"
+		},
+		{
+			key: "6",
+			title: "选项4"
+		},
+		{
+			key: "7",
+			title: "选项4"
+		},
+		{
+			key: "8",
+			title: "选项4"
+		},
+		{
+			key: "9",
+			title: "选项4"
+		},
+		{
+			key: "10",
+			title: "选项4"
+		},
+		{
+			key: "11",
+			title: "选项4"
+		},
+		{
+			key: "12",
+			title: "选项4"
+		}
+	])
+	
+	const toSearch=function(){
+		uni.navigateTo({
+			url:"/pages/search/search",
+			fail(e) {
+				console.log(e)
+			}
+		})
+	}
 </script>
 
 <style scoped lang="scss">
@@ -97,4 +445,8 @@
 	}
 
 	.index-carousel-box {}
+
+	.bg {
+		background-image: linear-gradient(to bottom, rgba(64, 169, 255, .5), rgba(102, 255, 0, 0));
+	}
 </style>
