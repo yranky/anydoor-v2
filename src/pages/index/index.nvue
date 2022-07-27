@@ -43,7 +43,7 @@
 			        content: '2222222222222222' }]" color="primary" :closable="false" :height="80"></tm-alert>
 
 		<!-- 功能列表 -->
-		<tm-sheet :padding="[0,0]" :margin="[0,0]" class=" round-5">
+		<tm-sheet :padding="[0,0]" :margin="[0,0]" class=" round-5" transprent>
 			<tm-scrollx :width="750" :height="140" color="primary">
 				<tm-grid :col="menuList.length" :width="150*menuList.length">
 					<tm-grid-item v-for="(item,index) in menuList" :key="index" :height="140" :count="item.count">
@@ -108,7 +108,8 @@
 		<!-- 新闻 -->
 		<tm-sheet :padding="[0,10]" :margin="[15,15]" class=" round-5">
 			<anydoor-label labelText="新闻" rectColor="primary" :actionFontSize="27"></anydoor-label>
-			<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1" :style="{
+			<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1"
+				:style="{
 				margin:'0 30rpx'
 			}">
 			</tm-tabs>
@@ -401,10 +402,10 @@
 			title: "选项4"
 		}
 	])
-	
-	const toSearch=function(){
+
+	const toSearch = function() {
 		uni.navigateTo({
-			url:"/pages/search/search",
+			url: "/pages/search/search",
 			fail(e) {
 				console.log(e)
 			}

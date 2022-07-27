@@ -50,7 +50,11 @@
 
 	],
 	"preloadRule": [
-
+		"pages/index/index",
+		"pages/lesson/lesson",
+		"pages/community/community",
+		"pages/my/my",
+		"pages/search/search"
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

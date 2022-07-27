@@ -1,17 +1,95 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
 		<!-- 顶部搜索栏 -->
-		<tm-navbar :rightWidth="50" :leftWidth="100">
+		<tm-navbar :rightWidth="0" :leftWidth="100">
 			<template v-slot:default>
-				<view class="index-input" style="width: 600rpx;">
-					<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
-							backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
-						}" :focus="inputFocus"></tm-input>
+				<view class="flex flex-nowrap flex-row">
+					<view class="index-input" style="width: 550rpx;">
+						<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
+								backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
+							}" :focus="true" @focus="inputFocus=true" @blur="inputFocus=false"></tm-input>
+					</view>
+					<view class="flex flex-center" style="width: 100rpx;">
+						<anydoor-text text="搜索" :color="inputFocus?'primary':'grey'"></anydoor-text>
+					</view>
 				</view>
 			</template>
 		</tm-navbar>
+		<!-- 搜索记录 -->
+		<tm-sheet :padding="[0,0]" :margin="[10,15]" class=" round-5">
+			<anydoor-label labelText="历史记录" :rectSize="0" rectColor="primary" :actionFontSize="27">
+				<template v-slot:action>
+					<tm-icon name="tmicon-delete-fill" color="grey" :fontSize="30"></tm-icon>
+				</template>
+			</anydoor-label>
+			<view class="search-history flex flex-wrap flex-row">
+				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
+					_class="search-history-item flex flex-nowrap flex-row">
+					<view class="flex-1">
+						<anydoor-text margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="62"
+							color="primary">
+						</anydoor-text>
+					</view>
+					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+				</tm-sheet>
+
+				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
+					_class="search-history-item flex flex-nowrap flex-row">
+					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="62"
+						color="primary">
+					</anydoor-text>
+					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+				</tm-sheet>
+
+				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
+					_class="search-history-item flex flex-nowrap flex-row">
+					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="1jidcjiejirvibokr" :fontSize="25"
+						lineHeight="62" color="primary">
+					</anydoor-text>
+					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+				</tm-sheet>
 
 
+				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
+					_class="search-history-item flex flex-nowrap flex-row">
+					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="历史记录一历史记录一历史记录一历史记录一历史记录一历史记录一"
+						:fontSize="25" lineHeight="62" color="primary">
+					</anydoor-text>
+					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+				</tm-sheet>
+
+				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
+					_class="search-history-item flex flex-nowrap flex-row">
+					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="12" :fontSize="25" lineHeight="62"
+						color="primary">
+					</anydoor-text>
+					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+				</tm-sheet>
+			</view>
+		</tm-sheet>
+
+		<!-- 热门推荐 -->
+		<tm-sheet :padding="[0,0]" :margin="[0,15]" class=" round-5" transprent>
+			<anydoor-label labelText="热门推荐" :rectSize="0" rectColor="primary" :actionFontSize="27">
+				<template v-slot:action>
+					<text></text>
+				</template>
+			</anydoor-label>
+			<tm-scrollx class="flex flex-nowrap flex-row" :width="750" :height="140" color="primary" :showBar="false">
+				<view class="flex flex-col recommend">
+					<view class="recommend-item flex flex-row flex-nowrap">
+						<view class="recommend-item-num flex flex-nowrap">
+							<anydoor-text text="1" color="white" :lines="1" lineHeight="40" :fontSize="20" bold>
+							</anydoor-text>
+						</view>
+						<anydoor-text class="flex-1 recommend-item-content flex flex-nowrap"
+							text="功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能1" color="white" :lines="1"
+							lineHeight="40" :fontSize="20"></anydoor-text>
+
+					</view>
+				</view>
+			</tm-scrollx>
+		</tm-sheet>
 	</tm-app>
 </template>
 
@@ -21,20 +99,57 @@
 	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
 	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
 	import {
 		useTmpiniaStore
 	} from '@/tmui/tool/lib/tmpinia'
 	import {
 		computed,
-		ref
+		ref,
+		watch
 	} from "vue"
-	
+	import {
+		onShow,
+		onHide,
+		onReady
+	} from "@dcloudio/uni-app"
+
 	//store
 	const store = useTmpiniaStore()
 	//聚焦
-	const inputFocus=ref(true)
+	const inputFocus = ref(true)
 </script>
 
 <style lang="scss" scoped>
-	
+	.search-history {
+		margin: 10rpx 30rpx;
+
+		.search-history-item {
+			max-width: 600rpx;
+		}
+	}
+
+	.recommend {
+		width: 500rpx;
+		background-color: red;
+		margin: 10rpx 25rpx;
+
+		.recommend-item {
+			width: 500rpx;
+			padding: 0 20rpx;
+
+			.recommend-item-num {
+				width: 40rpx;
+				height: 40rpx;
+				background-color: aqua;
+				text-align: center;
+				border-radius: 10rpx;
+			}
+
+			.recommend-item-content {
+				width: 420rpx;
+			}
+		}
+	}
 </style>
