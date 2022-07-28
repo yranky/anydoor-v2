@@ -6,8 +6,8 @@
 				<view class="flex flex-nowrap flex-row">
 					<view class="index-input" style="width: 550rpx;">
 						<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
-								backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
-							}" :focus="true" @focus="inputFocus=true" @blur="inputFocus=false"></tm-input>
+									backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
+								}" :focus="true" @focus="inputFocus=true" @blur="inputFocus=false" class=" round-5"></tm-input>
 					</view>
 					<view class="flex flex-center" style="width: 100rpx;">
 						<anydoor-text text="搜索" :color="inputFocus?'primary':'grey'"></anydoor-text>
@@ -23,46 +23,12 @@
 				</template>
 			</anydoor-label>
 			<view class="search-history flex flex-wrap flex-row">
-				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
-					_class="search-history-item flex flex-nowrap flex-row">
+				<tm-sheet _class="search-history-item flex flex-nowrap flex-row" class=" round-3" color="primary" text :margin="[0,0]" :padding="[0,0]">
 					<view class="flex-1">
-						<anydoor-text margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="62"
+						<anydoor-text margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="30"
 							color="primary">
 						</anydoor-text>
 					</view>
-					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
-				</tm-sheet>
-
-				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
-					_class="search-history-item flex flex-nowrap flex-row">
-					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="62"
-						color="primary">
-					</anydoor-text>
-					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
-				</tm-sheet>
-
-				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
-					_class="search-history-item flex flex-nowrap flex-row">
-					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="1jidcjiejirvibokr" :fontSize="25"
-						lineHeight="62" color="primary">
-					</anydoor-text>
-					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
-				</tm-sheet>
-
-
-				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
-					_class="search-history-item flex flex-nowrap flex-row">
-					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="历史记录一历史记录一历史记录一历史记录一历史记录一历史记录一"
-						:fontSize="25" lineHeight="62" color="primary">
-					</anydoor-text>
-					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
-				</tm-sheet>
-
-				<tm-sheet color="primary" text :padding="[0,0]" :margin="[10,10]" class=" round-3"
-					_class="search-history-item flex flex-nowrap flex-row">
-					<anydoor-text class="flex-1" margin="0 20rpx" :lines="1" text="12" :fontSize="25" lineHeight="62"
-						color="primary">
-					</anydoor-text>
 					<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
 				</tm-sheet>
 			</view>
@@ -70,26 +36,34 @@
 
 		<!-- 热门推荐 -->
 		<tm-sheet :padding="[0,0]" :margin="[0,15]" class=" round-5" transprent>
-			<anydoor-label labelText="热门推荐" :rectSize="0" rectColor="primary" :actionFontSize="27">
+			<anydoor-label labelText="热门推荐" :rectSize="0" rectColor="primary" :actionFontSize="0">
 				<template v-slot:action>
 					<text></text>
 				</template>
 			</anydoor-label>
-			<tm-scrollx class="flex flex-nowrap flex-row" :width="750" :height="140" color="primary" :showBar="false">
-				<view class="flex flex-col recommend">
-					<view class="recommend-item flex flex-row flex-nowrap">
-						<view class="recommend-item-num flex flex-nowrap">
-							<anydoor-text text="1" color="white" :lines="1" lineHeight="40" :fontSize="20" bold>
-							</anydoor-text>
+			<tm-scrollx class="flex flex-nowrap flex-row" :width="750" :height="80 * 15+50" color="primary"
+				:showBar="false">
+				<view class="recommend-box round-5" v-for="itemitem in 10" :key="itemitem"
+					style="background-image: linear-gradient(to bottom, rgba(64, 169, 255, .1), rgba(102, 255, 0, 0));">
+					<anydoor-text text="标题" color="primary" :lines="1" lineHeight="50" :fontSize="25" bold style="margin: 0 20rpx;">
+					</anydoor-text>
+					<view class="flex flex-col recommend">
+						<view class="recommend-item flex flex-row flex-nowrap" v-for="item in 15" :key="item">
+							<view class="recommend-item-num flex flex-nowrap">
+								<anydoor-text :text="item+''" color="white" :lines="1" lineHeight="50" :fontSize="25"
+									bold style="text-align: center;">
+								</anydoor-text>
+							</view>
+							<anydoor-text class="flex-1 recommend-item-content flex flex-nowrap"
+								text="功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能1" :lines="1"
+								lineHeight="65" :fontSize="25"></anydoor-text>
+							<tm-tag text size="xs" label="飙升" :margin="[5,20]" color="primary3"></tm-tag>
 						</view>
-						<anydoor-text class="flex-1 recommend-item-content flex flex-nowrap"
-							text="功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能功能1" color="white" :lines="1"
-							lineHeight="40" :fontSize="20"></anydoor-text>
-
 					</view>
 				</view>
 			</tm-scrollx>
 		</tm-sheet>
+
 	</tm-app>
 </template>
 
@@ -99,8 +73,10 @@
 	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
 	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmScrollx from "@/tmui/components/tm-scrollx/tm-scrollx.vue"
 	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
+	import tmTag from "@/tmui/components/tm-tag/tm-tag.vue"
 	import {
 		useTmpiniaStore
 	} from '@/tmui/tool/lib/tmpinia'
@@ -127,28 +103,33 @@
 
 		.search-history-item {
 			max-width: 600rpx;
+			margin: 10rpx;
 		}
 	}
 
-	.recommend {
-		width: 500rpx;
-		background-color: red;
-		margin: 10rpx 25rpx;
+	.recommend-box {
+		width: 550rpx;
+		margin: 0 25rpx;
 
-		.recommend-item {
-			width: 500rpx;
-			padding: 0 20rpx;
+		.recommend {
 
-			.recommend-item-num {
-				width: 40rpx;
-				height: 40rpx;
-				background-color: aqua;
-				text-align: center;
-				border-radius: 10rpx;
-			}
+			.recommend-item {
+				width: 550rpx;
+				padding: 0 10rpx;
+				margin: 5rpx 0;
 
-			.recommend-item-content {
-				width: 420rpx;
+				.recommend-item-num {
+					width: 50rpx;
+					height: 50rpx;
+					margin: 10rpx;
+					background-color: aqua;
+					text-align: center;
+					border-radius: 10rpx;
+				}
+
+				.recommend-item-content {
+					width: 420rpx;
+				}
 			}
 		}
 	}

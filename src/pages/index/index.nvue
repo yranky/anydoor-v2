@@ -17,7 +17,7 @@
 					<view class="index-input flex-1">
 						<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
 								backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
-							}" disabled @click="toSearch"></tm-input>
+							}" disabled @click="toSearch" class=" round-5"></tm-input>
 					</view>
 					<view class="index-icons flex flex-row flex-nowrap">
 						<view class="index-icon">
@@ -165,7 +165,8 @@
 <script lang="ts" setup>
 	import {
 		onReady,
-		onPageScroll
+		onPageScroll,
+		onShow
 	} from "@dcloudio/uni-app"
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import tmInput from "@/tmui/components/tm-input/tm-input.vue"
@@ -267,7 +268,9 @@
 
 	//页面滚动
 	onPageScroll((e) => {
-		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
+		throttle(() => {
+			pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
+		}, 1000 / 120)()
 	})
 	//store
 	const store = useTmpiniaStore()
@@ -406,9 +409,7 @@
 	const toSearch = function() {
 		uni.navigateTo({
 			url: "/pages/search/search",
-			fail(e) {
-				console.log(e)
-			}
+			animationType: "slide-in-right"
 		})
 	}
 </script>
