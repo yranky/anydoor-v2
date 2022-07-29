@@ -1,0 +1,132 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title=""></tm-navbar>
+		<!-- 延迟加载 不需要延迟navbar-->
+		<anydoor-delay :time="25">
+			<!-- 文章 -->
+			<view class="article">
+				<!-- 文章标题骨架屏 -->
+				<view v-if="!article.ready">
+					<tm-skeleton-line :height="70"></tm-skeleton-line>
+					<tm-skeleton-line :height="70"></tm-skeleton-line>
+				</view>
+				<!-- 文章标题 -->
+				<tm-translate name="fade" v-if="article.ready">
+					<view class="article-title">
+						<anydoor-text :fontSize="40" bold lineHeight="70" text="湖南省知识产权局发布了2022年湖南省知识产权战略推进专项项目立项通知">
+						</anydoor-text>
+					</view>
+				</tm-translate>
+				<!-- 文章信息详情 -->
+
+				<!-- 文章信息详情骨架屏 -->
+				<view class="article-info" v-if="!article.ready">
+					<view class="article-info flex flex-row">
+						<view style="width:100rpx">
+							<tm-skeleton-line class="ml-10 mr-10 round-25" :height="80"></tm-skeleton-line>
+						</view>
+						<view class="flex-1">
+							<tm-skeleton-line class="flex-1 ml-10 mr-10" :height="80"></tm-skeleton-line>
+						</view>
+						<view style="width:120rpx">
+							<tm-skeleton-line class="flex-0 ml-10 mr-10" :height="80"></tm-skeleton-line>
+						</view>
+					</view>
+				</view>
+
+				<tm-translate name="fade" v-if="article.ready">
+					<view class="article-info flex flex-row">
+						<tm-avatar img="https://picsum.photos/200/300" :round="15" :size="80"></tm-avatar>
+						<view class="article-author flex-1 flex-col">
+							<anydoor-text class="flex-1" text="南华大学新闻网南华大学新闻网南华大学新闻网南华大学新闻网" bold :fontSize="30"
+								lineHeight="45" :lines="1"></anydoor-text>
+							<view class="flex flex-row">
+								<anydoor-text margin="0 5rpx 0 0" text="两天前" color="grey" lineHeight="35" :lines="1">
+								</anydoor-text>
+								<anydoor-text class="flex-1" margin="0 5rpx" text="湖南湖南湖南湖南湖南湖南湖南湖南湖南湖南" color="grey"
+									lineHeight="35" :lines="1">
+								</anydoor-text>
+							</view>
+						</view>
+						<view class="flex flex-row">
+							<tm-tag class="flex-center" size="n" label="关注" text></tm-tag>
+						</view>
+					</view>
+				</tm-translate>
+
+				<!-- 文章内容骨架屏 -->
+				<template v-if="!parseReady||!article.ready">
+					<tm-skeleton-line v-for="item in 8" :key="item" class="article-info" :height="60"
+						style="margin: 10rpx 0;"></tm-skeleton-line>
+				</template>
+
+				<!-- 文章内容 -->
+				<tm-translate name="fade" :autoPlay="false" ref="articleContent" v-if="article.ready">
+					<view class="article-content" :style="{height:parseReady?'':0}">
+						<anydoor-richtext :content="content" @ready="parseReady=true;proxy.$refs.articleContent.play()">
+						</anydoor-richtext>
+					</view>
+				</tm-translate>
+			</view>
+		</anydoor-delay>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmAvatar from "@/tmui/components/tm-avatar/tm-avatar.vue"
+	import tmTag from "@/tmui/components/tm-tag/tm-tag.vue"
+	import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line"
+	import tmTranslate from "@/tmui/components/tm-translate/tm-translate"
+	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+
+	import {
+		ref,
+		getCurrentInstance,
+		reactive
+	} from "vue"
+
+	const {
+		proxy
+	} = getCurrentInstance();
+
+	const content = ref(`
+	 <div id="vsb_content_2"><div class="v_news_content">
+	<p class="vsbcontent_start" style="white-space:nowrap">近日，湖南省知识产权局发布了2022年湖南省知识产权战略推进专项项目立项通知，我校获批为湖南省高校知识产权中心建设单位之一，此次共有4所高校入选。</p>
+	<p style="color:grey">学校一直高度重视知识产权工作，以学科建设为龙头，大力实施人才强校战略，立足学校“核特色、医品牌和环保优势”，面向我国国防军工、核能行业、医疗卫生等领域和地方经济社会发展重大需求，紧密对接产业链、人才链、创新链，推进政产学研协同创新，推动知识产权和科技成果转化工作，提升服务社会能力，带动科学研究和创新型人才培养，开创深度政产学研合作新局面，探索出了一条具有南华特色的科技创新之路。截止2021年，学校累计获得授权专利1035件，其中国际和国家发明专利共计644件，实用新型专利382件，外观设计专利9件。先后成功转化有效专利50余项，承担政府/企事业单位委托横向项目1000余项，累计经费总额达2亿余元，为1000余家企事业单位和科研机构累计提供技术攻关与咨询服务2万余次，为我国国防军工、核能行业、医疗卫生事业和地方经济社会发展做出重大贡献，产生了显著的经济效益、社会效益、生态效益和国家安全效益。</p>
+	<p class="vsbcontent_end">近年来，学校知识产权与成果转化工作捷报频传，2021年8月我校获批了首批湖南省技术转移示范机构。学校目前正在申报高校国家知识产权信息服务中心和湖南省高等学校科技成果转化和技术转移基地。此次荣获湖南省高校知识产权中心，得益于湖南省知识产权局对我校知识产权与科技成果转化工作的肯定，得益于学校党委行政对知识产权与科技成果转化工作的高度重视。</p>
+	<p class="vsbcontent_img"><img width="9999999" height="384" src="https://uscnews.usc.edu.cn/__local/A/C0/E4/736BF5B46C204CD2A7EC7D6707A_87599510_175A6.png" vwidth="471" vheight="384" vurl="/_vsl/AC0E4736BF5B46C204CD2A7EC7D6707A/87599510/175A6" vsbhref="vurl" orisrc="https://uscnews.usc.edu.cn/__local/A/C0/E4/736BF5B46C204CD2A7EC7D6707A_87599510_175A6.png" class="img_vsb_content"></p>
+	<p class="vsbcontent_img"><img width="436" height="264" src="https://uscnews.usc.edu.cn/__local/9/5E/06/CF5F4067B8124F22DFEE3BFC2DA_CD69F641_13998.png" vwidth="436" vheight="264" vurl="/_vsl/95E06CF5F4067B8124F22DFEE3BFC2DA/CD69F641/13998" vsbhref="vurl" orisrc="https://uscnews.usc.edu.cn/__local/9/5E/06/CF5F4067B8124F22DFEE3BFC2DA_CD69F641_13998.png" class="img_vsb_content"></p>
+	</div></div><div id="div_vote_id"></div>
+	<video controlslist="nodownload" controls="" id="_vsb_player" style="background-color:#474747;float: none" align="" width="630" height="420"><source src="https://uscnews.usc.edu.cn//__local/F/A1/0E/D916AB258BBABFE74461DE461FB_B7E4CE72_31EC4DD.mp4?e=.mp4" type="video/mp4"></video>
+	`)
+
+	//文章加载完成
+	const article = reactive({
+		ready: false
+	})
+
+	setTimeout(() => {
+		article.ready = true
+	}, 2000)
+
+	//文章内容加载完成
+	const parseReady = ref(false)
+</script>
+
+<style lang="scss" scoped>
+	.article {
+		margin: 10rpx 40rpx;
+
+		.article-info {
+			margin: 30rpx 0;
+
+			.article-author {
+				margin: 0 20rpx;
+			}
+
+			.article-content {}
+		}
+	}
+</style>

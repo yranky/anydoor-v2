@@ -40,12 +40,12 @@
 			        icon: 'tmicon-alert',
 			        content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻' },{
 			        icon: 'tmicon-alert',
-			        content: '2222222222222222' }]" color="primary" :closable="false" :height="80"></tm-alert>
+			        content: '2222222222222222' }]" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
 
 		<!-- 功能列表 -->
 		<tm-sheet :padding="[0,0]" :margin="[0,0]" class=" round-5" transprent>
-			<tm-scrollx :width="750" :height="140" color="primary">
-				<tm-grid :col="menuList.length" :width="150*menuList.length">
+			<tm-scrollx :width="750" :height="140" color="primary" transprent>
+				<tm-grid :col="menuList.length" :width="150*menuList.length" transprent>
 					<tm-grid-item v-for="(item,index) in menuList" :key="index" :height="140" :count="item.count">
 						<tm-image :width="110" :height="79" :src="item.path"></tm-image>
 						<tm-text :font-size="24" :label="item.title"></tm-text>
