@@ -13,7 +13,7 @@
         "compilerVersion" : 3,
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
-            "waiting" : true,
+            "waiting" : false,
             "autoclose" : true,
             "delay" : 0
         },
@@ -44,8 +44,9 @@
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
-                "minSdkVersion" : "4.4.4",
-                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
+                "minSdkVersion" : 21,
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
+                "targetSdkVersion" : 30
             },
             /* ios打包配置 */
             "ios" : {
@@ -87,11 +88,36 @@
                         "spotlight@3x" : "unpackage/res/icons/120x120.png"
                     }
                 }
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
+                    "xhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
+                    "xxhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png"
+                }
             }
         },
         "uniStatistics" : {
             "enable" : false
-        }
+        },
+        "nativePlugins" : {
+            "anydoor_ui_tool" : {
+                "__plugin_info__" : {
+                    "name" : "任意门原生插件",
+                    "description" : "任意门原生插件",
+                    "platforms" : "Android",
+                    "url" : "",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
+                    "parameters" : {}
+                }
+            }
+        },
+        "nvueLaunchMode" : ""
     },
     /* 快应用特有相关 */
     "quickapp" : {},

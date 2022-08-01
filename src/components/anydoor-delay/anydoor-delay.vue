@@ -16,11 +16,14 @@
 			default: 200
 		}
 	})
+	
+	const emits=defineEmits(['complete'])
 
 	const timerEnd = ref(false)
 	onMounted(() => {
 		setTimeout(() => {
 			timerEnd.value = true
+			emits("complete")
 		}, props.time)
 	})
 </script>

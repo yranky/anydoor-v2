@@ -80,7 +80,6 @@
 	import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line"
 	import tmTranslate from "@/tmui/components/tm-translate/tm-translate"
 	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
-	import anydoorDelay from "@/components/anydoor-delay/anydoor-delay.vue"
 
 	import {
 		ref,

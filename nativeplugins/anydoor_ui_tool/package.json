@@ -1,0 +1,29 @@
+{
+	"name": "任意门原生插件",
+	"id": "anydoor_ui_tool",
+	"version": "1.0",
+	"description": "任意门原生插件",
+	"_dp_type": "nativeplugin",
+	"_dp_nativeplugin": {
+		"android": {
+			"plugins": [{
+					"type": "module",
+					"name": "anydoor_toast",
+					"class": "com.top_anydoor.toast.Index",
+					"dependencies": [
+					]
+				},
+				{
+					"type": "component",
+					"name": "anydoor-native-webview",
+					"class": "com.top_anydoor.webview.Index",
+					"dependencies": [
+						"jsbridge-1.0.4.aar"
+					]
+				}
+			],
+			"integrateType": "aar",
+			"minSdkVersion": 16
+		}
+	}
+}

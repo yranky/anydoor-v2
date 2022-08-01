@@ -20,7 +20,7 @@
 			<!-- 填充占位元素 -->
 			<view :style="{width:'100%',height:statusBarHeight,marginTop:'70rpx'}"></view>
 
-			<navigator url="/pages/article/article"><text>111</text></navigator>
+			<navigator url="/pages/article/article-web"><text>111</text></navigator>
 
 			<!-- 用户主信息 -->
 			<view class="user-info flex flex-row">
@@ -238,7 +238,6 @@
 					</tm-grid-item>
 				</tm-grid>
 			</view>
-
 		</anydoor-delay>
 	</tm-app>
 </template>

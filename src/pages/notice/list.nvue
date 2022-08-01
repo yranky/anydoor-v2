@@ -1,0 +1,63 @@
+<!-- 滑动切换选项卡+吸顶演示（nvue） -->
+<template>
+	<view ref="app" color="whiteBg">
+		<tm-navbar title="" ref="navBar"></tm-navbar>
+		<anydoor-delay :time="25">
+			
+		</anydoor-delay>
+	</view>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import anydoorDelay from "@/components/anydoor-delay/anydoor-delay.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import {
+		ref,
+		reactive,
+		nextTick,
+		getCurrentInstance,
+		computed
+	} from "vue"
+	import {
+		onLoad,
+		onReady
+	} from "@dcloudio/uni-app"
+	const {
+		proxy
+	} = getCurrentInstance()
+
+	//当前所在的tab
+	const current = ref(0)
+
+	const tabList = ref(['测试1', '测试2', '测试3', '测试4'])
+	// #ifdef APP-NVUE
+	const dom = uni.requireNativePlugin('dom')
+
+	const pageHeight = ref(0)
+
+	onReady(() => {
+		let height = 0
+		dom.getComponentRect(proxy.$refs.navBar, option => {
+			console.log(option)
+			if (option && option.result) {
+				height = option.size.height
+			}
+		})
+		pageHeight.value = uni.getSystemInfoSync().windowHeight - height
+		console.log(pageHeight.value)
+	})
+
+	// #endif
+
+	const listRefresh = function() {
+		//触发了下拉刷新，通知当前tabIndex对应子组件的下拉刷新
+		proxy.$refs.swiperItem[current.value].reload(() => {
+			proxy.$refs.paging.complete();
+		});
+	}
+</script>
+
+<style scoped lang="scss">
+
+</style>

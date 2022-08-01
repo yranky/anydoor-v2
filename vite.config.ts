@@ -5,7 +5,15 @@ import uni from "@dcloudio/vite-plugin-uni";
 export default defineConfig({
 	dts: true,
 	plugins: [
-		uni(),
+		uni({
+			vueOptions: { 
+				template: {
+					compilerOptions:{
+						isCustomElement:tag =>tag === 'anydoor-native-webview'
+					}
+				}
+			}
+		}),
 		// Components({
 		//       dirs: ['src/tm-vuetify/components'],
 		// extensions: ['vue'],
