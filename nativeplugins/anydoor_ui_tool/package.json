@@ -10,8 +10,7 @@
 					"type": "module",
 					"name": "anydoor_toast",
 					"class": "com.top_anydoor.toast.Index",
-					"dependencies": [
-					]
+					"dependencies": []
 				},
 				{
 					"type": "component",
@@ -20,6 +19,12 @@
 					"dependencies": [
 						"jsbridge-1.0.4.aar"
 					]
+				},
+				{
+					"type": "module",
+					"name": "anydoor_tool",
+					"class": "com.top_anydoor.tool.Index",
+					"dependencies": []
 				}
 			],
 			"integrateType": "aar",

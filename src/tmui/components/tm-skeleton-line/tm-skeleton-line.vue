@@ -69,7 +69,7 @@ onMounted(() => {
 	// #ifdef APP-PLUS-NVUE
 	try {
 		nextTick(function () {
-			spinNvueAni();
+			// spinNvueAni();
 		});
 	} catch (e) {
 		//TODO handle the exception

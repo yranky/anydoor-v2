@@ -1,5 +1,17 @@
-<script lang="ts">
+<script lang="ts" setup>
+	import {
+		onLaunch
+	} from "@dcloudio/uni-app"
 	
+	onLaunch(function() {
+		//修改userAgent
+		let userAgent: Array < string > | string = plus.navigator.getUserAgent()
+		if (userAgent && userAgent.indexOf("anydoor") <= -1) {
+			userAgent = userAgent.split("uni-app")[0]
+			const info: any = uni.getAppBaseInfo()
+			plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
+		}
+	})
 </script>
 <style>
 	/* #ifdef APP-NVUE */

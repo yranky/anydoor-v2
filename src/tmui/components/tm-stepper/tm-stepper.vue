@@ -170,9 +170,9 @@ async function setStep(ty: string) {
             title: '...',
             mask: true
         })
-        let p = await props.beforeEnter();
+        let p = await props.beforeEnter(ty);
         if (typeof p === 'function') {
-            p = await p();
+            p = await p(ty);
         }
         uni.hideLoading();
         if (!p) return false;

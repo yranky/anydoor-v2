@@ -1,418 +1,343 @@
 <template>
-	<view>
-		<anydoor-native-webview ref="mWebview" :src="src" :config="webConfig"
-			:style="{width:'750rpx', height:viewHeight }" @pageStart="pageStart" @pageReady="pageReady"
-			@loadResource="loadResource" @UrlLoadingPattern="intercept" @onError="pluginError" @pageError="pageError"
-			@pageHttpError="httpError" @pageSSLError="sslError" @onNameMessage="onNameMessage" @onMessage="onMessage"
-			@titleUpdate="titleUpdate" @pageAlert="pageAlert" @onDownload="onDownload" @progress="onProgress"
-			@console="onConsole">
-		</anydoor-native-webview>
+	<view class="relative">
+		<tm-result v-if="info.error.show" class="error-show" :showBtn="info.error.showBtn" :color="info.error.color"
+			:status="info.error.status" :btnText="info.error.btnText" :title="info.error.title"
+			:subTitle="info.error.subTitle" @click="doResult(info.error.btnText)"></tm-result>
+		<view class="fixed" v-if="progress.show"
+			:style="{backgroundColor:progressBg,width:progress.value+'rpx',height:'5rpx',
+			top:(props.config.progressTop?props.config.progressTop:0)+'rpx'}">
+		</view>
+		<view :style="{height:info.error.show?0:''}">
+			<anydoor-webview-base ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
+				:agent="props.userAgent" @pageStart="pageStart" @pageReady="pageReady" @loadResource="loadResource"
+				@intercept="intercept" @pluginError="pluginError" @pageError="pageError" @httpError="httpError"
+				@sslError="sslError" @onNameMessage="onNameMessage" @onMessage="onMessage" @titleUpdate="titleUpdate"
+				@pageAlert="pageAlert" @onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole"
+				@onNewWindow="onNewWindow" @onLinkPress="onLinkPress" @onImagePress="onImagePress"
+				@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme">
+			</anydoor-webview-base>
+		</view>
 	</view>
 </template>
 
 <script lang="ts" setup>
+	import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+	import anydoorWebviewBase from "./anydoor-webview-base.vue"
+	import tmProgress from "@/tmui/components/tm-progress/tm-progress.vue"
 	import utils from "./utils.js"
-	
 	import {
 		ref,
 		reactive,
 		computed,
 		onMounted
 	} from "vue"
-	
+	import getNETError from "@/common/network/error"
+	import theme from "@/tmui/tool/theme/theme"
 
+
+	const info = reactive({
+		error: {
+			show: false,
+			color: "red",
+			status: "",
+			btnText: "",
+			title: "",
+			subTitle: "",
+			showBtn: true,
+		}
+	})
 
 	const props = defineProps({
 		src: {
 			type: String,
-			default: ""
+			default: "",
 		},
 		config: {
 			type: Object,
 			default: () => {
 				return {}
-			}
+			},
 		},
 		unit: {
 			type: String,
-			default: "rpx"
+			default: "rpx",
+		},
+		userAgent: {
+			type: String,
+			default: "",
+		},
+	})
+
+	import {
+		action as NETErrorAction
+	} from "@/common/network/NETError"
+
+	import {
+		cloneDeep
+	} from "lodash"
+	//点击result按钮事件
+	const doResult = function(action: NETErrorAction) {
+		switch (action) {
+			case NETErrorAction.retry:
+				//取消显示
+				info.error.show = false
+				reload()
+				break
 		}
-	})
+	}
 
-	const emits = defineEmits(['pageStart', 'pageReady', 'loadResource', 'intercept',
-		'onNameMessage', 'onMessage', 'titleUpdate', 'pageAlert', 'onDownload', 'onProgress',
-		"onConsole", 'pageError', 'httpError', 'sslError'
+	//进度显示
+	const progress = reactive({
+		value: 0,
+		show: false
+	})
+	//进度背景
+	const progressBg = computed(() => {
+		return theme.getColor("primary").value
+	})
+	const emits = defineEmits([
+		"pageStart",
+		"pageReady",
+		"loadResource",
+		"intercept",
+		"onNameMessage",
+		"onMessage",
+		"titleUpdate",
+		"pageAlert",
+		"onDownload",
+		"onProgress",
+		"onConsole",
+		"pageError",
+		"httpError",
+		"sslError",
+		"onNewWindow",
+		"onLinkPress",
+		"onImagePress",
+		"onLinkClick",
+		"onImageClick",
+		"onBack",
+		"onScheme"
 	])
-
-	const mWebview = ref(null)
-
-	//拦截串
-	const interceptTmp: {
-		regs: Array < Object > ,
-		mode: string,
-		complete: boolean
-	} = reactive({
-		regs: [],
-		mode: "",
-		complete: false
-	})
 	/**
 	 * 回调
 	 */
 	//webview页面开始加载回调
 	const pageStart = (e) => {
-		emits("pageStart", e.detail)
+		//进度
+		progress.show = true
+		progress.value = 0
+		emits("pageStart", e)
 	}
 	//webview页面加载完成回调
 	const pageReady = (e) => {
-		emits("pageReady", e.detail)
+		//进度
+		progress.show = false
+		emits("pageReady", e)
 	}
 	//webview页面资源加载回调
 	const loadResource = (e) => {
-		emits("loadResource", e.detail)
+		emits("loadResource", e)
 	}
 	//url拦截了,detail:{url:拦截的url,pattern:拦截的串}
 	const intercept = (e) => {
-		emits("intercept", e.detail)
+		emits("intercept", e)
 	}
 	//jsbridge回调 指定name
 	const onNameMessage = (e) => {
-		emits("onNameMessage", e.detail)
+		emits("onNameMessage", e)
 	}
 	//jsbridge回调 接收传递过来的信息 默认
 	const onMessage = (e) => {
-		emits("onMessage", e.detail)
+		emits("onMessage", e)
 	}
 	//标题更改回调
 	const titleUpdate = (e) => {
-		emits("titleUpdate", e.detail)
+		emits("titleUpdate", e)
 	}
 	//网页alert回调
 	const pageAlert = (e) => {
-		emits("pageAlert", e.detail)
+		emits("pageAlert", e)
 	}
 	//网站下载的回调
 	const onDownload = (e) => {
-		emits("onDownload", e.detail)
+		emits("onDownload", e)
 	}
 	//加载进度的回调
 	const onProgress = (e) => {
-		emits("onProgress", e.detail)
+		progress.value = e.message * 750 / 100
+		emits("onProgress", e)
 	}
 	//控制台打印回调
 	const onConsole = (e) => {
-		emits("onConsole", e.detail)
+		emits("onConsole", e)
 	}
 	//pageError
 	const pageError = (e) => {
-		emits("pageError", e.detail)
+		progress.show = false
+		if (e.isCurrent) {
+			info.error = getNETError(e.errorCode)
+		}
+		if (e.description === "net::ERR_NAME_NOT_RESOLVED") {
+			info.error.subTitle = "无法连接(ERR_NAME_NOT_RESOLVED)"
+			info.error.showBtn = false
+		}
+		emits("pageError", e)
 	}
 	//http 安卓6及以上,detail:{url:url,description:描述，errorCode：code}
 	const httpError = (e) => {
-		emits("httpError", e.detail)
+		progress.show = false
+		if (e.isCurrent) {
+			info.error = getNETError(e.errorCode, "httpError")
+		}
+		emits("httpError", e)
 	}
-	//ssl错误 网站证书错误,detail:{url:url,detail}
+	//ssl错误 网站证书错误,detail:{url:url,=+==++detail}
 	const sslError = (e) => {
-		emits("sslError", e.detail)
+		emits("sslError", e)
+	}
+	//新窗口
+	const onNewWindow = (e) => {
+		emits("onNewWindow", e)
+	}
+	//链接长按
+	const onLinkPress = (e) => {
+		emits("onLinkPress", e)
+	}
+	//有src的图片长按
+	const onImagePress = (e) => {
+		emits("onImagePress", e)
+	}
+	//链接点击事件
+	const onLinkClick = (e) => {
+		emits("onLinkClick", e)
+	}
+	//图片点击事件
+	const onImageClick = (e) => {
+		emits("onImageClick", e)
+	}
+	//返回
+	const onBack = (e) => {
+		info.error.show = false
+		emits("onBack", e)
+	}
+	//拦截scheme
+	const onScheme = (e) => {
+		emits("onScheme", e)
 	}
 	//插件try catch捕获的错误
 	const pluginError = (e) => {
 		console.log(e)
 	}
-	// end
+	//end
+
+	const mWebview: any = ref(null)
 
 	/**
 	 * 向外暴露的接口
-	 * 
+	 *
 	 */
 	// url拦截
-	const setInterceptPattern = (regs: Array < Object > = [], mode: string = 'notAllow', complete ? : boolean) => {
-		if (mWebview.value === null) {
-			interceptTmp.regs = regs
-			interceptTmp.mode = mode
-			interceptTmp.complete = complete || interceptTmp.complete
-			return false
-		}
-		interceptTmp.complete = true
-		//不采用base64
-		mWebview.value.shouldOverrideUrlLoading({
-			regs: regs,
-			mode: mode === 'allow' ? 'allow' : 'notAllow'
-		})
+	const setInterceptPattern = (
+		regs: Array < Object > = [],
+		mode: string = "notAllow",
+		complete ? : boolean
+	) => {
+		return mWebview.value.setInterceptPattern(regs, mode, complete)
 	}
 	//获取cookie
-	const getCookie = async (url: string) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!");
-			else {
-				mWebview.value.getCookie(url, (e) => {
-					resolve({
-						success: e.success,
-						url: e.url,
-						cookie: e.cookie === undefined ? "" : e.cookie
-					})
-				})
-			}
-		})
+	const getCookie = (url: string) => {
+		return mWebview.value.getCookie(url)
 	}
 	//清除指定cookie,通过设置cookie为空来实现
 	const clearCookie = (url: string) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else {
-				//先get
-				mWebview.value.removeCookie(url, () => {
-					resolve({})
-				})
-
-			}
-		})
+		return mWebview.value.clearCookie(url)
 	}
 	//清空cookie
 	const clearAllCookie = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!");
-			else {
-				mWebview.value.removeAllCookie("", () => {
-					resolve({})
-				})
-			}
-		})
+		return mWebview.value.clearAllCookie()
 	}
 	//setCookie 设置cookie
 	const setCookie = (url: string, cookie: string, reload: boolean = false) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!");
-			else {
-				let domain = url;
-				if (/https?\:\/\//.test(url)) {
-					domain = url.match(/https?:\/\/([^/]+)/i)[1];
-				}
-				mWebview.value.setCookie({
-					url: domain,
-					cookie: cookie,
-					reload: reload ? "1" : "0"
-				}, () => {
-					resolve({})
-				})
-			}
-		})
+		return mWebview.value.setCookie(url, cookie, reload)
 	}
 	//清空storage
 	const removeAllStorage = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else {
-				mWebview.value.removeAllStorage("", () => {
-					resolve({})
-				});
-			}
-		})
+		return mWebview.value.removeAllStorage()
 	}
 
 	//设置夜间模式 实际上并没有很大效果
 	const setDark = (dark: boolean = true) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else {
-				mWebview.value.setDark(dark ? true : false, () => {
-					resolve({})
-				});
-			}
-		})
+		return mWebview.value.setDark(dark)
 	}
 	//是否可返回
 	const canBack = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.canBack("", (canBack: boolean) => {
-				resolve(canBack)
-			})
-		})
+		return mWebview.value.canBack()
 	}
 	//返回上一层
 	const back = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.back("", () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.back()
 	}
 	//下一层
 	const forward = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.forward("", () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.forward()
 	}
 	//上一层或下一层
 	const go = (step: string) => {
-		return new Promise((resolve, reject) => {
-			const myStep = isNaN(parseInt(step)) ? 0 : parseInt(step)
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.go(myStep, () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.go(step)
 	}
 	//重新加载当前页面
 	const reload = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.reload("", () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.reload()
 	}
 	//加载url
 	const loadUrl = (url: string) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.loadUrl(url, () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.loadUrl(url)
 	}
 	//清除缓存
 	const clear = (disk: boolean = true) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.clear(disk ? true : false, () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.clear(disk)
 	}
 	//清除所有缓存,包含cookie和localstorage缓存
 	const clearAll = (disk: boolean = true) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.clearAll(disk ? true : false, () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.clearAll(disk)
 	}
 	//清除历史
 	const clearHistory = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.clearHistory("", () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.clearHistory()
 	}
 	//获取当前title
 	const getTitle = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.getTitle("", (title: string) => {
-				resolve(title)
-			})
-		})
+		return mWebview.value.getTitle()
 	}
 	//获取当前url
 	const getUrl = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.getUrl("", (url: string) => {
-				resolve(url)
-			})
-		})
+		return mWebview.value.getUrl()
 	}
 	//停止加载
 	const stopLoading = () => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.stopLoading("", () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.stopLoading()
 	}
 	//向网页发送信息|网页的回调 message:String
 	const sendMessage = (message: string) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.send(message, (response: any) => {
-				resolve(response)
-			})
-		})
+		return mWebview.value.sendMessage(message)
 	}
 	//向网页注册一个handler name:string  通过onNameMessage接收
 	const registerHandler = (name: string) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.registerHandler(name, () => {
-				resolve({})
-			})
-		})
+		return mWebview.value.registerHandler(name)
 	}
 	//call网页的handler
 	const callHandler = (name: string, data: any) => {
-		return new Promise((resolve, reject) => {
-			if (mWebview.value === null) reject("初始化未完成!")
-			else mWebview.value.callHandler({
-				name,
-				data
-			}, (response) => {
-				resolve(response)
-			})
-		})
+		return mWebview.value.callHandler(name, data)
+	}
+	//获取user-agent
+	const getUserAgent = () => {
+		return mWebview.value.getUserAgent()
+	}
+	//设置user-agent
+	const setUserAgent = (s: string) => {
+		return mWebview.value.setUserAgent(s)
 	}
 	//end
-
-	/**
-	 * 计算属性
-	 */
-	//窗口高度
-	const viewHeight = computed(() => {
-		if (typeof props.config.height === "string") {
-			return props.config.height
-		} else if (typeof props.config.height === "number") {
-			return props.config.height + props.unit
-		}
-		const height = uni.getSystemInfoSync().safeArea.height + "px";
-		return height;
-	})
-	//config
-	const webConfig = computed(() => {
-		//自动返回 默认是打开
-		const autoBack: string = props.config.autoBack === false ? "0" : "1";
-		//启用javascript 默认打开
-		const javascript: string = props.config.javascript === false ? "0" : "1";
-		//是否启用缓存,默认打开
-		const cache: string = utils.CACHE[props.config.cache] ? utils.CACHE[props.config.cache] : "1";
-		//是否启用localstorage,默认关闭
-		const storage: string = props.config.storage === false ? "0" : "1";
-		//是否启用database，默认关闭
-		const database: string = props.config.storage === true ? "1" : "0";
-		//是否启用缩放，默认关闭
-		const zoom: string = props.config.zoom === false ? "0" : "1";
-		//是否启用缩放放大镜工具
-		const zoomControl: string = props.config.zoomControl === false ? "0" : "1";
-
-		const config = {
-			autoBack,
-			cache,
-			storage,
-			database,
-			zoom,
-			zoomControl,
-			javascript
-		}
-		return config;
-	})
-	//end
-
-	/**
-	 * 钩子
-	 */
-	onMounted(() => {
-		//如果未完成
-		if (!interceptTmp.complete) setInterceptPattern(interceptTmp.regs, interceptTmp.mode);
-	})
-
 
 	defineExpose({
 		setInterceptPattern,
@@ -436,6 +361,6 @@
 		stopLoading,
 		sendMessage,
 		registerHandler,
-		callHandler
+		callHandler,
 	})
 </script>

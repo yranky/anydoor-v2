@@ -1,9 +1,15 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar ref="navBar" title=""></tm-navbar>
-		<anydoor-webview ref="webview" src="http://usc.douyeblog.top" :config="{
-				height:webviewHeight+'px'
-			}" :webview-styles="webviewStyle" @intercept="interceptUrl" @pageReady="pageReady"></anydoor-webview>
+		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
+		<anydoor-webview ref="webview" :src="src" :config="{
+				height:webviewHeight+'px',
+				windowsAutomatically:false,
+				multipleWindow:false,
+				zoom:false,
+				cache:false
+			}" :webview-styles="webviewStyle" @intercept="interceptUrl" @pageReady="pageReady" @onNewWindow="onNewWindow"
+			@pageError="pageError" @titleUpdate="titleUpdate">
+		</anydoor-webview>
 	</tm-app>
 </template>
 
@@ -19,7 +25,8 @@
 		nextTick
 	} from "vue"
 	import {
-		onReady
+		onReady,
+		onLoad
 	} from "@dcloudio/uni-app"
 	const {
 		proxy
@@ -29,14 +36,12 @@
 	const dom = uni.requireNativePlugin("dom")
 	//webview的高度
 	const webviewHeight = ref(0)
-
 	//webview的style样式
 	const webviewStyle = reactive({
 		progress: {
 			color: theme.getColor("primary").value
 		}
 	})
-
 	const loadWebviewHeight = function() {
 		//加载高度
 		dom.getComponentRect(proxy.$refs.navBar, (option) => {
@@ -47,23 +52,46 @@
 			}
 		})
 	}
-
 	const webview = ref(null)
-
 	//拦截的url
 	const interceptUrl = (e) => {
-		console.log(e);
+		console.log(e)
 	}
-
+	//标题
+	const navTitle: {
+		value: string
+	} = ref("")
+	const titleUpdate = (e) => {
+		navTitle.value = e.title
+	}
 	//加载完成之后，定义拦截
 	const pageReady = (e) => {
-		console.log(1);
-		webview.value.getUrl().then(url => {
-			console.log(url);
-		})
-		// webview.value.setInterceptPattern([""])
+		// console.log(e)
+		// webview.value.sendMessage("张三的消息")
+		// webview.value.getUrl().then(url => {
+		// 	console.log(url);
+		// })
+		// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
 	}
-
+	//页面加载异常
+	const pageError = (e) => {
+		// console.log(e)
+	}
+	const onNewWindow = (e) => {
+		uni.showToast({
+			icon: "none",
+			title: JSON.stringify(e)
+		})
+		uni.navigateTo({
+			url: "/pages/article/article-web?url=" + encodeURIComponent(e.url),
+			animationType: "slide-in-right"
+		})
+	}
+	// const src = ref("http://nas.douye.top:10000/webview")
+	const src = ref("http://usc.douyeblog.top")
+	onLoad((e) => {
+		if (e && e.url) src.value = decodeURIComponent(e.url)
+	})
 	//加载webview的配置
 	onReady(() => {
 		loadWebviewHeight()
@@ -71,5 +99,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+	.error-show {
+		margin-top: 200rpx;
+	}
 </style>
