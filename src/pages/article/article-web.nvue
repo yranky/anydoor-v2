@@ -3,8 +3,8 @@
 		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
 		<anydoor-webview ref="webview" :src="src" :config="{
 				height:webviewHeight+'px',
-				windowsAutomatically:false,
-				multipleWindow:false,
+				windowsAutomatically:true,
+				multipleWindow:true,
 				zoom:false,
 				cache:false
 			}" :webview-styles="webviewStyle" @intercept="interceptUrl" @pageReady="pageReady" @onNewWindow="onNewWindow"
@@ -62,7 +62,8 @@
 		value: string
 	} = ref("")
 	const titleUpdate = (e) => {
-		navTitle.value = e.title
+		//不显示网址
+		navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
 	}
 	//加载完成之后，定义拦截
 	const pageReady = (e) => {

@@ -4,9 +4,9 @@
 			<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
 					backgroundColor:navbarBg
 				}">
-				<tm-sheet _class="index-navbar flex flex-row flex-nowrap" :margin="[0,0]" :padding="[0,0]" :style="{
+				<view class="index-navbar flex flex-row flex-nowrap" :style="{
 						paddingTop:statusBarHeight
-					}" transprent>
+					}">
 					<view class="flex-1 pl-32 pr-16">
 						<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
 					</view>
@@ -15,7 +15,7 @@
 						<tm-icon @click="onChangeDark" :color="store.tmStore.dark?'primary':''" _class="pl-16 pr-16"
 							:font-size="42" name="tmicon-ios-sunny"></tm-icon>
 					</view>
-				</tm-sheet>
+				</view>
 			</view>
 			<!-- 填充占位元素 -->
 			<view :style="{width:'100%',height:statusBarHeight,marginTop:'70rpx'}"></view>

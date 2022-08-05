@@ -3,8 +3,7 @@
 		<tm-result v-if="info.error.show" class="error-show" :showBtn="info.error.showBtn" :color="info.error.color"
 			:status="info.error.status" :btnText="info.error.btnText" :title="info.error.title"
 			:subTitle="info.error.subTitle" @click="doResult(info.error.btnText)"></tm-result>
-		<view class="fixed" v-if="progress.show"
-			:style="{backgroundColor:progressBg,width:progress.value+'rpx',height:'5rpx',
+		<view class="fixed webview-progress" v-if="progress.show" :style="{backgroundColor:progressBg,width:progress.value+'rpx',height:'5rpx',
 			top:(props.config.progressTop?props.config.progressTop:0)+'rpx'}">
 		</view>
 		<view :style="{height:info.error.show?0:''}">
@@ -364,3 +363,8 @@
 		callHandler,
 	})
 </script>
+<style scoped lang="scss">
+	.webview-progress {
+		transition: width 0.3s;
+	}
+</style>
