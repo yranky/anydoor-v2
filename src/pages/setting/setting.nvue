@@ -1,0 +1,19 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="我的设置"></tm-navbar>
+		<view style="margin: 10rpx 20rpx;">
+			<tm-cell showAvatar avatar="https://picsum.photos/200" :margin="[0, 0]" :titleFontSize="35" title="头像 Avatar">
+			</tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="昵称"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="出生日期"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="学校"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="个性签名"> </tm-cell>
+		</view>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+</script>

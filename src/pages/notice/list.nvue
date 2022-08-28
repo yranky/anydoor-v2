@@ -1,17 +1,89 @@
-<!-- 滑动切换选项卡+吸顶演示（nvue） -->
 <template>
-	<view ref="app" color="whiteBg">
-		<tm-navbar title="" ref="navBar"></tm-navbar>
-		<anydoor-delay :time="25">
-			
-		</anydoor-delay>
-	</view>
+	<tm-app ref="app" color="whiteBg">
+		<view ref="navBar">
+			<tm-navbar title="通知列表"></tm-navbar>
+			<tm-tabs :list="tabList" align="left" :width="750" :height="300" default-name="1" itemModel="line"
+				activeColor="primary" activeFontColor="primary"></tm-tabs>
+		</view>
+		<list :style="{height:pageHeight}">
+			<refresh><text>11111</text></refresh>
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+
+			<cell>
+				<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+					img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+					:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+				</anydoorNewsItem>
+			</cell>
+		</list>
+	</tm-app>
 </template>
 
 <script lang="ts" setup>
+	0
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import anydoorDelay from "@/components/anydoor-delay/anydoor-delay.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
+	import anydoorNewsItem from "@/components/anydoor-news-item/anydoor-news-item.vue"
 	import {
 		ref,
 		reactive,
@@ -30,7 +102,23 @@
 	//当前所在的tab
 	const current = ref(0)
 
-	const tabList = ref(['测试1', '测试2', '测试3', '测试4'])
+	const tabList = ref([{
+			key: "1",
+			title: "选项1"
+		},
+		{
+			key: "2",
+			title: "选项2"
+		},
+		{
+			key: "3",
+			title: "选项3"
+		},
+		{
+			key: "4",
+			title: "选项4"
+		},
+	])
 	// #ifdef APP-NVUE
 	const dom = uni.requireNativePlugin('dom')
 
@@ -39,23 +127,15 @@
 	onReady(() => {
 		let height = 0
 		dom.getComponentRect(proxy.$refs.navBar, option => {
-			console.log(option)
 			if (option && option.result) {
 				height = option.size.height
 			}
+			console.log(uni.getSystemInfoSync())
+			pageHeight.value = (uni.getSystemInfoSync().windowHeight - height) + 'px'
 		})
-		pageHeight.value = uni.getSystemInfoSync().windowHeight - height
-		console.log(pageHeight.value)
 	})
 
 	// #endif
-
-	const listRefresh = function() {
-		//触发了下拉刷新，通知当前tabIndex对应子组件的下拉刷新
-		proxy.$refs.swiperItem[current.value].reload(() => {
-			proxy.$refs.paging.complete();
-		});
-	}
 </script>
 
 <style scoped lang="scss">

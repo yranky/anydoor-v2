@@ -28,6 +28,8 @@
 			</view>
 			<!-- 填充占位元素 -->
 			<view :style="{width:'100%',height:statusBarHeight,marginTop:'60rpx'}"></view>
+
+
 			<!-- 轮播 -->
 			<view class="index-carousel-box round-5" style="margin: 35rpx;">
 				<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
@@ -105,7 +107,7 @@
 
 		<!-- 新闻 -->
 		<view style="padding: 10rpx 0;margin: 15rpx;">
-			<anydoor-label labelText="新闻" rectColor="primary" :actionFontSize="27"></anydoor-label>
+			<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"></anydoor-label>
 			<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1"
 				:style="{
 				margin:'0 30rpx'
@@ -155,7 +157,7 @@
 				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
 				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
 			</anydoorNewsItem>
-		</view>
+		</view>   
 
 	</tm-app>
 
@@ -178,6 +180,7 @@
 	import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 	import tmAlert from "@/tmui/components/tm-alert/tm-alert.vue"
 	import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
+	import anydoorDelay from "@/components/anydoor-delay/anydoor-delay.vue"
 	import {
 		useTmpiniaStore
 	} from '@/tmui/tool/lib/tmpinia'

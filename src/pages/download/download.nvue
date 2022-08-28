@@ -1,0 +1,15 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="我的下载"></tm-navbar>
+
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+</script>
+
+<style lang="scss" scoped>
+
+</style>

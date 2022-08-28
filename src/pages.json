@@ -20,6 +20,14 @@
 		}
 
 	}, {
+		"path": "pages/my/detail",
+		"style": {
+			"navigationBarTitleText": "我的信息",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
+	}, {
 		"path": "pages/lesson/lesson",
 		"style": {
 			"navigationBarTitleText": "课程表",
@@ -28,17 +36,16 @@
 		}
 
 	}, {
-		"path": "pages/community/community",
-		"style": {
-			"navigationBarTitleText": "社区",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
 		"path": "pages/search/search",
 		"style": {
 			"navigationBarTitleText": "搜索",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/article/list",
+		"style": {
+			"navigationBarTitleText": "文章列表",
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
@@ -70,16 +77,52 @@
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
+	}, {
+		"path": "pages/user/login",
+		"style": {
+			"navigationBarTitleText": "登录",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
+	}, {
+		"path": "pages/more/score",
+		"style": {
+			"navigationBarTitleText": "成绩",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
+	}, {
+		"path": "pages/more/exam",
+		"style": {
+			"navigationBarTitleText": "考试查询",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
+	}, {
+		"path": "pages/setting/setting",
+		"style": {
+			"navigationBarTitleText": "我的设置",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
+	}, {
+		"path": "pages/download/download",
+		"style": {
+			"navigationBarTitleText": "我的下载",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
 	}],
 	"subPackages": [
 
 	],
 	"preloadRule": [
-		"pages/index/index",
-		"pages/lesson/lesson",
-		"pages/community/community",
-		"pages/my/my",
-		"pages/search/search"
+
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -113,16 +156,6 @@
 				"fontSize": "25"
 			},
 			"text": "课程表"
-		}, {
-			"pagePath": "pages/community/community",
-			"iconfont": {
-				"text": "\ue6ff",
-				"selectedText": "\ue700",
-				"color": "#494949",
-				"selectedColor": "#40a9ff",
-				"fontSize": "25"
-			},
-			"text": "社区"
 		}, {
 			"pagePath": "pages/my/my",
 			"iconfont": {

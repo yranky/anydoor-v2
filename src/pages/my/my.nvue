@@ -1,28 +1,30 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoor-delay :time="25">
-			<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
+		<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
 					backgroundColor:navbarBg
 				}">
-				<view class="index-navbar flex flex-row flex-nowrap" :style="{
+			<view class="index-navbar flex flex-row flex-nowrap" :style="{
 						paddingTop:statusBarHeight
 					}">
-					<view class="flex-1 pl-32 pr-16">
-						<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
-					</view>
-					<view class="navbar-action flex flex-center flex-row pl-16 pr-16">
-						<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"></tm-icon>
-						<tm-icon @click="onChangeDark" :color="store.tmStore.dark?'primary':''" _class="pl-16 pr-16"
-							:font-size="42" name="tmicon-ios-sunny"></tm-icon>
-					</view>
+				<view class="flex-1 pl-32 pr-16">
+					<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
+				</view>
+				<view class="navbar-action flex flex-center flex-row pl-16 pr-16">
+					<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"></tm-icon>
+					<tm-icon @click="onChangeDark" :color="store.tmStore.dark?'primary':''" _class="pl-16 pr-16"
+						:font-size="42" name="tmicon-ios-sunny"></tm-icon>
 				</view>
 			</view>
-			<!-- 填充占位元素 -->
-			<view :style="{width:'100%',height:statusBarHeight,marginTop:'70rpx'}"></view>
+		</view>
+		<!-- 填充占位元素 -->
+		<view :style="{width:'100%',height:statusBarHeight,marginTop:'70rpx'}"></view>
 
-			<navigator url="/pages/article/article-web"><text>111</text></navigator>
+		<navigator url="/pages/article/article-web"><text>111</text></navigator>
+		<navigator url="/pages/user/login"><text>222</text></navigator>
+		<navigator url="/pages/notice/list"><text>333</text></navigator>
 
-			<!-- 用户主信息 -->
+		<!-- 用户主信息 -->
+		<navigator url="/pages/my/detail">
 			<view class="user-info flex flex-row">
 				<view class="user-avatar">
 					<!-- 120rpx margin 20rpx 40rpx -->
@@ -43,27 +45,29 @@
 					<tm-icon :font-size="30" name="tmicon-angle-right" color="grey"></tm-icon>
 				</view>
 			</view>
-			<!-- 社区信息 -->
-			<view class="user-community flex flex-row">
-				<view class="user-community-itme flex-1">
-					<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
-					</anydoor-text>
-					<anydoor-text text="动态" :fontSize="25" :lines="1" lineHeight="40" color="grey"
-						style="text-align: center;"></anydoor-text>
-				</view>
-				<view class="user-community-itme flex-1">
-					<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
-					</anydoor-text>
-					<anydoor-text text="关注" :fontSize="25" :lines="1" lineHeight="40" color="grey"
-						style="text-align: center;"></anydoor-text>
-				</view>
-				<view class="user-community-itme flex-1">
-					<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
-					</anydoor-text>
-					<anydoor-text text="粉丝" :fontSize="25" :lines="1" lineHeight="40" color="grey"
-						style="text-align: center;"></anydoor-text>
-				</view>
+		</navigator>
+		<!-- 社区信息 -->
+		<view class="user-community flex flex-row">
+			<view class="user-community-itme flex-1">
+				<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
+				</anydoor-text>
+				<anydoor-text text="动态" :fontSize="25" :lines="1" lineHeight="40" color="grey"
+					style="text-align: center;"></anydoor-text>
 			</view>
+			<view class="user-community-itme flex-1">
+				<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
+				</anydoor-text>
+				<anydoor-text text="关注" :fontSize="25" :lines="1" lineHeight="40" color="grey"
+					style="text-align: center;"></anydoor-text>
+			</view>
+			<view class="user-community-itme flex-1">
+				<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
+				</anydoor-text>
+				<anydoor-text text="粉丝" :fontSize="25" :lines="1" lineHeight="40" color="grey"
+					style="text-align: center;"></anydoor-text>
+			</view>
+		</view>
+		<anydoor-delay :time="300">
 			<!-- 账户登录信息 -->
 			<view class="user-account-login">
 				<view class="user-account-login-item flex flex-row round-5" :style="{
@@ -85,15 +89,17 @@
 					</view>
 				</view>
 			</view>
-			<!-- 功能列表 -->
-			<!-- 应用中心 -->
-			<tm-divider :border="5"></tm-divider>
-			<view>
-				<tm-cell :margin="[20, 0]" :titleFontSize="32" title="应用中心" transprent> </tm-cell>
-				<tm-cell :margin="[20, 0]" :titleFontSize="32" title="我的下载" transprent> </tm-cell>
-
-			</view>
-			<tm-divider :border="5"></tm-divider>
+		</anydoor-delay>
+		<!-- 功能列表 -->
+		<!-- 应用中心 -->
+		<tm-divider :border="5"></tm-divider>
+		<view>
+			<!-- <tm-cell :margin="[20, 0]" :titleFontSize="32" title="应用中心" transprent> </tm-cell> -->
+			<tm-cell :margin="[20, 0]" :titleFontSize="32" title="设置" transprent> </tm-cell>
+			<tm-cell :margin="[20, 0]" :titleFontSize="32" title="我的下载" transprent> </tm-cell>
+		</view>
+		<tm-divider :border="5"></tm-divider>
+		<anydoor-delay :time="600">
 			<!-- 菜单功能 -->
 			<view>
 				<anydoor-label labelText="教务" :rectSize="0" rectColor="primary" :actionFontSize="27"
@@ -130,7 +136,8 @@
 					</tm-grid-item>
 				</tm-grid>
 			</view>
-
+		</anydoor-delay>
+		<anydoor-delay :time="900">
 			<view>
 				<anydoor-label labelText="生活" :rectSize="0" rectColor="primary" :actionFontSize="27"
 					style="margin:20rpx 0">
@@ -166,7 +173,8 @@
 					</tm-grid-item>
 				</tm-grid>
 			</view>
-
+		</anydoor-delay>
+		<anydoor-delay :time="1200">
 			<view>
 				<anydoor-label labelText="我的服务" :rectSize="0" rectColor="primary" :actionFontSize="27"
 					style="margin:20rpx 0">
@@ -202,7 +210,8 @@
 					</tm-grid-item>
 				</tm-grid>
 			</view>
-
+		</anydoor-delay>
+		<anydoor-delay :time="1500">
 			<view>
 				<anydoor-label labelText="推荐" :rectSize="0" rectColor="primary" :actionFontSize="27"
 					style="margin:20rpx 0">
