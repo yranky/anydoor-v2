@@ -109,7 +109,7 @@
 								<view style="height:24rpx"></view>
 								<view hover-class="opacity-7" @click.stop="onclick(index,item)" 
 								v-for="(item,index) in listData"  :key="index" class="flex-1 flex px-24  py-16" >
-									<view class="flex-row flex pb-12 flex-between ">
+									<view class="flex-row flex pb-12 flex-row-center-between">
 										<view class="flex flex-row flex-row-center-start flex-1">
 											<tm-icon :color="item.iconColor" :dark="props.dark" :fontSize="36" _class="pr-12" v-if="item.icon" :name="item.icon"></tm-icon>
 											<tm-text :fontSize="32" :label="item.text"></tm-text>
@@ -191,7 +191,7 @@
 									<view style="height:24rpx"></view>
 									<view hover-class="opacity-7" @click.stop="onclick(index,item)" 
 									v-for="(item,index) in listData"  :key="index" class="flex-1 flex px-24  py-16" >
-										<view class="flex-row flex pb-12 flex-between ">
+										<view class="flex-row flex pb-12 flex-row-center-between ">
 											<view class="flex flex-row flex-row-center-start flex-1">
 												<tm-icon :color="item.iconColor" :dark="props.dark" :fontSize="36" _class="pr-12" v-if="item.icon" :name="item.icon"></tm-icon>
 												<tm-text :fontSize="32" :label="item.text"></tm-text>
@@ -250,6 +250,9 @@
 	// #ifdef APP-PLUS-NVUE
 	const dom = uni.requireNativePlugin('dom')
 	// #endif
+	const sysinfo = inject("tmuiSysInfo",computed(()=>{
+		return {bottom:0,height:750,width:uni.upx2px(750),top:0,isCustomHeader:false,sysinfo:null}
+	}))
 	const emits = defineEmits(['click'])
 	const proxy = getCurrentInstance()?.proxy??null;
 	const aniDom = ref<InstanceType<typeof tmTranslate> | null>(null)
@@ -296,9 +299,8 @@
 			default:false
 		},
 	})
-	const info = uni.getSystemInfoSync();
-	const windowWidth = ref(info.windowWidth)
-	const windowHeight = ref(info?.safeArea?.height??info.windowHeight)
+	const windowWidth = computed(()=>sysinfo.value.width)
+	const windowHeight = computed(()=>sysinfo.value.height)
 	let isNvue = ref(false)
 	// #ifdef APP-PLUS-NVUE
 	isNvue.value =true;

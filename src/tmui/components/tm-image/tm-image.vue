@@ -8,17 +8,19 @@
 			<view :class="[`pb-${props.padding[1]}`]">
 				<image v-if="loading" :src="img_src" style="width: 10px;height: 10px;opacity: 0;transform:translateX(1200px)" @load="imageLoad"
 					@error="imageError" mode="scaleToFill"></image>
-				<image @click="imageClick" :class="['round-' + props.round]" v-if="!loading && !error" :src="img_src"
+				<image :show-menu-by-longpress="props.showMenuByLongPress" @click="imageClick" :class="['round-' + props.round]" v-if="!loading && !error" :src="img_src"
 					:style="[{ width: img_width + props.unit, height: img_height + props.unit }]" :mode="props.model"></image>
 				<view v-if="loading && !error" :style="[{ width: img_width + props.unit, height: img_height + props.unit }]"
 					class="flex flex-center opacity-3">
 					<tm-icon v-if="props.showLoad" :font-size="26" spin name="tmicon-loading"></tm-icon>
 				</view>
-				<view v-if="!loading && error" :style="[{ width: img_width + props.unit, height: img_height + props.unit }]"
-					class="flex flex-col flex-center opacity-5">
-					<tm-icon name="tmicon-exclamation-circle"></tm-icon>
-					<tm-text _class="pt-10" :font-size="26" :label="props.errorLabel"></tm-text>
-				</view>
+				<slot name="error">
+					<view v-if="!loading && error" :style="[{ width: img_width + props.unit, height: img_height + props.unit }]"
+						class="flex flex-col flex-center opacity-5">
+						<tm-icon name="tmicon-exclamation-circle"></tm-icon>
+						<tm-text _class="pt-10" :font-size="26" :label="props.errorLabel"></tm-text>
+					</view>
+				</slot>
 				<!-- extra -->
 				<view @click.stop="imageClick" v-if="props.extra" :class="[
 					props.extraPosition == 'in' ? 'absolute l-0 b-0 zIndex-5' : '',
@@ -150,6 +152,11 @@ const props = defineProps({
 	unit: {
 		type: String,
 		default: 'rpx'
+	},
+	//开启长按图片显示识别小程序码菜单,与preview不冲突,可点击预览也可长按,默认不开启
+	showMenuByLongPress: {
+		type: [Boolean],
+		default: false
 	}
 })
 if (!props.height && !props.width) {

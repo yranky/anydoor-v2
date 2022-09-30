@@ -1,11 +1,11 @@
 <template>
-  <tm-sheet :round="3" _class="flex flex-col overflow" :padding="props.padding" :margin="props.margin">
+  <tm-sheet  :transprent="props.transprent" :round="3" _class="flex flex-col overflow" :padding="props.padding" :margin="props.margin">
       <slot></slot>
   </tm-sheet>
 </template>
 
 <script lang="ts" setup>
-/**
+/** 
  * 表单
  * @description 注意，内部需要放置tm-form-item,不限层级，可随意布局。
  * 对以下表单类组件进行字段收集。
@@ -60,11 +60,15 @@ const props = defineProps({
 	border:{
 		type:Boolean,
 		default:true
+	},
+	transprent:{
+		type:Boolean,
+		default:false
 	}
 })
 const _modelVal = ref({})
 //备份，重置时，使用。
-const _backModelVal = {...props.modelValue}
+const _backModelVal = uni.$tm.u.deepClone(props.modelValue)
 watchEffect(()=>_modelVal.value = props.modelValue);
 //收集的字段。状态。它与_modelVal是有区别的，用户提供的字段，不一定就会在页面中存在，需要与已经渲染的字段进行匹配
 const _callBackModelVal:Ref<Array<formItem>> = ref([])
@@ -83,16 +87,18 @@ provide("tmFormLabelWidth",computed(()=>props.labelWidth))
 provide("tmFormLabelAlign",computed(()=>props.labelAlign))
 provide("tmFormLayout",computed(()=>props.layout))
 provide("tmFormBorder",computed(()=>props.border))
+provide("tmFormTransprent",computed(()=>props.transprent))
 let timid = 56321326898746;
 function reset(){
     formFunCallBack.value = ""
     nextTick(()=>{
         formFunCallBack.value = 'reset'
         clearTimeout(timid)
-        timid = setTimeout(function() {
-            emits("reset")
-            emits("update:modelValue",{..._backModelVal})
-        }, 200);
+		emits("reset")
+        // timid = setTimeout(function() {
+        //     emits("reset")
+        //     // emits("update:modelValue",_backModelVal)
+        // }, 500);
     })
 }
 function clearValidate(){

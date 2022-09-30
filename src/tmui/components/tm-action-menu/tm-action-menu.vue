@@ -5,7 +5,8 @@
  * @Description: 文件
 -->
 <template>
-	<tm-drawer ref="drawer" @close="drawerClose" @open="drawerOpen" :height="cHeight" @update:show="show = $event"
+	<tm-drawer ref="drawer" @close="drawerClose" @open="drawerOpen" 
+	:duration="props.duration" :height="cHeight" @update:show="show = $event"
 		:show="show" :transprent="true" :hide-header="true">
 		<view @click.stop="" class=" flex flex-col">
 			<view style="height: 24rpx;"></view>
@@ -19,7 +20,7 @@
 			</tm-sheet>
 			<tm-button :round="5" :fontColor="props.activeFontColor" :followTheme="false" @click="cancel" label="取消" :font-size="28" :margin="[32, 8]" :color="_color"
 				block :shadow="0"></tm-button>
-				
+			<view :style="{height:sysinfo.bottom+'px'}"></view>
 		</view>
 	</tm-drawer>
 </template>
@@ -32,13 +33,16 @@ import {
 	ref,
 	PropType,
 	computed,
-	watchEffect,watch
+	watchEffect,watch,inject, onMounted, nextTick
 } from "vue"
 import tmDrawer from '../tm-drawer/tm-drawer.vue';
 import tmButton from "../tm-button/tm-button.vue";
 import tmText from "../tm-text/tm-text.vue";
 import tmSheet from "../tm-sheet/tm-sheet.vue";
 const drawer = ref<InstanceType<typeof tmDrawer> | null>(null)
+const sysinfo = inject("tmuiSysInfo",computed(()=>{
+	return {bottom:0,height:750,width:uni.upx2px(750),top:0,isCustomHeader:false,sysinfo:null}
+}))
 
 /**
  * 事件说明å
@@ -85,6 +89,10 @@ const props = defineProps({
 	allowClose:{
 		type:Boolean,
 		default:true
+	},
+	duration:{
+		type:Number,
+		default:250
 	}
 })
 const show = ref(props?.modelValue ?? false);
@@ -108,21 +116,19 @@ const _list = computed<Array<listitem>>(() => {
 	})
 	return listdata
 })
-let win_bottom = uni.getSystemInfoSync()?.safeAreaInsets?.bottom??0
 
-// #ifndef APP || MP-WEIXIN
-win_bottom = uni.getSystemInfoSync()?.safeArea?.bottom??0
-win_bottom = win_bottom>uni.getSystemInfoSync().windowHeight?0:win_bottom
-// #endif
 const cHeight = computed(() => {
 	let len = _list.value.length + 1
-	return len * 80 + 180 + win_bottom
+	return len * 80 + 180 + sysinfo.value.bottom
 })
+
 const _color = computed(() => props.color)
 
-watchEffect(() => {
-	show.value = props.modelValue;
 
+onMounted(()=>{
+	watchEffect(() => {
+		show.value = props.modelValue;
+	})
 })
 watch(()=>props.active,()=>{
 	_active.value = props.active;
