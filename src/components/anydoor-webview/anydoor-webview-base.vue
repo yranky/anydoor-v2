@@ -1,12 +1,12 @@
 <template>
 	<view>
 		<anydoor-native-webview ref="mWebview" :src="src" :config="webConfig" :agent="agent"
-			:style="{width:'750rpx', height:viewHeight }" @pageStart="pageStart" @pageReady="pageReady"
-			@loadResource="loadResource" @urlLoadingPattern="intercept" @onError="pluginError" @pageError="pageError"
-			@pageHttpError="httpError" @pageSSLError="sslError" @onNameMessage="onNameMessage" @onMessage="onMessage"
-			@titleUpdate="titleUpdate" @pageAlert="pageAlert" @onDownload="onDownload" @progress="onProgress"
-			@console="onConsole" @onNewWindow="onNewWindow" @onLinkPress="onLinkPress" @onImagePress="onImagePress"
-			@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme">
+			:style="{width:'750rpx', height:viewHeight }" @page-start="pageStart" @page-ready="pageReady"
+			@load-resource="loadResource" @url-loading-pattern="intercept" @on-error="pluginError" @page-error="pageError"
+			@page-http-error="httpError" @page-s-s-l-error="sslError" @on-name-message="onNameMessage" @on-message="onMessage"
+			@title-update="titleUpdate" @page-alert="pageAlert" @on-download="onDownload" @progress="onProgress"
+			@console="onConsole" @on-new-window="onNewWindow" @on-link-press="onLinkPress" @on-image-press="onImagePress"
+			@on-link-click="onLinkClick" @on-image-click="onImageClick" @on-back="onBack" @on-scheme="onScheme">
 		</anydoor-native-webview>
 	</view>
 </template>
@@ -65,6 +65,7 @@
 	 */
 	//webview页面开始加载回调
 	const pageStart = (e) => {
+		console.log(e)
 		emits("pageStart", e.detail)
 	}
 	//webview页面加载完成回调
