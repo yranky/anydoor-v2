@@ -28,6 +28,7 @@
 		onReady,
 		onLoad
 	} from "@dcloudio/uni-app"
+import { throttle } from "lodash"
 	const {
 		proxy
 	} = getCurrentInstance()
@@ -42,16 +43,23 @@
 			color: theme.getColor("primary").value
 		}
 	})
-	const loadWebviewHeight = function() {
+	const loadWebviewHeight = throttle(function() {
 		//加载高度
 		dom.getComponentRect(proxy.$refs.navBar, (option) => {
 			if (option && option.result) {
 				const navBarHeight = option.size.height
+				//如果没获取到
+				if(navBarHeight===0) loadWebviewHeight()
+				else{
+					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+				}
 				// console.log(uni.getSystemInfoSync().windowHeight - navBarHeight)
-				webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+				// console.log("windowHeight", uni.getSystemInfoSync().windowHeight)
+				// console.log("navBarHeight", navBarHeight)
+				// console.log("webviewHeight", webviewHeight.value)
 			}
 		})
-	}
+	},200)
 	const webview = ref(null)
 	//拦截的url
 	const interceptUrl = (e) => {
