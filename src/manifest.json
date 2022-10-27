@@ -21,7 +21,10 @@
         "modules" : {
             /* 使用Canvas模块 */
             "Canvas" : "nvue canvas",
-            "VideoPlayer" : {}
+            "VideoPlayer" : {},
+            "UniMP" : {
+                "description" : "小程序模块"
+            }
         },
         /* 应用发布信息 */
         "distribute" : {

@@ -1,0 +1,51 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="微应用"></tm-navbar>
+		<button @click="openMp()">打开</button>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import {
+		show
+	} from "@/common/toast/toast"
+	import {
+		position
+	} from "@/common/toast/interface/define"
+
+	const mp = uni.requireNativePlugin('uniMP')
+
+	function openMp(): void {
+		console.log(1)
+		if (!mp) {
+			show({
+				text: "模块加载失败，请尝试应用升级版本",
+				postion: position.center
+			})
+			return;
+		}
+		mp.openUniMP({
+			appid: "__UNI__43CDF4D"
+		}, (e: any) => {
+			if (e.code === -1001) {
+				mp.installUniMP({
+					appid: "__UNI__43CDF4D",
+					wgtFile: "/static/__UNI__43CDF4D.wgt"
+				}, (msg: any) => {
+					console.log(msg)
+				})
+			} else if (e.code !== 0) {
+				show({
+					text: "未知异常",
+					postion: position.center
+				})
+			}
+		})
+	}
+</script>
+
+<style lang="scss" scoped>
+
+</style>

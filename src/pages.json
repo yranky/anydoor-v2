@@ -117,6 +117,14 @@
 			"navigationStyle": "custom"
 		}
 
+	}, {
+		"path": "pages/mprogram/mprogram",
+		"style": {
+			"navigationBarTitleText": "微应用",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
 	}],
 	"subPackages": [
 
