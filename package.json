@@ -47,10 +47,10 @@
         "@dcloudio/uni-mp-weixin": "3.0.0-3061520221228001",
         "@dcloudio/uni-quickapp-webview": "3.0.0-3061520221228001",
         "echarts": "5.3.2",
+        "lodash": "^4.17.21",
         "pinia": "^2.0.17",
         "vue": "^3.2.45",
-        "vue-i18n": "^9.1.9",
-        "lodash": "^4.17.21"
+        "vue-i18n": "^9.1.9"
     },
     "devDependencies": {
         "@dcloudio/types": "^3.0.17",

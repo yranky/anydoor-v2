@@ -50,10 +50,8 @@
 
 <script lang="ts" setup>
 /**
- * 二维码
- * @description 这是一个二维码组件，属性多，可以生成非常个性化的组件哦~
- * 如果想知道生成的属性请查看：qrOpts类型属性。
- * 更改任意属性，都将会导致重绘
+ * render为画面绘制组件
+ * @description 可以通过render组件对canvas组件进行操作并绘制相关内容。
  */
 import { getCurrentInstance, computed, ref, onMounted, nextTick } from "vue";
 import crender from "./crender/index.js";
@@ -119,7 +117,7 @@ onMounted(() => {
   // #endif
 });
 
-function init(): Promise<tmCharts | CRenderTypes> {
+function init(): Promise<tmCharts> {
   return new Promise((res, rej) => {
     if (render) {
       res(render);
