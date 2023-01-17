@@ -144,6 +144,7 @@
 		"selectedColor": "#40a9ff",
 		"iconfontSrc": "static/tabbar/iconfont.ttf",
 		"borderStyle": "white",
+		"color": "#494949",
 		"list": [{
 			"pagePath": "pages/index/index",
 			"iconfont": {
