@@ -1,3 +1,13 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2022-10-06 16:04:14
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-01-20 22:24:54
+ * @FilePath: \anydoor-v2\src\pages\mprogram\mprogram.nvue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
 <template>
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar title="微应用"></tm-navbar>
@@ -14,31 +24,17 @@
 	import {
 		position
 	} from "@/common/toast/interface/define"
+	import MProgram, {
+		IMProgramStatusResult,
+		MPROGRAM_STATUS_CODE
+	} from "@/common/mprogram/MProgram"
 
-	const mp = uni.requireNativePlugin('uniMP')
 
 	function openMp(): void {
-		console.log(1)
-		if (!mp) {
-			show({
-				text: "模块加载失败，请尝试应用升级版本",
-				postion: position.center
-			})
-			return;
-		}
-		mp.openUniMP({
-			appid: "__UNI__43CDF4D"
-		}, (e: any) => {
-			if (e.code === -1001) {
-				mp.installUniMP({
-					appid: "__UNI__43CDF4D",
-					wgtFile: "/static/__UNI__43CDF4D.wgt"
-				}, (msg: any) => {
-					console.log(msg)
-				})
-			} else if (e.code !== 0) {
+		MProgram.getInstance().start("__UNI__43CDF4D", "/static/__UNI__43CDF4D.wgt").then((res: IMProgramStatusResult) => {
+			if (res.code !== MPROGRAM_STATUS_CODE.SUCCSS) {
 				show({
-					text: "未知异常",
+					text: res.msg,
 					postion: position.center
 				})
 			}

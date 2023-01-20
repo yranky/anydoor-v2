@@ -1,9 +1,159 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2022-07-28 07:24:55
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-01-19 13:31:42
+ * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
+ * @Description: 课程表
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
 <template>
 	<tm-app ref="app" color="whiteBg">
-
+		<!-- 课程表 -->
+		<tm-navbar title="课程表" id="navBar"></tm-navbar>
+		<list :bounce="false" :id="pageId" :style="{
+			height:listHeight
+		}">
+			<refresh @refresh="onrefresh" @pullingdown="onpullingdown" :display="refreshing ? 'show' : 'hide'">
+				<div>
+					<text class="loading-text">{{refreshText}}</text>
+				</div>
+			</refresh>
+			<cell>
+				<swiper ref="swiper" :current="swiperIndex" :duration="300" :style="{
+					height:(rowItemHeight*rowNum)+numBase
+				}">
+					<swiper-item v-for="(page, index) in swiperList" :key="index">
+						<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
+							:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="lessons" />
+						<!-- <swiper-page class="swiper-page" :pid="page.pageid" :parentId="pageId" ref="page"></swiper-page> -->
+					</swiper-item>
+				</swiper>
+			</cell>
+		</list>
 	</tm-app>
 </template>
 
 <script setup lang="ts">
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import anydoorLessonView from "@/components/anydoor-lesson-view/anydoor-lesson-view.vue"
+	import {
+		ISwiperList
+	} from "@/common/timetable/define/interface"
+	import {
+		onBeforeMount,
+		onMounted,
+		ref,
+		computed,
+		getCurrentInstance
+	} from "vue"
+	import IAnydoorLesson from '@/components/anydoor-lesson-view/IAnydoorLesson'
+
+
+
+	/**ATART 子页面的配置 */
+	//单位
+	const numBase = ref < string > ('rpx')
+	//栏目数量
+	const colNum = ref < number > (8)
+	//栏目宽度
+	const colItemWidth = computed < number > (() => {
+		return (750 / colNum.value)
+	})
+	//一个row的高度
+	const rowNum = ref < number > (10)
+
+	const rowItemHeight = ref < number > (150)
+
+	const lessons = ref < IAnydoorLesson[] > ([{
+			name: "高等数学",
+			teacher: "张默",
+			position: "南华楼1-101",
+			week: 1,
+			time: [1, 10],
+			weeks: [1, 2],
+			semester: "2022-01-01"
+		},
+		{
+			name: "政治",
+			teacher: "张默",
+			position: "南华楼1-101",
+			week: 2,
+			time: [1, 2],
+			weeks: [1, 2],
+			semester: "2022-01-01"
+		},
+		{
+			name: "英语",
+			teacher: "张默",
+			position: "南华楼1-101",
+			week: 6,
+			time: [5, 6],
+			weeks: [1, 2],
+			semester: "2022-01-01"
+		}
+	])
+	/**END 子页面的配置 */
+
+	//页面的id
+	const pageId = ref < string > ("page")
+	//当前的swiperId的索引,对应于周次
+	const swiperIndex = ref < number > (0)
+	const swiperList = ref < ISwiperList[] > ([])
+	const pageList = ref < Element[] > ()
+
+	onBeforeMount(() => {
+		for (var i = 0; i < 6; i++) {
+			swiperList.value.push({
+				id: "tab" + i,
+				name: 'Tab ' + (i + 1),
+				pageId: i + 1
+			})
+		}
+	})
+
+	//初始化
+	onMounted(() => {
+		console.log(pageList)
+		//设置list的高度
+		setListHeight()
+	})
+
+	//正在加载
+	const refreshing = ref < boolean > (false)
+	//加载显示的文字
+	const refreshText = ref < string > ()
+
+	const onrefresh = () => {
+		console.log(111)
+		refreshing.value = true
+		refreshText.value = "刷新中..."
+		setTimeout(() => {
+			refreshing.value = false
+			refreshText.value = "已刷新"
+		}, 2000)
+	}
+
+	const onpullingdown = (e) => {
+		console.log(e)
+		if (refreshing.value) return
+
+		if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+			refreshText.value = "释放立即刷新"
+		} else {
+			refreshText.value = "下拉可以刷新"
+		}
+	}
+	
+	//列表高度
+	const listHeight= ref<string>('100vh')
+	const setListHeight=():void=>{
+		const query=uni.createSelectorQuery().in(getCurrentInstance())
+		query.select('#navBar').boundingClientRect((data:any) => {
+		  const windowHeight=uni.getSystemInfoSync().windowHeight
+		  listHeight.value=(windowHeight-data.height)+'px'
+		}).exec()
+	}
 </script>
