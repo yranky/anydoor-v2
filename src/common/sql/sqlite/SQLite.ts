@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:27:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-01-20 23:32:26
+ * @LastEditTime: 2023-01-20 23:42:04
  * @FilePath: \anydoor-v2\src\common\sql\sqlite\SQLite.ts
  * @Description: sql
  * 
@@ -79,7 +79,7 @@ export default class SQLite {
     executeSql(sql: string[]): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
-            if (SQLite.queue[this.name]!.length > 0) await SQLite.queue[this.name]![SQLite.queue[this.name]!.length - 1]
+            await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
             //先打开数据库
             const openRes: ISQLiteStatusResult = await this.open()
             if (openRes.code !== SQLITE_STATUS_CODE.SUCCESS) resolve(openRes)
@@ -102,7 +102,7 @@ export default class SQLite {
     selectSql(sql: string): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
-            if (SQLite.queue[this.name]!.length > 0) await SQLite.queue[this.name]![SQLite.queue[this.name]!.length - 1]
+            await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
             //先打开数据库
             const openRes: ISQLiteStatusResult = await this.open()
             if (openRes.code !== SQLITE_STATUS_CODE.SUCCESS) resolve(openRes)
