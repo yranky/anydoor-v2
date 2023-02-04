@@ -24,7 +24,8 @@
             "VideoPlayer" : {},
             "UniMP" : {
                 "description" : "小程序模块"
-            }
+            },
+            "SQLite" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -131,7 +132,8 @@
         "setting" : {
             "urlCheck" : false,
             "es6" : true,
-            "minified" : true
+            "minified" : true,
+            "postcss" : true
         },
         "usingComponents" : true,
         "uniStatistics" : {

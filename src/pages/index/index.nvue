@@ -1,164 +1,167 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<view class="bg" :style="{
-			backgroundImage:headerBg
-		}">
-			<!-- 顶部搜索栏 -->
-			<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
-				backgroundColor:navbarBg
-			}">
-				<view class="index-navbar flex flex-row flex-nowrap" :style="{
-					paddingTop:statusBarHeight
+		<anydoorPage>
+			<template #navBar>
+				<view class="bg" :style="{
+					backgroundImage:headerBg,
+					paddingBottom:'35rpx'
 				}">
-					<text class="index-day" :style="{
-						color:store.tmStore.dark?'rgba(252, 252, 252, 1.0)':'rgba(34, 34, 34, 1.0)',
-						lineHeight:'60rpx'
-					}">南华大学</text>
-					<view class="index-input flex-1">
-						<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
-								backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
-							}" disabled @click="toSearch" class=" round-5"></tm-input>
-					</view>
-					<view class="index-icons flex flex-row flex-nowrap">
-						<view class="index-icon">
-							<tm-icon name="tmicon-scan" :fontSize="40"></tm-icon>
+					<!-- 顶部搜索栏 -->
+					<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
+						backgroundColor:navbarBg
+					}">
+						<view class="index-navbar flex flex-row flex-nowrap" :style="{
+							paddingTop:statusBarHeight
+						}">
+							<text class="index-day" :style="{
+								color:store.tmStore.dark?'rgba(252, 252, 252, 1.0)':'rgba(34, 34, 34, 1.0)',
+								lineHeight:'60rpx'
+							}">南华大学</text>
+							<view class="index-input flex-1">
+								<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
+										backgroundColor:store.tmStore.dark?'rgba(255,255,255,.15)':'rgba(0,0,0,.03)'
+									}" disabled @click="toSearch" class=" round-5"></tm-input>
+							</view>
+							<view class="index-icons flex flex-row flex-nowrap">
+								<view class="index-icon">
+									<tm-icon name="tmicon-scan" :fontSize="40"></tm-icon>
+								</view>
+							</view>
 						</view>
 					</view>
+					<!-- 填充占位元素 -->
+					<view :style="{width:'100%',height:statusBarHeight,marginTop:'60rpx'}"></view>
 				</view>
-			</view>
-			<!-- 填充占位元素 -->
-			<view :style="{width:'100%',height:statusBarHeight,marginTop:'60rpx'}"></view>
+			</template>
+			<template #content>
+				<!-- 轮播 -->
+				<view class="index-carousel-box round-5" style="margin: 35rpx;">
+					<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
+						:list="swiperList" align="left"></tm-carousel>
+				</view>
+				<!-- 全局提醒组件 -->
+				<tm-alert class=" round-5" :shadow="2" text :content="[{
+							icon: 'tmicon-alert',
+							content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻' },{
+							icon: 'tmicon-alert',
+							content: '2222222222222222' }]" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
 
+				<!-- 功能列表 -->
+				<tm-scrollx :width="750" :height="140" color="primary" transprent>
+					<tm-grid :col="menuList.length" :width="150*menuList.length" transprent>
+						<tm-grid-item v-for="(item,index) in menuList" :key="index" :height="140" :count="item.count">
+							<tm-image :width="110" :height="79" :src="item.path"></tm-image>
+							<tm-text :font-size="24" :label="item.title"></tm-text>
+						</tm-grid-item>
+					</tm-grid>
+				</tm-scrollx>
 
-			<!-- 轮播 -->
-			<view class="index-carousel-box round-5" style="margin: 35rpx;">
-				<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
-					:list="swiperList" align="left"></tm-carousel>
-			</view>
-		</view>
+				<!-- 今日课程 -->
+				<view style="margin: 15rpx 10rpx;">
+					<view class="lesson-tips flex flex-nowrap flex-row">
+						<anydoor-text text="7/24 周三" class="flex-1" lineHeight="50" :fontSize="30" color="primary2" :lines="1"
+							bold style="margin:0 20rpx"></anydoor-text>
+						<anydoor-text class="flex-2" text="111" :fontSize="25" lineHeight="50" color="grey" :lines="1"
+							style="margin:0 20rpx;text-align: right;"></anydoor-text>
+					</view>
+					<anydoor-index-lesson time="第1-2节" lessonName="高等数学A2" lessonRoom="xxx楼701"></anydoor-index-lesson>
+					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+					</anydoor-index-lesson>
+					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+					</anydoor-index-lesson>
+					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+					</anydoor-index-lesson>
+					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+					</anydoor-index-lesson>
+					<tm-divider align="center" label="今天没课~~~"></tm-divider>
+				</view>
 
-		<!-- 全局提醒组件 -->
-		<tm-alert class=" round-5" :shadow="2" text :content="[{
-			        icon: 'tmicon-alert',
-			        content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻' },{
-			        icon: 'tmicon-alert',
-			        content: '2222222222222222' }]" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
+				<!-- 通知 -->
+				<view style="padding: 10rpx 0;margin: 15rpx;">
+					<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"></anydoor-label>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
 
-		<!-- 功能列表 -->
-		<tm-scrollx :width="750" :height="140" color="primary" transprent>
-			<tm-grid :col="menuList.length" :width="150*menuList.length" transprent>
-				<tm-grid-item v-for="(item,index) in menuList" :key="index" :height="140" :count="item.count">
-					<tm-image :width="110" :height="79" :src="item.path"></tm-image>
-					<tm-text :font-size="24" :label="item.title"></tm-text>
-				</tm-grid-item>
-			</tm-grid>
-		</tm-scrollx>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+					</anydoorNewsItem>
 
-		<!-- 今日课程 -->
-		<view style="margin: 15rpx 10rpx;">
-			<view class="lesson-tips flex flex-nowrap flex-row">
-				<anydoor-text text="7/24 周三" class="flex-1" lineHeight="50" :fontSize="30" color="primary2" :lines="1"
-					bold style="margin:0 20rpx"></anydoor-text>
-				<anydoor-text class="flex-2" text="111" :fontSize="25" lineHeight="50" color="grey" :lines="1"
-					style="margin:0 20rpx;text-align: right;"></anydoor-text>
-			</view>
-			<anydoor-index-lesson time="第1-2节" lessonName="高等数学A2" lessonRoom="xxx楼701"></anydoor-index-lesson>
-			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
-			</anydoor-index-lesson>
-			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
-			</anydoor-index-lesson>
-			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
-			</anydoor-index-lesson>
-			<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
-			</anydoor-index-lesson>
-			<tm-divider align="center" label="今天没课~~~"></tm-divider>
-		</view>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
 
-		<!-- 通知 -->
-		<view style="padding: 10rpx 0;margin: 15rpx;">
-			<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"></anydoor-label>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+					</anydoorNewsItem>
 
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
-			</anydoorNewsItem>
+					<anydoorNewsItem
+						video="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
+					</anydoorNewsItem>
+				</view>
 
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
-			</anydoorNewsItem>
-
-			<anydoorNewsItem
-				video="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']">
-			</anydoorNewsItem>
-		</view>
-
-		<!-- 新闻 -->
-		<view style="padding: 10rpx 0;margin: 15rpx;">
-			<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"></anydoor-label>
-			<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1"
-				:style="{
-				margin:'0 30rpx'
-			}">
-			</tm-tabs>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-			<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-				img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-				:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
-			</anydoorNewsItem>
-		</view>   
-
+				<!-- 新闻 -->
+				<view style="padding: 10rpx 0;margin: 15rpx;" >
+					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"></anydoor-label>
+					<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80" default-name="1"
+						:style="{
+						margin:'0 30rpx'
+					}">
+					</tm-tabs>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
+						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
+						:infoList="['2022-07-25','南华大学新闻网','文图/任辉','3人浏览','2人评论','1人点赞']" titleColor="red">
+					</anydoorNewsItem>
+				</view>
+			</template>
+		</anydoorPage>
 	</tm-app>
 
 </template>
@@ -193,6 +196,7 @@
 	} from "@/tmui/tool/lib/minxs"
 	import {
 		computed,
+		onMounted,
 		ref
 	} from "vue"
 	import theme from "@/tmui/tool/theme/theme"
@@ -201,7 +205,7 @@
 	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
 	import anydoorIndexLesson from "@/components/anydoor-index-lesson/anydoor-index-lesson.vue"
 	import anydoorNewsItem from "@/components/anydoor-news-item/anydoor-news-item.vue"
-
+	import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 	import {
 		getCurrentInstance
 	} from "vue"

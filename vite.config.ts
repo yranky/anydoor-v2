@@ -9,7 +9,7 @@ export default defineConfig({
 			vueOptions: { 
 				template: {
 					compilerOptions:{
-						isCustomElement:tag =>tag === 'anydoor-native-webview'
+						isCustomElement:tag =>tag === 'anydoor-native-webview' || tag==='anydoor-native-lottie'
 					}
 				}
 			}

@@ -12,7 +12,7 @@
 import SQLite from "../sql/sqlite/SQLite"
 import databases, { DATA } from "../sql/sqlite/database"
 import { position } from "../toast/interface/define"
-import { show } from "../toast/toast"
+import Toast from "../toast/toast"
 import { MPROGRAM_PROGRAM } from "./tables"
 
 
@@ -87,7 +87,7 @@ export default class MProgram {
     reloadMP() {
         this.times++
         if (!MProgram.MP) {
-            show({
+            Toast.show({
                 text: "模块加载失败，请尝试应用升级版本,重试:" + this.times,
                 postion: position.center
             })

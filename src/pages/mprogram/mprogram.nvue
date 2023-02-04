@@ -18,9 +18,7 @@
 <script lang="ts" setup>
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	import {
-		show
-	} from "@/common/toast/toast"
+	import Toast from "@/common/toast/toast"
 	import {
 		position
 	} from "@/common/toast/interface/define"
@@ -33,7 +31,7 @@
 	function openMp(): void {
 		MProgram.getInstance().start("__UNI__43CDF4D", "/static/__UNI__43CDF4D.wgt").then((res: IMProgramStatusResult) => {
 			if (res.code !== MPROGRAM_STATUS_CODE.SUCCSS) {
-				show({
+				Toast.show({
 					text: res.msg,
 					postion: position.center
 				})

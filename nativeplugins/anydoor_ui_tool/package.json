@@ -6,7 +6,9 @@
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
 		"android": {
-			"plugins": [{
+			"hooksClass": "com.top_anydoor.Hook",
+			"plugins": [
+				{
 					"type": "module",
 					"name": "anydoor_toast",
 					"class": "com.top_anydoor.toast.Index",
@@ -25,10 +27,33 @@
 					"name": "anydoor_tool",
 					"class": "com.top_anydoor.tool.Index",
 					"dependencies": []
+				},
+				{
+					"type": "component",
+					"name": "anydoor-native-lottie",
+					"class": "com.top_anydoor.lottie.Index",
+					"dependencies": []
+				},
+				{
+					"type": "module",
+					"name": "anydoor_bugly",
+					"class": "com.top_anydoor.bugly.Index",
+					"dependencies": []
+				},
+				{
+					"type": "module",
+					"name": "anydoor_baidu_tongji",
+					"class": "com.top_anydoor.baidu_tongji.Index",
+					"dependencies": []
+				},{
+					"type": "module",
+					"name": "anydoor_download",
+					"class": "com.top_anydoor.download.Index",
+					"dependencies": []
 				}
 			],
 			"integrateType": "aar",
-			"minSdkVersion": 16
+			"minSdkVersion": 23
 		}
 	}
 }
