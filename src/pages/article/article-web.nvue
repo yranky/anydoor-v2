@@ -2,13 +2,14 @@
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
 		<anydoor-webview ref="webview" :src="src" :config="{
-				height:webviewHeight+'px',
-				windowsAutomatically:true,
-				multipleWindow:true,
-				zoom:false,
-				cache:false
-			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate">
+						height:webviewHeight+'px',
+						windowsAutomatically:true,
+						multipleWindow:true,
+						zoom:false,
+						cache:false
+					}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
+			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
+			@onImagePress="onImagePress">
 		</anydoor-webview>
 	</tm-app>
 </template>
@@ -108,6 +109,9 @@
 	onReady(() => {
 		loadWebviewHeight()
 	})
+	const onImagePress = (e) => {
+		console.log(e)
+	}
 </script>
 
 <style lang="scss" scoped>

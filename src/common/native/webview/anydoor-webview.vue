@@ -9,22 +9,21 @@
 		}">
 		</view>
 		<view :style="{ height: info.error.show ? 0 : '' }">
-			<anydoor-webview-base ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
+			<anydoorNativeWebview ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
 				:agent="props.userAgent" @onPageStart="pageStart" @onPageReady="pageReady"
 				@onLoadResource="loadResource" @onUrlLoadingPatern="intercept" @onError="pluginError"
 				@onPageError="pageError" @onPageHttpError="httpError" @onPageSSLError="sslError"
 				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate"
 				@onPageAlert="pageAlert" @onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole"
 				@onNewWindow="onNewWindow" @onLinkPress="onLinkPress" @onImagePress="onImagePress"
-				@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme">
-			</anydoor-webview-base>
+				@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme"/>
 		</view>
 	</view>
 </template>
 
 <script lang="ts" setup>
 import tmResult from "@/tmui/components/tm-result/tm-result.vue"
-import anydoorWebviewBase from "./anydoor-webview-base.vue"
+import anydoorNativeWebview from "./anydoor-native-webview"
 import tmProgress from "@/tmui/components/tm-progress/tm-progress.vue"
 import {
 	ref,
@@ -163,7 +162,7 @@ const onDownload = (e: IDownloadResult) => {
 }
 //加载进度的回调
 const onProgress = (e: IOnProgressResult) => {
-	progress.value = e.message * 750 / 100
+	progress.value = e.progress * 750 / 100
 	emits("onProgress", e)
 }
 //控制台打印回调

@@ -33,9 +33,13 @@
 <script lang="ts" setup>
 	import anydoorPullLoading from "@/components/anydoor-pull-loading/anydoor-pull-loading.vue"
 	import {
+		onShow
+	} from "@dcloudio/uni-app";
+	import {
 		ref,
 		onMounted,
-		getCurrentInstance
+		getCurrentInstance,
+		nextTick
 	} from "vue"
 
 
@@ -67,8 +71,17 @@
 	}
 
 	onMounted(() => {
-		setListHeight()
+		nextTick(() => {
+			setListHeight()
+		})
 	})
+
+	onShow(() => {
+		nextTick(() => {
+			setListHeight()
+		})
+	})
+
 	const navBarHeight = ref < number > (0)
 
 	//列表高度
