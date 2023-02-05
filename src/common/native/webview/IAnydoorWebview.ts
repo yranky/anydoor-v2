@@ -175,3 +175,7 @@ export interface IOnLinkClickResult {
 export interface IOnImageClickResult {
     url: string
 }
+
+export interface IOnBackResult {
+
+}

@@ -1,365 +1,370 @@
 <template>
-    <view>
-        <anydoor-native-webview ref="mWebview" :src="props.src" :agent="props.userAgent" :bugly="props.bugly"
-            :style="{ width: '750rpx', height: viewHeight }" @on-back="onBack" @page-start="pageStart"
-            @on-scheme="onScheme" @url-loading-pattern="urlLoadingPatern" @page-ready="pageReady"
-            @page-error="pageError" @page-http-error="pageHttpError" @page-s-s-l-error="pageSSLError"
-            @load-resource="loadResource" @on-download="onDownload" @on-message="onMessage"
-            @on-name-messgae="onNameMessage" @on-error="onError" @title-update="titleUpdate" @page-alert="pageAlert"
-            @on-progress="onProgress" @on-console="onConsole" @on-new-window="onNewWindow" @on-link-press="onLinkPress"
-            @on-image-press="onImagePress" @on-link-click="onLinkClick" @on-image-click="onImageClick">
-        </anydoor-native-webview>
-    </view>
+	<view class="relative">
+		<tm-result v-if="info.error.show" class="error-show" :showBtn="info.error.showBtn" :color="info.error.color"
+			:status="info.error.status" :btnText="info.error.btnText" :title="info.error.title"
+			:subTitle="info.error.subTitle" @click="doResult(info.error.btnText)"></tm-result>
+		<view class="fixed webview-progress" v-if="progress.show" :style="{
+			backgroundColor: progressBg, width: progress.value + 'rpx', height: '5rpx',
+			top: (props.config.progressTop ? props.config.progressTop : 0) + 'rpx'
+		}">
+		</view>
+		<view :style="{ height: info.error.show ? 0 : '' }">
+			<anydoor-webview-base ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
+				:agent="props.userAgent" @onPageStart="pageStart" @onPageReady="pageReady"
+				@onLoadResource="loadResource" @onUrlLoadingPatern="intercept" @onError="pluginError"
+				@onPageError="pageError" @onPageHttpError="httpError" @onPageSSLError="sslError"
+				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate"
+				@onPageAlert="pageAlert" @onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole"
+				@onNewWindow="onNewWindow" @onLinkPress="onLinkPress" @onImagePress="onImagePress"
+				@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme">
+			</anydoor-webview-base>
+		</view>
+	</view>
 </template>
 
 <script lang="ts" setup>
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+import anydoorWebviewBase from "./anydoor-webview-base.vue"
+import tmProgress from "@/tmui/components/tm-progress/tm-progress.vue"
 import {
-    ref,
-    reactive,
-    computed,
-    onMounted
+	ref,
+	reactive,
+	computed
 } from "vue"
-
-import {
-    IAnydoorEventResult,
-    IAnydoorWebviewConfig, IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult,
-    IPageAlertResult,
-    IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult,
-    IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult
-} from "./IAnydoorWebview"
+import getNETError from "@/common/network/error"
+import theme from "@/tmui/tool/theme/theme"
+import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
 
 
-const props = withDefaults(defineProps<{
-    src: string,
-    bugly?: boolean,
-    config?: IAnydoorWebviewConfig,
-    unit?: string,
-    userAgent?: string
-}>(), {
-    src: "",
-    bugly: true,
-    config: (): IAnydoorWebviewConfig => {
-        return {}
-    },
-    unit: "rpx",
-    userAgent: ""
+const info = reactive({
+	error: {
+		show: false,
+		color: "red",
+		status: "",
+		btnText: "",
+		title: "",
+		subTitle: "",
+		showBtn: true,
+	}
 })
 
-const mWebview = ref<IAnydoorWebviewRef>()
+const props = defineProps({
+	src: {
+		type: String,
+		default: "",
+	},
+	config: {
+		type: Object,
+		default: () => {
+			return {}
+		},
+	},
+	unit: {
+		type: String,
+		default: "rpx",
+	},
+	userAgent: {
+		type: String,
+		default: "",
+	},
+})
 
-const emits = defineEmits(['onBack', "onPageStart", 'onScheme', 'onUrlLoadingPatern', 'onPageReady', 'onPageError',
-    "onPageHttpError", 'onPageSSLError', 'onLoadResource', 'onDownload', 'onMessage', 'onNameMessage', 'onError',
-    'onTitleUpdate', 'onPageAlert', 'onProgress', 'onConsole', 'onNewWindow', 'onLinkPress', 'onLinkClick', 'onImageClick',
-    'onImagePress'
+import {
+	action as NETErrorAction
+} from "@/common/network/NETError"
+
+//点击result按钮事件
+const doResult = function (action: NETErrorAction) {
+	switch (action) {
+		case NETErrorAction.retry:
+			//取消显示
+			info.error.show = false
+			reload()
+			break
+	}
+}
+
+//进度显示
+const progress = reactive({
+	value: 0,
+	show: false
+})
+//进度背景
+const progressBg = computed(() => {
+	return theme.getColor("primary").value
+})
+const emits = defineEmits([
+	"onPageStart",
+	"onPageReady",
+	"onLoadResource",
+	"onUrlLoadingPatern",
+	"onNameMessage",
+	"onMessage",
+	"onTitleUpdate",
+	"onPageAlert",
+	"onDownload",
+	"onProgress",
+	"onConsole",
+	"onPageError",
+	"onPageHttpError",
+	"onPageSSLError",
+	"onNewWindow",
+	"onLinkPress",
+	"onImagePress",
+	"onLinkClick",
+	"onImageClick",
+	"onBack",
+	"onScheme",
+	"onError"
 ])
-
-//返回上一层
-const onBack = (res: IAnydoorEventResult<{}>) => {
-    emits("onBack", res.detail)
+/**
+ * 回调
+ */
+//webview页面开始加载回调
+const pageStart = (e: IPageStartResult) => {
+	//进度
+	progress.show = true
+	progress.value = 0
+	emits("onPageStart", e)
 }
-//页面开始
-const pageStart = (res: IAnydoorEventResult<IPageStartResult>) => {
-    emits("onPageStart", res.detail)
+//webview页面加载完成回调
+const pageReady = (e: IPageReadyResult) => {
+	//进度
+	progress.show = false
+	emits("onPageReady", e)
 }
-//未识别的scheme
-const onScheme = (res: IAnydoorEventResult<IOnSchemeResult>) => {
-    emits("onScheme", res.detail)
+//webview页面资源加载回调
+const loadResource = (e: ILoadResourceResult) => {
+	emits("onLoadResource", e)
 }
-//拦截的url
-const urlLoadingPatern = (res: IAnydoorEventResult<IUrlLoadingPaternResult>) => {
-    emits("onUrlLoadingPatern", res.detail)
+//url拦截了,detail:{url:拦截的url,pattern:拦截的串}
+const intercept = (e: IUrlLoadingPaternResult) => {
+	emits("onUrlLoadingPatern", e)
 }
-//页面加载完成
-const pageReady = (res: IAnydoorEventResult<IPageReadyResult>) => {
-    emits("onPageReady", res.detail)
+//jsbridge回调 指定name
+const onNameMessage = (e: INameMessageResult) => {
+	emits("onNameMessage", e)
 }
-//页面错误
-const pageError = (res: IAnydoorEventResult<IPageErrorResult>) => {
-    emits("onPageError", res.detail)
+//jsbridge回调 接收传递过来的信息 默认
+const onMessage = (e: IMessageResult) => {
+	emits("onMessage", e)
 }
-//页面http错误
-const pageHttpError = (res: IAnydoorEventResult<IPageHttpErrorResult>) => {
-    emits("onPageHttpError", res.detail)
+//标题更改回调
+const titleUpdate = (e: ITitleUpdateResult) => {
+	emits("onTitleUpdate", e)
 }
-//ssl错误
-const pageSSLError = (res: IAnydoorEventResult<IPageSSLErrorResult>) => {
-    emits("onPageSSLError", res.detail)
+//网页alert回调
+const pageAlert = (e: IPageAlertResult) => {
+	emits("onPageAlert", e)
 }
-//加载资源
-const loadResource = (res: IAnydoorEventResult<ILoadResourceResult>) => {
-    emits("onLoadResource", res.detail)
+//网站下载的回调
+const onDownload = (e: IDownloadResult) => {
+	emits("onDownload", e)
 }
-//下载
-const onDownload = (res: IAnydoorEventResult<IDownloadResult>) => {
-    emits("onDownload", res.detail)
+//加载进度的回调
+const onProgress = (e: IOnProgressResult) => {
+	progress.value = e.message * 750 / 100
+	emits("onProgress", e)
 }
-//消息
-const onMessage = (res: IAnydoorEventResult<IMessageResult>) => {
-    emits("onMessage", res.detail)
+//控制台打印回调
+const onConsole = (e: IOnConsoleResult) => {
+	emits("onConsole", e)
 }
-//有名称的消息
-const onNameMessage = (res: IAnydoorEventResult<INameMessageResult>) => {
-    emits("onNameMessage", res.detail)
+//pageError
+const pageError = (e: IPageErrorResult) => {
+	progress.show = false
+	if (e.isCurrent) {
+		info.error = getNETError(e.errorCode)
+	}
+	if (e.description === "net::ERR_NAME_NOT_RESOLVED") {
+		info.error.subTitle = "无法连接(ERR_NAME_NOT_RESOLVED)"
+		info.error.showBtn = false
+	}
+	emits("onPageError", e)
 }
-//错误
-const onError = (res: IAnydoorEventResult<IOnErrorResult>) => {
-    emits("onError", res.detail)
+//http 安卓6及以上,detail:{url:url,description:描述，errorCode：code}
+const httpError = (e: IPageHttpErrorResult) => {
+	progress.show = false
+	if (e.isCurrent) {
+		info.error = getNETError(e.errorCode, "httpError")
+	}
+	emits("onPageHttpError", e)
 }
-//标题更新
-const titleUpdate = (res: IAnydoorEventResult<ITitleUpdateResult>) => {
-    emits("onTitleUpdate", res.detail)
-}
-//js alert
-const pageAlert = (res: IAnydoorEventResult<IPageAlertResult>) => {
-    emits("onPageAlert", res.detail)
-}
-//进度
-const onProgress = (res: IAnydoorEventResult<IOnProgressResult>) => {
-    emits("onProgress", res.detail)
-}
-//控制台
-const onConsole = (res: IAnydoorEventResult<IOnConsoleResult>) => {
-    emits("onConsole", res.detail)
+//ssl错误 网站证书错误,detail:{url:url,=+==++detail}
+const sslError = (e: IPageSSLErrorResult) => {
+	emits("onPageSSLError", e)
 }
 //新窗口
-const onNewWindow = (res: IAnydoorEventResult<IOnNewWindowResult>) => {
-    emits("onNewWindow", res.detail)
+const onNewWindow = (e: IOnNewWindowResult) => {
+	emits("onNewWindow", e)
 }
-
 //链接长按
-const onLinkPress = (res: IAnydoorEventResult<IOnLinkPressResult>) => {
-    emits("onLinkPress", res.detail)
+const onLinkPress = (e: IOnLinkPressResult) => {
+	emits("onLinkPress", e)
 }
-//图片长按
-const onImagePress = (res: IAnydoorEventResult<IOnImagePressResult>) => {
-    emits("onImagePress", res.detail)
+//有src的图片长按
+const onImagePress = (e: IOnImagePressResult) => {
+	emits("onImagePress", e)
 }
-//链接点击
-const onLinkClick = (res: IAnydoorEventResult<IOnLinkClickResult>) => {
-    emits("onLinkClick", res.detail)
+//链接点击事件
+const onLinkClick = (e: IOnLinkClickResult) => {
+	emits("onLinkClick", e)
 }
+//图片点击事件
+const onImageClick = (e: IOnImageClickResult) => {
+	emits("onImageClick", e)
+}
+//返回
+const onBack = (e: IOnBackResult) => {
+	info.error.show = false
+	emits("onBack", e)
+}
+//拦截scheme
+const onScheme = (e: IOnSchemeResult) => {
+	emits("onScheme", e)
+}
+//插件try catch捕获的错误
+const pluginError = (e: IOnErrorResult) => {
+	emits("onError", e)
+}
+//end
 
-//图片点击
-const onImageClick = (res: IAnydoorEventResult<IOnImageClickResult>) => {
-    emits("onImageClick", res.detail)
-}
-
-//设置userAgent
-const setUserAgent = (userAgent: string): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.setUserAgent(userAgent, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-//获取userAgent
-const getUserAgent = async (): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.getUserAgent((res) => {
-            resolve(res.data)
-        })
-    })
-}
-//拦截
-const shouldOverrideUrlLoading = (option: IShouldOverrideUrlLoadingOption): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.shouldOverrideUrlLoading(option, (res) => {
-            resolve(res.data)
-        })
-    })
-}
-//获取cookie
-const getCookie = (url: string): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.getCookie(url, (res) => {
-            resolve(res.data)
-        })
-    })
-}
-//设置cookie
-const setCookie = (option: ISetCookieOption): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.setCookie(option, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const removeAllCookie = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.removeAllCookie((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const removeCookie = (url: string): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.removeCookie(url, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const removeAllStorage = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.removeAllStorage((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const setDark = (open: boolean): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.setDark(open, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const canBack = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        return mWebview.value?.canBack((res) => {
-            resolve(res.data)
-        })
-    })
-}
-const back = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.back((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const forward = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.forward((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const go = (index: number): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.go(index, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const reload = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.reload((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const loadUrl = (url: string): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.loadUrl(url, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const clear = (disk: boolean): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.clear(disk, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const clearAll = (disk: boolean): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.clearAll(disk, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-const clearHistory = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.clearHistory((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const getTitle = (): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.getTitle((res) => {
-            resolve(res.data)
-        })
-    })
-}
-const getUrl = (): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.getUrl((res) => {
-            resolve(res.data)
-        })
-    })
-}
-const stopLoading = (): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.stopLoading((res) => {
-            resolve(res.success)
-        })
-    })
-}
-const send = (data: string, callbackFn: (res: string) => void): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.send(data, (res) => {
-            resolve(res.data)
-        })
-    })
-}
-const callHandler = (data: ICallHandlerOption, callbackFn: (res: string) => void): Promise<string | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.callHandler(data, (res) => {
-            resolve(res.data)
-        })
-    })
-}
-const registerHandler = (name: string): Promise<boolean | undefined> => {
-    return new Promise((resolve) => {
-        mWebview.value?.registerHandler(name, (res) => {
-            resolve(res.success)
-        })
-    })
-}
-
+const mWebview: any = ref<IAnydoorWebviewRef>()
 
 /**
-     * 计算属性
-     */
-//窗口高度
-const viewHeight = computed<String>(() => {
-    if (typeof props.config.height === "string") {
-        return props.config.height
-    } else if (typeof props.config.height === "number") {
-        return props.config.height + props.unit
-    }
-    // @ts-ignore
-    const height = (uni.getSystemInfoSync().safeArea.height / (uni.upx2px(100) / 100)) + 'rpx'
-    return height;
-})
+ * 向外暴露的接口
+ *
+ */
+// url拦截
+const shouldOverrideUrlLoading = (
+	option: IShouldOverrideUrlLoadingOption
+) => {
+	return mWebview.value.shouldOverrideUrlLoading(option)
+}
+//获取cookie
+const getCookie = (url: string) => {
+	return mWebview.value.getCookie(url)
+}
+//清除指定cookie,通过设置cookie为空来实现
+const removeCookie = (url: string) => {
+	return mWebview.value.removeCookie(url)
+}
+//清空cookie
+const removeAllCookie = () => {
+	return mWebview.value.removeAllCookie()
+}
+//setCookie 设置cookie
+const setCookie = (option: ISetCookieOption) => {
+	return mWebview.value.setCookie(option)
+}
+//清空storage
+const removeAllStorage = () => {
+	return mWebview.value.removeAllStorage()
+}
 
-
+//设置夜间模式 实际上并没有很大效果
+const setDark = (dark: boolean = true) => {
+	return mWebview.value.setDark(dark)
+}
+//是否可返回
+const canBack = () => {
+	return mWebview.value.canBack()
+}
+//返回上一层
+const back = () => {
+	return mWebview.value.back()
+}
+//下一层
+const forward = () => {
+	return mWebview.value.forward()
+}
+//上一层或下一层
+const go = (step: string) => {
+	return mWebview.value.go(step)
+}
+//重新加载当前页面
+const reload = () => {
+	return mWebview.value.reload()
+}
+//加载url
+const loadUrl = (url: string) => {
+	return mWebview.value.loadUrl(url)
+}
+//清除缓存
+const clear = (disk: boolean = true) => {
+	return mWebview.value.clear(disk)
+}
+//清除所有缓存,包含cookie和localstorage缓存
+const clearAll = (disk: boolean = true) => {
+	return mWebview.value.clearAll(disk)
+}
+//清除历史
+const clearHistory = () => {
+	return mWebview.value.clearHistory()
+}
+//获取当前title
+const getTitle = () => {
+	return mWebview.value.getTitle()
+}
+//获取当前url
+const getUrl = () => {
+	return mWebview.value.getUrl()
+}
+//停止加载
+const stopLoading = () => {
+	return mWebview.value.stopLoading()
+}
+//向网页发送信息|网页的回调 message:String
+const send = (message: string) => {
+	return mWebview.value.send(message)
+}
+//向网页注册一个handler name:string  通过onNameMessage接收
+const registerHandler = (name: string) => {
+	return mWebview.value.registerHandler(name)
+}
+//call网页的handler
+const callHandler = (data: ICallHandlerOption) => {
+	return mWebview.value.callHandler(data)
+}
+//获取user-agent
+const getUserAgent = () => {
+	return mWebview.value.getUserAgent()
+}
+//设置user-agent
+const setUserAgent = (s: string) => {
+	return mWebview.value.setUserAgent(s)
+}
+//end
 
 defineExpose({
-    setUserAgent,
-    getUserAgent,
-    shouldOverrideUrlLoading,
-    getCookie,
-    setCookie,
-    removeAllCookie,
-    removeCookie,
-    removeAllStorage,
-    setDark,
-    canBack,
-    back,
-    forward,
-    go,
-    reload,
-    loadUrl,
-    clear,
-    clearAll,
-    clearHistory,
-    getTitle,
-    getUrl,
-    stopLoading,
-    send,
-    callHandler,
-    registerHandler
+	shouldOverrideUrlLoading,
+	getCookie,
+	removeCookie,
+	removeAllCookie,
+	setCookie,
+	removeAllStorage,
+	setDark,
+	canBack,
+	back,
+	forward,
+	go,
+	reload,
+	loadUrl,
+	clear,
+	clearAll,
+	clearHistory,
+	getTitle,
+	getUrl,
+	stopLoading,
+	send,
+	registerHandler,
+	callHandler,
+	setUserAgent,
+	getUserAgent
 })
 </script>
+<style scoped lang="scss">
+.webview-progress {
+	transition: width 0.3s;
+}
+</style>

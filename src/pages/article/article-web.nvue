@@ -7,8 +7,8 @@
 				multipleWindow:true,
 				zoom:false,
 				cache:false
-			}" :webview-styles="webviewStyle" @intercept="interceptUrl" @pageReady="pageReady" @onNewWindow="onNewWindow"
-			@pageError="pageError" @titleUpdate="titleUpdate">
+			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
+			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate">
 		</anydoor-webview>
 	</tm-app>
 </template>
@@ -16,7 +16,8 @@
 <script setup lang="ts">
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
+	// import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
+	import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
 	import {
 		computed,
 		getCurrentInstance,
@@ -28,7 +29,9 @@
 		onReady,
 		onLoad
 	} from "@dcloudio/uni-app"
-import { throttle } from "lodash"
+	import {
+		throttle
+	} from "lodash"
 	const {
 		proxy
 	} = getCurrentInstance()
@@ -49,8 +52,8 @@ import { throttle } from "lodash"
 			if (option && option.result) {
 				const navBarHeight = option.size.height
 				//如果没获取到
-				if(navBarHeight===0) loadWebviewHeight()
-				else{
+				if (navBarHeight === 0) loadWebviewHeight()
+				else {
 					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
 				}
 				// console.log(uni.getSystemInfoSync().windowHeight - navBarHeight)
@@ -59,7 +62,7 @@ import { throttle } from "lodash"
 				// console.log("webviewHeight", webviewHeight.value)
 			}
 		})
-	},200)
+	}, 200)
 	const webview = ref(null)
 	//拦截的url
 	const interceptUrl = (e) => {
@@ -84,7 +87,7 @@ import { throttle } from "lodash"
 	}
 	//页面加载异常
 	const pageError = (e) => {
-		// console.log(e)
+		console.log(e)
 	}
 	const onNewWindow = (e) => {
 		uni.showToast({
