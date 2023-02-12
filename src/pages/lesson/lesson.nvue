@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-04 20:36:09
+ * @LastEditTime: 2023-02-12 21:33:13
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -46,6 +46,7 @@
 		getCurrentInstance
 	} from "vue"
 	import IAnydoorLesson from '@/components/anydoor-lesson-view/IAnydoorLesson'
+	import Lesson from "@/common/database/Lesson/Lesson"
 
 
 
@@ -108,5 +109,7 @@
 				pageId: i + 1
 			})
 		}
+
+		Lesson.getInstance()
 	})
 </script>
