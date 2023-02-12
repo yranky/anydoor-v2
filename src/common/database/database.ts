@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:31:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-05 16:32:42
+ * @LastEditTime: 2023-02-07 13:40:56
  * @FilePath: \anydoor-v2\src\common\database\database.ts
  * @Description: 数据库一些常量
  * 
@@ -15,7 +15,9 @@ import MPROGRAM_TABLES from "./tables/mprogram"
 //数据库名称
 export enum DATA {
     //微应用
-    MPROGRAM = "mprogram"
+    MPROGRAM = "mprogram",
+    //课程数据
+    LESSON = "lesson"
 }
 
 export const databases = {

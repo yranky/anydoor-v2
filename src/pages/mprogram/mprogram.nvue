@@ -25,7 +25,7 @@
 	import MProgram, {
 		IMProgramStatusResult,
 		MPROGRAM_STATUS_CODE
-	} from "@/common/mprogram/MProgram"
+	} from "@/common/database/mprogram/MProgram"
 
 
 	function openMp(): void {

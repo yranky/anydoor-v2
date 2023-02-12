@@ -141,7 +141,7 @@
 	"tabBar": {
 		"backgroundColor": "#f3f3f6",
 		"position": "bottom",
-		"selectedColor": "#40a9ff",
+		"selectedColor": "#4f52ff",
 		"iconfontSrc": "static/tabbar/iconfont.ttf",
 		"borderStyle": "white",
 		"color": "#494949",
@@ -151,7 +151,7 @@
 				"text": "\ue703",
 				"selectedText": "\ue702",
 				"color": "#494949",
-				"selectedColor": "#40a9ff",
+				"selectedColor": "#4f52ff",
 				"fontSize": "25"
 			},
 			"text": "首页"
@@ -161,7 +161,7 @@
 				"text": "\ue6de",
 				"selectedText": "\ue6df",
 				"color": "#494949",
-				"selectedColor": "#40a9ff",
+				"selectedColor": "#4f52ff",
 				"fontSize": "25"
 			},
 			"text": "课程表"
@@ -171,7 +171,7 @@
 				"text": "\ue716",
 				"selectedText": "\ue715",
 				"color": "#494949",
-				"selectedColor": "#40a9ff",
+				"selectedColor": "#4f52ff",
 				"fontSize": "25"
 			},
 			"text": "我"

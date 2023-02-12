@@ -26,6 +26,7 @@
 				<navigator url="/pages/article/article-web"><text>111</text></navigator>
 				<navigator url="/pages/user/login"><text>222</text></navigator>
 				<navigator url="/pages/mprogram/mprogram"><text>333</text></navigator>
+				<navigator url="/pages/setting/setting"><text>333</text></navigator>
 
 				<!-- 用户主信息 -->
 				<navigator url="/pages/my/detail">

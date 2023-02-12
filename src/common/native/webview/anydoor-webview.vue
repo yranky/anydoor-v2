@@ -69,7 +69,7 @@ const props = defineProps({
 })
 
 import {
-	action as NETErrorAction
+	ACTION as NETErrorAction
 } from "@/common/network/NETError"
 
 //点击result按钮事件
