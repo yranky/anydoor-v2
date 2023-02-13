@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-12 21:33:13
+ * @LastEditTime: 2023-02-13 17:48:45
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -110,6 +110,189 @@
 			})
 		}
 
-		Lesson.getInstance()
+		Lesson.getInstance().updateLessonList([
+			{
+				"weekday": "1",
+				"name": "Java程序设计实验",
+				"teacher": "黄欣阳副教授",
+				"weeks": "16-17",
+				"classnums": "01,02",
+				"room": "【红湘校区】计算机专业机房606B"
+			},
+			{
+				"weekday": "2",
+				"name": "大学物理B",
+				"teacher": "黄跃宇",
+				"weeks": "1-16",
+				"classnums": "01,02",
+				"room": "【红湘校区】南华楼214"
+			},
+			{
+				"weekday": "3",
+				"name": "Java程序设计",
+				"teacher": "黄欣阳副教授",
+				"weeks": "1-16",
+				"classnums": "01,02",
+				"room": "【红湘校区】核学楼305"
+			},
+			{
+				"weekday": "4",
+				"name": "大学物理B",
+				"teacher": "黄跃宇",
+				"weeks": "1-12",
+				"classnums": "01,02",
+				"room": "【红湘校区】南华楼214"
+			},
+			{
+				"weekday": "5",
+				"name": "高等数学A2",
+				"teacher": "肖其珍副教授",
+				"weeks": "1-12",
+				"classnums": "01,02",
+				"room": "【红湘校区】南华楼312"
+			},
+			{
+				"weekday": "1",
+				"name": "线性代数A",
+				"teacher": "刘邵容",
+				"weeks": "2-16",
+				"classnums": "03,04",
+				"room": "【红湘校区】南华楼111"
+			},
+			{
+				"weekday": "2",
+				"name": "数字逻辑",
+				"teacher": "屈爱平副教授",
+				"weeks": "2-17",
+				"classnums": "03,04",
+				"room": "【红湘校区】核学楼203"
+			},
+			{
+				"weekday": "3",
+				"name": "大学体育2(乒乓球)",
+				"teacher": "卿小琴",
+				"weeks": "1-16",
+				"classnums": "03,04"
+			},
+			{
+				"weekday": "4",
+				"name": "数字逻辑",
+				"teacher": "屈爱平副教授",
+				"weeks": "2-4",
+				"classnums": "03,04",
+				"room": "【红湘校区】环安楼311"
+			},
+			{
+				"weekday": "1",
+				"name": "大学英语B2(本19计类[7-12]班A)",
+				"teacher": "何鸿雁副教授",
+				"weeks": "2-16",
+				"classnums": "05,06",
+				"room": "【红湘校区】南华楼503"
+			},
+			{
+				"weekday": "2",
+				"name": "毛泽东思想和中国特色社会主义理论体系概论",
+				"teacher": "齐辉副教授",
+				"weeks": "1-16",
+				"classnums": "05,06",
+				"room": "【红湘校区】南华楼109"
+			},
+			{
+				"weekday": "3",
+				"name": "高等数学A2",
+				"teacher": "肖其珍副教授",
+				"weeks": "1-16",
+				"classnums": "05,06",
+				"room": "【红湘校区】南华楼512"
+			},
+			{
+				"weekday": "4",
+				"name": "毛泽东思想和中国特色社会主义理论体系概论",
+				"teacher": "齐辉副教授",
+				"weeks": "1-16",
+				"classnums": "05,06",
+				"room": "【红湘校区】南华楼107"
+			},
+			{
+				"weekday": "5",
+				"name": "Java程序设计",
+				"teacher": "黄欣阳副教授",
+				"weeks": "2,4,6,8,10,12,14,16",
+				"classnums": "05,06",
+				"room": "【红湘校区】环安楼409"
+			},
+			{
+				"weekday": "1",
+				"name": "高等数学A2",
+				"teacher": "肖其珍副教授",
+				"weeks": "2-16",
+				"classnums": "07,08",
+				"room": "【红湘校区】南华楼512"
+			},
+			{
+				"weekday": "2",
+				"name": "线性代数A",
+				"teacher": "刘邵容",
+				"weeks": "1-4",
+				"classnums": "07,08",
+				"room": "【红湘校区】南华楼111"
+			},
+			{
+				"weekday": "2",
+				"name": "数字逻辑",
+				"teacher": "屈爱平副教授",
+				"weeks": "12-16",
+				"classnums": "07,08",
+				"room": "【红湘校区】计算机专业机房601"
+			},
+			{
+				"weekday": "3",
+				"name": "大学英语B2(本19计类[7-12]班A)",
+				"teacher": "何鸿雁副教授",
+				"weeks": "1-16",
+				"classnums": "07,08",
+				"room": "【红湘校区】南华楼503"
+			},
+			{
+				"weekday": "5",
+				"name": "形势与政策2",
+				"teacher": "高征难副教授,张俊波,付晶助理政工师",
+				"weeks": "6,8,10",
+				"classnums": "07,08",
+				"room": "【红湘校区】南华楼104"
+			},
+			{
+				"weekday": "3",
+				"name": "计算机类专业导论",
+				"teacher": "陈灵娜教授",
+				"weeks": "1-8",
+				"classnums": "09,10",
+				"room": "【红湘校区】环安楼310"
+			},
+			{
+				"weekday": "4",
+				"name": "Java程序设计实验",
+				"teacher": "黄欣阳副教授",
+				"weeks": "3-5,7-17",
+				"classnums": "09,10",
+				"room": "【红湘校区】计算机专业机房606B"
+			},
+			{
+				"teacher": "",
+				"name": "模拟法测静电场（物理实验B 红湘）",
+				"weeks": "17",
+				"room": "化工楼215",
+				"weekday": "5",
+				"classnums": "05,06,07,08"
+			}
+		],"2020-2021-1").then((res)=>{
+			// console.log(res)
+			Lesson.getInstance().getLessonTempStorage().then(res=>{
+				console.log(res)
+			})
+		}).catch(e=>{
+			console.log(e)
+		})
 	})
 </script>

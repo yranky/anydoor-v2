@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:27:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-05 17:12:30
+ * @LastEditTime: 2023-02-13 14:05:04
  * @FilePath: \anydoor-v2\src\common\sql\SQLite.ts
  * @Description: sql
  * 
@@ -11,6 +11,7 @@
 
 //TODO 进行queue队列的清理操作
 import databases, { DATA } from "../database/database"
+import ErrorHandler from "../errorHandler/ErrorHandler"
 
 export enum SQLITE_STATUS_CODE {
     SUCCESS = 200,
@@ -76,7 +77,7 @@ export default class SQLite {
         })
     }
     //执行sql语句
-    executeSql(sql: string[]): Promise<ISQLiteStatusResult> {
+    executeSql(sql: string[], failTag: string = "unknown", failHandler?: Function): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
@@ -91,6 +92,13 @@ export default class SQLite {
                 },
                 fail: (e: any) => {
                     resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: e })
+                    //上报错误,如果没有自定义错误
+                    if (failHandler === undefined) {
+                        //上报错误
+                        ErrorHandler.push(failTag, JSON.stringify(e))
+                    }
+                    //执行自定义错误
+                    typeof failHandler === "function" && failHandler(e)
                 }
             })
             this.close()
@@ -99,7 +107,7 @@ export default class SQLite {
         return promise
     }
     //执行查询语句
-    selectSql(sql: string): Promise<ISQLiteStatusResult> {
+    selectSql(sql: string, failTag: string = "unknown", failHandler?: Function): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
@@ -114,6 +122,13 @@ export default class SQLite {
                 },
                 fail: (e: any) => {
                     resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: e })
+                    //上报错误,如果没有自定义错误
+                    if (failHandler === undefined) {
+                        //上报错误
+                        ErrorHandler.push(failTag, JSON.stringify(e))
+                    }
+                    //执行自定义错误
+                    typeof failHandler === "function" && failHandler(e)
                 }
             })
             this.close()

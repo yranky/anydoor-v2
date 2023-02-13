@@ -11,6 +11,7 @@
 
 export type ITables<T extends string | number | symbol> = {
     [key in T]: {
-        init: string
+        init: string,
+        drop?: string
     }
 }
