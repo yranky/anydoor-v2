@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 13:52:45
+ * @LastEditTime: 2023-02-15 20:31:26
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -17,17 +17,17 @@
 			<anydoorPage>
 				<template #navBar>
 					<!-- 课程表 -->
-					<tm-navbar title="课程表" transprent></tm-navbar>
+					<tm-navbar :title="'第'+currentShowWeeks+'周'" transprent></tm-navbar>
 					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight">
 					</anydoorLessonDate>
 				</template>
 				<template #content>
-					<swiper ref="swiper" :current="swiperIndex" :duration="300" :style="{
+					<swiper ref="swiper" :current="defaultSwiperIndex" :duration="300" :style="{
 					height: (rowItemHeight * rowNum) + numBase
-				}">
-						<swiper-item v-for="(page, index) in swiperList" :key="index">
+				}" :circular="true" @change="updateSwiper">
+						<swiper-item v-for="page in [0,1,2]" :key="page">
 							<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
-								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="lessons" />
+								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="swiperData[page]" />
 							<!-- <swiper-page class="swiper-page" :pid="page.pageid" :parentId="pageId" ref="page"></swiper-page> -->
 						</swiper-item>
 					</swiper>
@@ -78,45 +78,31 @@
 
 	const rowItemHeight = ref < number > (150)
 
-	const lessons = ref < IAnydoorLesson[] > ([{
-			name: "高等数学",
-			teacher: "张默",
-			position: "南华楼1-101",
-			week: 1,
-			time: [1, 10],
-			weeks: [1, 2],
-			semester: "2022-01-01",
-			color: "red"
-		},
-		{
-			name: "政治",
-			teacher: "张默",
-			position: "南华楼1-101",
-			week: 2,
-			time: [1, 2],
-			weeks: [1, 2],
-			semester: "2022-01-01",
-			color: "red"
-		},
-		{
-			name: "英语",
-			teacher: "张默",
-			position: "南华楼1-101",
-			week: 6,
-			time: [5, 6],
-			weeks: [1, 2],
-			semester: "2022-01-01",
-			color: "red"
-		}
-	])
+	const lessons = ref < IAnydoorLesson[] > ([])
 	/**END 子页面的配置 */
 
 	//页面的id
 	const pageId = ref < string > ("page")
-	//当前的swiperId的索引,对应于周次
-	const swiperIndex = ref < number > (0)
-	const swiperList = ref < ISwiperList[] > ([])
+	//当前的swiperId的索引
+	const defaultSwiperIndex = ref < number > (0)
 	const pageList = ref < Element[] > ()
+
+	//swiper的数据
+	const swiperData = ref < IAnydoorLesson[][] > ([
+		[],
+		[],
+		[]
+	])
+
+	//当前显示的周次
+	const currentShowWeeks = ref < number > (1)
+	//当前的周次
+	const currentWeeks = ref < number > (1)
+	//最大的周次
+	const maxWeeks = ref < number > (36)
+
+	//当前的轮播索引
+	const currentSwiperIndex=ref<number>(0)
 
 
 	//更新客户曾
@@ -135,198 +121,236 @@
 		})
 	}
 
-	onBeforeMount(() => {
-		for (var i = 0; i < 6; i++) {
-			swiperList.value.push({
-				id: "tab" + i,
-				name: 'Tab ' + (i + 1),
-				pageId: i + 1
-			})
+	const updateSwiper = (e: {
+		detail: {
+			current: number,
+			source: string
 		}
+	}) => {
+		//当前所在的swiper
+		const current = e.detail.current
+		//计算下一个的符号
+		const s = current - currentSwiperIndex.value
+		//当前的符号，如果是1就是加，-1就是减
+		let r = 1
+		//判断是加还是减
+		currentSwiperIndex.value = current
+		//更新信息,触发的是上一个
+		if(s===-1 || s===2) r = -1
+		//更新展示的周次
+		currentShowWeeks.value=(currentShowWeeks.value + r) % maxWeeks.value
+		//最小值
+		if(currentShowWeeks.value < 0) currentShowWeeks.value = maxWeeks.value - 1
+		//最大值
+		if(currentShowWeeks.value > maxWeeks.value -1 ) currentShowWeeks.value = 1
+		// 更新下一个
+		const next: number = (current + 1) % 3
+		const nextWeekShow: number = (currentShowWeeks.value + 1) % maxWeeks.value
+		swiperData.value[next]=getCurrentWeekList(nextWeekShow)
 
-		Lesson.getInstance().updateLessonList([{
-				"weekday": "1",
-				"name": "Java程序设计实验",
-				"teacher": "黄欣阳副教授",
-				"weeks": "16-17",
-				"classnums": "01,02",
-				"room": "【红湘校区】计算机专业机房606B"
-			},
-			{
-				"weekday": "2",
-				"name": "大学物理B",
-				"teacher": "黄跃宇",
-				"weeks": "1-16",
-				"classnums": "01,02",
-				"room": "【红湘校区】南华楼214"
-			},
-			{
-				"weekday": "3",
-				"name": "Java程序设计",
-				"teacher": "黄欣阳副教授",
-				"weeks": "1-16",
-				"classnums": "01,02",
-				"room": "【红湘校区】核学楼305"
-			},
-			{
-				"weekday": "4",
-				"name": "大学物理B",
-				"teacher": "黄跃宇",
-				"weeks": "1-12",
-				"classnums": "01,02",
-				"room": "【红湘校区】南华楼214"
-			},
-			{
-				"weekday": "5",
-				"name": "高等数学A2",
-				"teacher": "肖其珍副教授",
-				"weeks": "1-12",
-				"classnums": "01,02",
-				"room": "【红湘校区】南华楼312"
-			},
-			{
-				"weekday": "1",
-				"name": "线性代数A",
-				"teacher": "刘邵容",
-				"weeks": "2-16",
-				"classnums": "03,04",
-				"room": "【红湘校区】南华楼111"
-			},
-			{
-				"weekday": "2",
-				"name": "数字逻辑",
-				"teacher": "屈爱平副教授",
-				"weeks": "2-17",
-				"classnums": "03,04",
-				"room": "【红湘校区】核学楼203"
-			},
-			{
-				"weekday": "3",
-				"name": "大学体育2(乒乓球)",
-				"teacher": "卿小琴",
-				"weeks": "1-16",
-				"classnums": "03,04"
-			},
-			{
-				"weekday": "4",
-				"name": "数字逻辑",
-				"teacher": "屈爱平副教授",
-				"weeks": "2-4",
-				"classnums": "03,04",
-				"room": "【红湘校区】环安楼311"
-			},
-			{
-				"weekday": "1",
-				"name": "大学英语B2(本19计类[7-12]班A)",
-				"teacher": "何鸿雁副教授",
-				"weeks": "2-16",
-				"classnums": "05,06",
-				"room": "【红湘校区】南华楼503"
-			},
-			{
-				"weekday": "2",
-				"name": "毛泽东思想和中国特色社会主义理论体系概论",
-				"teacher": "齐辉副教授",
-				"weeks": "1-16",
-				"classnums": "05,06",
-				"room": "【红湘校区】南华楼109"
-			},
-			{
-				"weekday": "3",
-				"name": "高等数学A2",
-				"teacher": "肖其珍副教授",
-				"weeks": "1-16",
-				"classnums": "05,06",
-				"room": "【红湘校区】南华楼512"
-			},
-			{
-				"weekday": "4",
-				"name": "毛泽东思想和中国特色社会主义理论体系概论",
-				"teacher": "齐辉副教授",
-				"weeks": "1-16",
-				"classnums": "05,06",
-				"room": "【红湘校区】南华楼107"
-			},
-			{
-				"weekday": "5",
-				"name": "Java程序设计",
-				"teacher": "黄欣阳副教授",
-				"weeks": "2,4,6,8,10,12,14,16",
-				"classnums": "05,06",
-				"room": "【红湘校区】环安楼409"
-			},
-			{
-				"weekday": "1",
-				"name": "高等数学A2",
-				"teacher": "肖其珍副教授",
-				"weeks": "2-16",
-				"classnums": "07,08",
-				"room": "【红湘校区】南华楼512"
-			},
-			{
-				"weekday": "2",
-				"name": "线性代数A",
-				"teacher": "刘邵容",
-				"weeks": "1-4",
-				"classnums": "07,08",
-				"room": "【红湘校区】南华楼111"
-			},
-			{
-				"weekday": "2",
-				"name": "数字逻辑",
-				"teacher": "屈爱平副教授",
-				"weeks": "12-16",
-				"classnums": "07,08",
-				"room": "【红湘校区】计算机专业机房601"
-			},
-			{
-				"weekday": "3",
-				"name": "大学英语B2(本19计类[7-12]班A)",
-				"teacher": "何鸿雁副教授",
-				"weeks": "1-16",
-				"classnums": "07,08",
-				"room": "【红湘校区】南华楼503"
-			},
-			{
-				"weekday": "5",
-				"name": "形势与政策2",
-				"teacher": "高征难副教授,张俊波,付晶助理政工师",
-				"weeks": "6,8,10",
-				"classnums": "07,08",
-				"room": "【红湘校区】南华楼104"
-			},
-			{
-				"weekday": "3",
-				"name": "计算机类专业导论",
-				"teacher": "陈灵娜教授",
-				"weeks": "1-8",
-				"classnums": "09,10",
-				"room": "【红湘校区】环安楼310"
-			},
-			{
-				"weekday": "4",
-				"name": "Java程序设计实验",
-				"teacher": "黄欣阳副教授",
-				"weeks": "3-5,7-17",
-				"classnums": "09,10,12,13",
-				"room": "【红湘校区】计算机专业机房606B"
-			},
-			{
-				"teacher": "",
-				"name": "模拟法测静电场（物理实验B 红湘）",
-				"weeks": "17",
-				"room": "化工楼215",
-				"weekday": "5",
-				"classnums": "05,06,07,08"
-			}
-		], "2020-2021-1").then((res) => {
-			// console.log(res)
-			Lesson.getInstance().getLessonTempStorage().then(res => {
-				updateLesson(res)
-			})
-		}).catch(e => {
-			console.log(e)
+		//更新上一个
+		const pre = (current + 2) % 3
+		let preWeekShow: number = currentShowWeeks.value - 1
+		if(preWeekShow < 0) preWeekShow = 0
+		swiperData.value[pre]=getCurrentWeekList(preWeekShow)
+
+		//更新当前
+		swiperData.value[current] = getCurrentWeekList(currentShowWeeks.value)
+	}
+
+	//获取当前周次的课程
+	const getCurrentWeekList = (week: number) => {
+		// console.log(week)
+		return lessons.value.filter((item) => item.weeks.includes(week))
+	}
+
+	onBeforeMount(() => {
+		// Lesson.getInstance().updateLessonList([{
+		// 		"weekday": "1",
+		// 		"name": "Java程序设计实验",
+		// 		"teacher": "黄欣阳副教授",
+		// 		"weeks": "16-17",
+		// 		"classnums": "01,02",
+		// 		"room": "【红湘校区】计算机专业机房606B"
+		// 	},
+		// 	{
+		// 		"weekday": "2",
+		// 		"name": "大学物理B",
+		// 		"teacher": "黄跃宇",
+		// 		"weeks": "1-16",
+		// 		"classnums": "01",
+		// 		"room": "【红湘校区】南华楼214"
+		// 	},
+		// 	{
+		// 		"weekday": "3",
+		// 		"name": "Java程序设计",
+		// 		"teacher": "黄欣阳副教授",
+		// 		"weeks": "1-16",
+		// 		"classnums": "01,02",
+		// 		"room": "【红湘校区】核学楼305"
+		// 	},
+		// 	{
+		// 		"weekday": "4",
+		// 		"name": "大学物理B",
+		// 		"teacher": "黄跃宇",
+		// 		"weeks": "1-12",
+		// 		"classnums": "01,02",
+		// 		"room": "【红湘校区】南华楼214"
+		// 	},
+		// 	{
+		// 		"weekday": "5",
+		// 		"name": "高等数学A2",
+		// 		"teacher": "肖其珍副教授",
+		// 		"weeks": "1-12",
+		// 		"classnums": "01,02",
+		// 		"room": "【红湘校区】南华楼312"
+		// 	},
+		// 	{
+		// 		"weekday": "1",
+		// 		"name": "线性代数A",
+		// 		"teacher": "刘邵容",
+		// 		"weeks": "2-16",
+		// 		"classnums": "03,04",
+		// 		"room": "【红湘校区】南华楼111"
+		// 	},
+		// 	{
+		// 		"weekday": "2",
+		// 		"name": "数字逻辑",
+		// 		"teacher": "屈爱平副教授",
+		// 		"weeks": "2-17",
+		// 		"classnums": "03,04",
+		// 		"room": "【红湘校区】核学楼203"
+		// 	},
+		// 	{
+		// 		"weekday": "3",
+		// 		"name": "大学体育2(乒乓球)",
+		// 		"teacher": "卿小琴",
+		// 		"weeks": "1-16",
+		// 		"classnums": "03,04"
+		// 	},
+		// 	{
+		// 		"weekday": "4",
+		// 		"name": "数字逻辑",
+		// 		"teacher": "屈爱平副教授",
+		// 		"weeks": "2-4",
+		// 		"classnums": "03,04",
+		// 		"room": "【红湘校区】环安楼311"
+		// 	},
+		// 	{
+		// 		"weekday": "1",
+		// 		"name": "大学英语B2(本19计类[7-12]班A)",
+		// 		"teacher": "何鸿雁副教授",
+		// 		"weeks": "2-16",
+		// 		"classnums": "05,06",
+		// 		"room": "【红湘校区】南华楼503"
+		// 	},
+		// 	{
+		// 		"weekday": "2",
+		// 		"name": "毛泽东思想和中国特色社会主义理论体系概论",
+		// 		"teacher": "齐辉副教授",
+		// 		"weeks": "1-16",
+		// 		"classnums": "05,06",
+		// 		"room": "【红湘校区】南华楼109"
+		// 	},
+		// 	{
+		// 		"weekday": "3",
+		// 		"name": "高等数学A2",
+		// 		"teacher": "肖其珍副教授",
+		// 		"weeks": "1-16",
+		// 		"classnums": "05,06",
+		// 		"room": "【红湘校区】南华楼512"
+		// 	},
+		// 	{
+		// 		"weekday": "4",
+		// 		"name": "毛泽东思想和中国特色社会主义理论体系概论",
+		// 		"teacher": "齐辉副教授",
+		// 		"weeks": "1-16",
+		// 		"classnums": "05,06",
+		// 		"room": "【红湘校区】南华楼107"
+		// 	},
+		// 	{
+		// 		"weekday": "5",
+		// 		"name": "Java程序设计",
+		// 		"teacher": "黄欣阳副教授",
+		// 		"weeks": "2,4,6,8,10,12,14,16",
+		// 		"classnums": "05,06",
+		// 		"room": "【红湘校区】环安楼409"
+		// 	},
+		// 	{
+		// 		"weekday": "1",
+		// 		"name": "高等数学A2",
+		// 		"teacher": "肖其珍副教授",
+		// 		"weeks": "2-16",
+		// 		"classnums": "07,08",
+		// 		"room": "【红湘校区】南华楼512"
+		// 	},
+		// 	{
+		// 		"weekday": "2",
+		// 		"name": "线性代数A",
+		// 		"teacher": "刘邵容",
+		// 		"weeks": "1-4",
+		// 		"classnums": "07,08",
+		// 		"room": "【红湘校区】南华楼111"
+		// 	},
+		// 	{
+		// 		"weekday": "2",
+		// 		"name": "数字逻辑",
+		// 		"teacher": "屈爱平副教授",
+		// 		"weeks": "12-16",
+		// 		"classnums": "07,08",
+		// 		"room": "【红湘校区】计算机专业机房601"
+		// 	},
+		// 	{
+		// 		"weekday": "3",
+		// 		"name": "大学英语B2(本19计类[7-12]班A)",
+		// 		"teacher": "何鸿雁副教授",
+		// 		"weeks": "1-16",
+		// 		"classnums": "07,08",
+		// 		"room": "【红湘校区】南华楼503"
+		// 	},
+		// 	{
+		// 		"weekday": "5",
+		// 		"name": "形势与政策2",
+		// 		"teacher": "高征难副教授,张俊波,付晶助理政工师",
+		// 		"weeks": "6,8,10",
+		// 		"classnums": "07,08",
+		// 		"room": "【红湘校区】南华楼104"
+		// 	},
+		// 	{
+		// 		"weekday": "3",
+		// 		"name": "计算机类专业导论",
+		// 		"teacher": "陈灵娜教授",
+		// 		"weeks": "1-8",
+		// 		"classnums": "09,10",
+		// 		"room": "【红湘校区】环安楼310"
+		// 	},
+		// 	{
+		// 		"weekday": "4",
+		// 		"name": "Java程序设计实验",
+		// 		"teacher": "黄欣阳副教授",
+		// 		"weeks": "3-5,7-17",
+		// 		"classnums": "09,10,12,13",
+		// 		"room": "【红湘校区】计算机专业机房606B"
+		// 	},
+		// 	{
+		// 		"teacher": "",
+		// 		"name": "模拟法测静电场（物理实验B 红湘）",
+		// 		"weeks": "17",
+		// 		"room": "化工楼215",
+		// 		"weekday": "5",
+		// 		"classnums": "05,06,07,08"
+		// 	}
+		// ], "2020-2021-1").then((res) => {
+		// console.log(res)
+		Lesson.getInstance().getLessonTempStorage().then(res => {
+			console.log(res)
+			updateLesson(res)
+			//更新数据
+			updateSwiper({detail:{current:defaultSwiperIndex.value}})
 		})
+		// }).catch(e => {
+		// 	console.log(e)
+		// })
 	})
 </script>
 

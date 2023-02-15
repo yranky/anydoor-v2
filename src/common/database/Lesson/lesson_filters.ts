@@ -57,10 +57,11 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
                 //错误上报
                 ErrorHandler.push(ERROR_TARGET.LESSON_FILTER, JSON.stringify(e))
             }
+            const color = item.color || random_color()
             return {
                 id: item.id,
                 name: item.name,
-                color: item.color || random_color(),
+                color,
                 semester: item.semester,
                 ext
             }
@@ -73,10 +74,11 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
             //错误上报
             ErrorHandler.push(ERROR_TARGET.LESSON_FILTER, JSON.stringify(e))
         }
+        const color = data.color || random_color()
         return {
             id: data.id,
             name: data.name,
-            color: data.color || random_color(),
+            color,
             semester: data.semester,
             ext
         }

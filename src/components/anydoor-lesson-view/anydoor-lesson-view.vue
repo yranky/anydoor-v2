@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:14:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 13:58:18
+ * @LastEditTime: 2023-02-15 18:20:14
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\anydoor-lesson-view.vue
  * @Description: 课程表组件
  * 
@@ -26,7 +26,7 @@
 			width: colItemWidth + numBase,
 			height: (rowNum * rowItemHeight) + numBase
 		}">
-			<view v-for="lesson in item" :key="index + lesson.time.join(' ')" class="lesson-item" :style="{
+			<view v-for="lesson in item" :key="JSON.stringify(lesson)" class="lesson-item" :style="{
 				'top': (rowItemHeight * (lesson.time[0] - 1) - 6) + numBase,
 				'height': (rowItemHeight * (lesson.time[1] - lesson.time[0] + 1) - 6) + numBase,
 				'backgroundColor': lesson.color
@@ -101,6 +101,7 @@ const lessonData = computed((val: IAnydoorLesson[]): IAnydoorLesson[][] => {
 	lessons.value.forEach((item: IAnydoorLesson) => {
 		if (arr[item.week] instanceof Array) arr[item.week].push(item)
 	})
+	// console.log(arr)
 	return arr
 })
 </script>

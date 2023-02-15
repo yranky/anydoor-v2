@@ -12,7 +12,7 @@ import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-14 10:50:50
+ * @LastEditTime: 2023-02-15 18:48:32
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -145,9 +145,9 @@ export default class Lesson {
         /**
          * 课程名称更新开始
          */
-        //解析课程名称数据
-        const lesson_name_arr: ILessonNameItem[] = data.map((item: ILessonItemsResult) => Filter_ILessonName({
-            name: item.name,
+        //解析课程名称数据,去重相同名称的课程
+        const lesson_name_arr: ILessonNameItem[] = Array.from(new Set(data.map(item => item.name))).map((item) => ({
+            name: item,
             semester: semesterTag
         })) as ILessonNameItem[]
         // console.log(lesson_name_arr)

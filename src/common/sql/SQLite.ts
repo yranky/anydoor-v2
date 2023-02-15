@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:27:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 14:05:04
+ * @LastEditTime: 2023-02-15 18:20:33
  * @FilePath: \anydoor-v2\src\common\sql\SQLite.ts
  * @Description: sql
  * 
@@ -34,6 +34,9 @@ export default class SQLite {
     private name: DATA
     //数据库路径
     private path: string
+    // @ts-ignore
+    private static MODULE = uni.requireNativePlugin("anydoor_sqlite")
+
     constructor(name: DATA, path?: string) {
         this.name = name
         this.path = path || databases[name].path
@@ -41,67 +44,29 @@ export default class SQLite {
         if (!SQLite.queue[name]) SQLite.queue[name] = []
     }
     private static queue: IQueue = {}
-    //打开数据库
-    open(): Promise<ISQLiteStatusResult> {
-        return new Promise((resolve) => {
-            //先判断有没有打开
-            const isOpen: boolean = plus.sqlite.isOpenDatabase({ name: this.name, path: this.path })
-            if (isOpen) resolve({ code: SQLITE_STATUS_CODE.SUCCESS })
-            plus.sqlite.openDatabase({
-                name: this.name,
-                path: this.path,
-                success: function () {
-                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS })
-                },
-                fail: function (e) {
-                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: JSON.stringify(e), error: JSON.stringify(e) })
-                }
-            })
-        })
-    }
-    //关闭数据库
-    close(): Promise<ISQLiteStatusResult> {
-        return new Promise((resolve) => {
-            //先判断有没有打开
-            const isOpen: boolean = plus.sqlite.isOpenDatabase({ name: this.name, path: this.path })
-            if (!isOpen) resolve({ code: SQLITE_STATUS_CODE.SUCCESS })
-            plus.sqlite.closeDatabase({
-                name: this.name,
-                success: function () {
-                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS })
-                },
-                fail: function (e) {
-                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: JSON.stringify(e), error: JSON.stringify(e) })
-                }
-            })
-        })
-    }
     //执行sql语句
     executeSql(sql: string[], failTag: string = "unknown", failHandler?: Function): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
-            //先打开数据库
-            const openRes: ISQLiteStatusResult = await this.open()
-            if (openRes.code !== SQLITE_STATUS_CODE.SUCCESS) resolve(openRes)
-            plus.sqlite.executeSql({
-                name: this.name,
-                sql,
-                success: (e: any) => {
-                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: e })
-                },
-                fail: (e: any) => {
-                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: e })
+            SQLite.MODULE.executeSql({
+                path: this.path,
+                sql
+            }, (res) => {
+                // console.log(res)
+                if (res.success === true) {
+                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: {} })
+                } else {
+                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: res.error })
                     //上报错误,如果没有自定义错误
                     if (failHandler === undefined) {
                         //上报错误
-                        ErrorHandler.push(failTag, JSON.stringify(e))
+                        ErrorHandler.push(failTag, JSON.stringify(res.error))
                     }
                     //执行自定义错误
-                    typeof failHandler === "function" && failHandler(e)
+                    typeof failHandler === "function" && failHandler(res.error)
                 }
             })
-            this.close()
         })
         SQLite.queue[this.name]!.push(promise)
         return promise
@@ -111,27 +76,24 @@ export default class SQLite {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
-            //先打开数据库
-            const openRes: ISQLiteStatusResult = await this.open()
-            if (openRes.code !== SQLITE_STATUS_CODE.SUCCESS) resolve(openRes)
-            plus.sqlite.selectSql({
-                name: this.name,
-                sql,
-                success: (e: any) => {
-                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: e })
-                },
-                fail: (e: any) => {
-                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: e })
+            SQLite.MODULE.selectSql({
+                path: this.path,
+                sql
+            }, (res) => {
+                // console.log(res)
+                if (res.success === true) {
+                    resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: res.data })
+                } else {
+                    resolve({ code: SQLITE_STATUS_CODE.FAIL, msg: 'ok', error: res.error })
                     //上报错误,如果没有自定义错误
                     if (failHandler === undefined) {
                         //上报错误
-                        ErrorHandler.push(failTag, JSON.stringify(e))
+                        ErrorHandler.push(failTag, JSON.stringify(res.error))
                     }
                     //执行自定义错误
-                    typeof failHandler === "function" && failHandler(e)
+                    typeof failHandler === "function" && failHandler(res.error)
                 }
             })
-            this.close()
         })
         SQLite.queue[this.name]!.push(promise)
         return promise

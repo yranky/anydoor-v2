@@ -55,6 +55,11 @@
 					"name": "anydoor-native-scroll",
 					"class": "com.top_anydoor.scroll.Index",
 					"dependencies": []
+				}, {
+					"type": "module",
+					"name": "anydoor_sqlite",
+					"class": "com.top_anydoor.sqlite.Index",
+					"dependencies": []
 				}
 			],
 			"integrateType": "aar",
