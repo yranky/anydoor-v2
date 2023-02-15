@@ -1,37 +1,37 @@
 {
-    "name" : "任意门",
-    "appid" : "__UNI__B3665B8",
-    "description" : "任意门",
-    "versionName" : "2.0.0",
-    "versionCode" : 200,
-    "transformPx" : false,
+    "name": "任意门",
+    "appid": "__UNI__1C153E4",
+    "description": "任意门",
+    "versionName": "2.0.0",
+    "versionCode": 200,
+    "transformPx": false,
     /* 5+App特有相关 */
-    "app-plus" : {
-        "usingComponents" : true,
-        "ignoreVersion" : true,
-        "nvueStyleCompiler" : "uni-app",
-        "compilerVersion" : 3,
-        "splashscreen" : {
-            "alwaysShowBeforeRender" : true,
-            "waiting" : false,
-            "autoclose" : true,
-            "delay" : 0
+    "app-plus": {
+        "usingComponents": true,
+        "ignoreVersion": true,
+        "nvueStyleCompiler": "uni-app",
+        "compilerVersion": 3,
+        "splashscreen": {
+            "alwaysShowBeforeRender": true,
+            "waiting": false,
+            "autoclose": true,
+            "delay": 0
         },
         /* 模块配置 */
-        "modules" : {
+        "modules": {
             /* 使用Canvas模块 */
-            "Canvas" : "nvue canvas",
-            "VideoPlayer" : {},
-            "UniMP" : {
-                "description" : "小程序模块"
+            "Canvas": "nvue canvas",
+            "VideoPlayer": {},
+            "UniMP": {
+                "description": "小程序模块"
             },
-            "SQLite" : {}
+            "SQLite": {}
         },
         /* 应用发布信息 */
-        "distribute" : {
+        "distribute": {
             /* android打包配置 */
-            "android" : {
-                "permissions" : [
+            "android": {
+                "permissions": [
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
@@ -48,167 +48,171 @@
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
-                "minSdkVersion" : 23,
-                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
-                "targetSdkVersion" : 30
+                "minSdkVersion": 23,
+                "abiFilters": [
+                    "armeabi-v7a",
+                    "arm64-v8a",
+                    "x86"
+                ],
+                "targetSdkVersion": 30
             },
             /* ios打包配置 */
-            "ios" : {
-                "idfa" : false,
-                "dSYMs" : false
+            "ios": {
+                "idfa": false,
+                "dSYMs": false
             },
             /* SDK配置 */
-            "sdkConfigs" : {
-                "ad" : {}
+            "sdkConfigs": {
+                "ad": {}
             },
-            "icons" : {
-                "android" : {
-                    "hdpi" : "unpackage/res/icons/72x72.png",
-                    "xhdpi" : "unpackage/res/icons/96x96.png",
-                    "xxhdpi" : "unpackage/res/icons/144x144.png",
-                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+            "icons": {
+                "android": {
+                    "hdpi": "unpackage/res/icons/72x72.png",
+                    "xhdpi": "unpackage/res/icons/96x96.png",
+                    "xxhdpi": "unpackage/res/icons/144x144.png",
+                    "xxxhdpi": "unpackage/res/icons/192x192.png"
                 },
-                "ios" : {
-                    "appstore" : "unpackage/res/icons/1024x1024.png",
-                    "ipad" : {
-                        "app" : "unpackage/res/icons/76x76.png",
-                        "app@2x" : "unpackage/res/icons/152x152.png",
-                        "notification" : "unpackage/res/icons/20x20.png",
-                        "notification@2x" : "unpackage/res/icons/40x40.png",
-                        "proapp@2x" : "unpackage/res/icons/167x167.png",
-                        "settings" : "unpackage/res/icons/29x29.png",
-                        "settings@2x" : "unpackage/res/icons/58x58.png",
-                        "spotlight" : "unpackage/res/icons/40x40.png",
-                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                "ios": {
+                    "appstore": "unpackage/res/icons/1024x1024.png",
+                    "ipad": {
+                        "app": "unpackage/res/icons/76x76.png",
+                        "app@2x": "unpackage/res/icons/152x152.png",
+                        "notification": "unpackage/res/icons/20x20.png",
+                        "notification@2x": "unpackage/res/icons/40x40.png",
+                        "proapp@2x": "unpackage/res/icons/167x167.png",
+                        "settings": "unpackage/res/icons/29x29.png",
+                        "settings@2x": "unpackage/res/icons/58x58.png",
+                        "spotlight": "unpackage/res/icons/40x40.png",
+                        "spotlight@2x": "unpackage/res/icons/80x80.png"
                     },
-                    "iphone" : {
-                        "app@2x" : "unpackage/res/icons/120x120.png",
-                        "app@3x" : "unpackage/res/icons/180x180.png",
-                        "notification@2x" : "unpackage/res/icons/40x40.png",
-                        "notification@3x" : "unpackage/res/icons/60x60.png",
-                        "settings@2x" : "unpackage/res/icons/58x58.png",
-                        "settings@3x" : "unpackage/res/icons/87x87.png",
-                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
-                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    "iphone": {
+                        "app@2x": "unpackage/res/icons/120x120.png",
+                        "app@3x": "unpackage/res/icons/180x180.png",
+                        "notification@2x": "unpackage/res/icons/40x40.png",
+                        "notification@3x": "unpackage/res/icons/60x60.png",
+                        "settings@2x": "unpackage/res/icons/58x58.png",
+                        "settings@3x": "unpackage/res/icons/87x87.png",
+                        "spotlight@2x": "unpackage/res/icons/80x80.png",
+                        "spotlight@3x": "unpackage/res/icons/120x120.png"
                     }
                 }
             },
-            "splashscreen" : {
-                "androidStyle" : "default",
-                "android" : {
-                    "hdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
-                    "xhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
-                    "xxhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png"
+            "splashscreen": {
+                "androidStyle": "default",
+                "android": {
+                    "hdpi": "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
+                    "xhdpi": "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
+                    "xxhdpi": "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png"
                 }
             }
         },
-        "uniStatistics" : {
-            "enable" : false
+        "uniStatistics": {
+            "enable": false
         },
-        "nativePlugins" : {
-            "anydoor_ui_tool" : {
-                "__plugin_info__" : {
-                    "name" : "任意门原生插件",
-                    "description" : "任意门原生插件",
-                    "platforms" : "Android",
-                    "url" : "",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : false,
-                    "bought" : -1,
-                    "pid" : "",
-                    "parameters" : {}
+        "nativePlugins": {
+            "anydoor_ui_tool": {
+                "__plugin_info__": {
+                    "name": "任意门原生插件",
+                    "description": "任意门原生插件",
+                    "platforms": "Android",
+                    "url": "",
+                    "android_package_name": "",
+                    "ios_bundle_id": "",
+                    "isCloud": false,
+                    "bought": -1,
+                    "pid": "",
+                    "parameters": {}
                 }
             }
         },
-        "nvueLaunchMode" : "",
-        "nvueCompiler" : "uni-app"
+        "nvueLaunchMode": "",
+        "nvueCompiler": "uni-app"
     },
     /* 快应用特有相关 */
-    "quickapp" : {},
+    "quickapp": {},
     /* 小程序特有相关 */
-    "mp-weixin" : {
-        "appid" : "",
-        "setting" : {
-            "urlCheck" : false,
-            "es6" : true,
-            "minified" : true,
-            "postcss" : true
+    "mp-weixin": {
+        "appid": "",
+        "setting": {
+            "urlCheck": false,
+            "es6": true,
+            "minified": true,
+            "postcss": true
         },
-        "usingComponents" : true,
-        "uniStatistics" : {
-            "enable" : false
+        "usingComponents": true,
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-alipay" : {
-        "usingComponents" : true,
-        "uniStatistics" : {
-            "enable" : false
+    "mp-alipay": {
+        "usingComponents": true,
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-baidu" : {
-        "usingComponents" : true,
-        "uniStatistics" : {
-            "enable" : false
+    "mp-baidu": {
+        "usingComponents": true,
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-toutiao" : {
-        "usingComponents" : true,
-        "uniStatistics" : {
-            "enable" : false
+    "mp-toutiao": {
+        "usingComponents": true,
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "uniStatistics" : {
-        "enable" : false,
-        "version" : "2"
+    "uniStatistics": {
+        "enable": false,
+        "version": "2"
     },
-    "vueVersion" : "3",
-    "h5" : {
-        "uniStatistics" : {
-            "enable" : false
+    "vueVersion": "3",
+    "h5": {
+        "uniStatistics": {
+            "enable": false
         },
-        "title" : "任意门",
-        "router" : {
-            "mode" : "hash",
-            "base" : "/h5/"
+        "title": "任意门",
+        "router": {
+            "mode": "hash",
+            "base": "/h5/"
         },
-        "optimization" : {
-            "treeShaking" : {
-                "enable" : false
+        "optimization": {
+            "treeShaking": {
+                "enable": false
             }
         },
-        "devServer" : {
-            "https" : false
+        "devServer": {
+            "https": false
         }
     },
-    "mp-jd" : {
-        "uniStatistics" : {
-            "enable" : false
+    "mp-jd": {
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-kuaishou" : {
-        "uniStatistics" : {
-            "enable" : false
+    "mp-kuaishou": {
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-lark" : {
-        "uniStatistics" : {
-            "enable" : false
+    "mp-lark": {
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "mp-qq" : {
-        "uniStatistics" : {
-            "enable" : false
+    "mp-qq": {
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "quickapp-webview-huawei" : {
-        "uniStatistics" : {
-            "enable" : false
+    "quickapp-webview-huawei": {
+        "uniStatistics": {
+            "enable": false
         }
     },
-    "quickapp-webview-union" : {
-        "uniStatistics" : {
-            "enable" : false
+    "quickapp-webview-union": {
+        "uniStatistics": {
+            "enable": false
         }
     }
 }
