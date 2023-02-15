@@ -6,10 +6,13 @@ export default defineConfig({
 	dts: true,
 	plugins: [
 		uni({
-			vueOptions: { 
+			vueOptions: {
 				template: {
-					compilerOptions:{
-						isCustomElement:tag =>tag === 'anydoor-native-webview' || tag==='anydoor-native-lottie'
+					compilerOptions: {
+						isCustomElement: tag => (
+							tag === 'anydoor-native-webview'
+							|| tag === 'anydoor-native-lottie'
+							|| tag === 'anydoor-native-scroll')
 					}
 				}
 			}

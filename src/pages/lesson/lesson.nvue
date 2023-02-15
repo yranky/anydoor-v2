@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 17:48:45
+ * @LastEditTime: 2023-02-15 13:52:45
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -10,23 +10,30 @@
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage>
-			<template #navBar>
-				<!-- 课程表 -->
-				<tm-navbar title="课程表"></tm-navbar>
-			</template>
-			<template #content>
-				<swiper ref="swiper" :current="swiperIndex" :duration="300" :style="{
-					height:(rowItemHeight*rowNum)+numBase
+		<view class="lesson-bg">
+			<image class="lesson-bg" src="../../static/bg/bg.png"></image>
+		</view>
+		<view style="position:fixed;">
+			<anydoorPage>
+				<template #navBar>
+					<!-- 课程表 -->
+					<tm-navbar title="课程表" transprent></tm-navbar>
+					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight">
+					</anydoorLessonDate>
+				</template>
+				<template #content>
+					<swiper ref="swiper" :current="swiperIndex" :duration="300" :style="{
+					height: (rowItemHeight * rowNum) + numBase
 				}">
-					<swiper-item v-for="(page, index) in swiperList" :key="index">
-						<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
-							:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="lessons" />
-						<!-- <swiper-page class="swiper-page" :pid="page.pageid" :parentId="pageId" ref="page"></swiper-page> -->
-					</swiper-item>
-				</swiper>
-			</template>
-		</anydoorPage>
+						<swiper-item v-for="(page, index) in swiperList" :key="index">
+							<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
+								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="lessons" />
+							<!-- <swiper-page class="swiper-page" :pid="page.pageid" :parentId="pageId" ref="page"></swiper-page> -->
+						</swiper-item>
+					</swiper>
+				</template>
+			</anydoorPage>
+		</view>
 	</tm-app>
 </template>
 
@@ -34,6 +41,7 @@
 	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 	import anydoorLessonView from "@/components/anydoor-lesson-view/anydoor-lesson-view.vue"
+	import anydoorLessonDate from "@/components/anydoor-lesson-view/anydoor-lesson-date.vue"
 	import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 	import {
 		ISwiperList
@@ -47,10 +55,16 @@
 	} from "vue"
 	import IAnydoorLesson from '@/components/anydoor-lesson-view/IAnydoorLesson'
 	import Lesson from "@/common/database/Lesson/Lesson"
+	import {
+		ILessonTempItemResult
+	} from "@/common/database/Lesson/ILesson"
 
 
 
 	/**ATART 子页面的配置 */
+	//时间栏目高度
+	const dateHeight = ref < number > (80)
+
 	//单位
 	const numBase = ref < string > ('rpx')
 	//栏目数量
@@ -71,7 +85,8 @@
 			week: 1,
 			time: [1, 10],
 			weeks: [1, 2],
-			semester: "2022-01-01"
+			semester: "2022-01-01",
+			color: "red"
 		},
 		{
 			name: "政治",
@@ -80,7 +95,8 @@
 			week: 2,
 			time: [1, 2],
 			weeks: [1, 2],
-			semester: "2022-01-01"
+			semester: "2022-01-01",
+			color: "red"
 		},
 		{
 			name: "英语",
@@ -89,7 +105,8 @@
 			week: 6,
 			time: [5, 6],
 			weeks: [1, 2],
-			semester: "2022-01-01"
+			semester: "2022-01-01",
+			color: "red"
 		}
 	])
 	/**END 子页面的配置 */
@@ -101,6 +118,23 @@
 	const swiperList = ref < ISwiperList[] > ([])
 	const pageList = ref < Element[] > ()
 
+
+	//更新客户曾
+	const updateLesson = (data: ILessonTempItemResult[]) => {
+		lessons.value = data.map((item) => {
+			return {
+				name: item.name,
+				teacher: item.teacher,
+				position: item.position,
+				week: item.week,
+				weeks: item.weeks,
+				semester: item.semester,
+				time: item.time,
+				color: item.color
+			}
+		})
+	}
+
 	onBeforeMount(() => {
 		for (var i = 0; i < 6; i++) {
 			swiperList.value.push({
@@ -110,8 +144,7 @@
 			})
 		}
 
-		Lesson.getInstance().updateLessonList([
-			{
+		Lesson.getInstance().updateLessonList([{
 				"weekday": "1",
 				"name": "Java程序设计实验",
 				"teacher": "黄欣阳副教授",
@@ -275,7 +308,7 @@
 				"name": "Java程序设计实验",
 				"teacher": "黄欣阳副教授",
 				"weeks": "3-5,7-17",
-				"classnums": "09,10",
+				"classnums": "09,10,12,13",
 				"room": "【红湘校区】计算机专业机房606B"
 			},
 			{
@@ -286,13 +319,23 @@
 				"weekday": "5",
 				"classnums": "05,06,07,08"
 			}
-		],"2020-2021-1").then((res)=>{
+		], "2020-2021-1").then((res) => {
 			// console.log(res)
-			Lesson.getInstance().getLessonTempStorage().then(res=>{
-				console.log(res)
+			Lesson.getInstance().getLessonTempStorage().then(res => {
+				updateLesson(res)
 			})
-		}).catch(e=>{
+		}).catch(e => {
 			console.log(e)
 		})
 	})
 </script>
+
+<style lang="scss" scoped>
+	.lesson-bg {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+</style>

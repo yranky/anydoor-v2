@@ -7,8 +7,7 @@
 	"_dp_nativeplugin": {
 		"android": {
 			"hooksClass": "com.top_anydoor.Hook",
-			"plugins": [
-				{
+			"plugins": [{
 					"type": "module",
 					"name": "anydoor_toast",
 					"class": "com.top_anydoor.toast.Index",
@@ -45,10 +44,16 @@
 					"name": "anydoor_baidu_tongji",
 					"class": "com.top_anydoor.baidu_tongji.Index",
 					"dependencies": []
-				},{
+				}, {
 					"type": "module",
 					"name": "anydoor_download",
 					"class": "com.top_anydoor.download.Index",
+					"dependencies": []
+				},
+				{
+					"type": "component",
+					"name": "anydoor-native-scroll",
+					"class": "com.top_anydoor.scroll.Index",
 					"dependencies": []
 				}
 			],

@@ -4,15 +4,15 @@ import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
 import Toast from "../../toast/toast"
 import databases, { DATA } from "../database"
 import { LESSON_TABLES_NAME } from "../tables/lesson"
-import { ILessonItemsResult, ILessonNameItem, ISemesterItem } from "./ILesson"
-import { Filter_ILessonName, Filter_ISemester, mergeItem } from "./lesson_filters"
+import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
+import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
 import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
 
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 23:40:47
+ * @LastEditTime: 2023-02-14 10:50:50
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -200,11 +200,17 @@ export default class Lesson {
         return res
     }
     //获取temp数据
-    async getLessonTempStorage() {
-        return await this.sql?.selectSql(
+    async getLessonTempStorage(): Promise<ILessonTempItemResult[]> {
+        const result = await this.sql?.selectSql(
             `select a.id temp_id,a.semester smester,b.id lesson_id,b.color color,b.name name,b.ext b_ext,a.weekday weekday,a.weeks weeks,a.teacher teacher,a.position position,a.time time,a.ext a_ext from ${LESSON_TABLES_NAME.TEMP} as a left join ${LESSON_TABLES_NAME.NAME} as b on a.lesson_id=b.id`
             , ERROR_TARGET.LESSON_CLASS
         )
+        if (result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            Toast.show({ text: "课程数据信息获取失败!" })
+        } else {
+            result.data = Filter_ILessonTempResult(result.data)
+        }
+        return result?.data || []
     }
 
     //重置temp表

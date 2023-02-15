@@ -32,3 +32,31 @@ export interface ILessonItemsResult {
     classnums: string,
     ext?: {}
 }
+
+//temp结果
+export interface ILessonTempItemResult {
+    //课程名称:必填
+    name: string,
+    //教师
+    teacher: string,
+    //教室
+    position: string,
+    //学期
+    semester: string,
+    //星期(0-6)
+    week: number,
+    //节次,两个1-2节传[1,2]
+    time: number[],
+    //周次(第几周，可以传任意多个)
+    weeks: number[],
+    //颜色
+    color: string,
+    //课程id
+    lesson_id: number,
+    //temp_id
+    temp_id: number,
+    ext: {
+        temp: any,
+        name: any
+    }
+}

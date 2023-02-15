@@ -2,12 +2,14 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:23:48
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-01-17 18:19:51
+ * @LastEditTime: 2023-02-14 11:19:37
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\IAnydoorLesson.ts
  * @Description: 接口
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+
+
 //课程接口定义
 export default interface IAnydoorLesson {
     //课程名称:必填
@@ -23,7 +25,9 @@ export default interface IAnydoorLesson {
     //节次,两个1-2节传[1,2]
     time: number[],
     //周次(第几周，可以传任意多个)
-    weeks: number[]
+    weeks: number[],
+    //颜色
+    color: string
 }
 export enum ILessonTagType {
     //删除
