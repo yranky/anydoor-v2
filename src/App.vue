@@ -31,8 +31,6 @@ onLaunch(function () {
 	})
 
 	nativeInit()
-
-	BTongjiModule.getInstance().MODULE.startDebugPage()
 })
 </script>
 <style>

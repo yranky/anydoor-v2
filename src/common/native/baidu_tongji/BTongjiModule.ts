@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:02:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-16 21:20:03
+ * @LastEditTime: 2023-02-16 22:12:21
  * @FilePath: \anydoor-v2\src\common\native\baidu_tongji\BTongjiModule.ts
  * @Description: 百度统计模块
  * 
@@ -20,7 +20,7 @@ export default class BTongjiModule {
     public MODULE: IBTonbgjiModuleNative = uni.requireNativePlugin("anydoor_baidu_tongji")
     //监听
     private static instance: BTongjiModule | null = null
-    private __construtor(): void {
+    private constructor() {
         //初始化
         this.MODULE && this.MODULE.init({
             appVersion: config.baidu_tongji.appVersion

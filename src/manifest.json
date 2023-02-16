@@ -107,9 +107,9 @@
         },
         "nativePlugins" : {
             "anydoor_ui_tool" : {
-                "BTongji_appid" : "",
-                "BTongji_channel" : "",
-                "Bugly_appid" : "",
+                "BTongji_appid" : "c41d788dc4",
+                "BTongji_channel" : "debug",
+                "Bugly_appid" : "6c3a24368a",
                 "__plugin_info__" : {
                     "name" : "任意门原生插件",
                     "description" : "任意门原生插件",
@@ -179,7 +179,7 @@
     },
     "uniStatistics" : {
         "enable" : false,
-        "version" : "2"
+        "version" : "1"
     },
     "vueVersion" : "3",
     "h5" : {

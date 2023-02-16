@@ -1,3 +1,13 @@
+/*
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-02-04 20:28:26
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-02-16 22:16:31
+ * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+ */
 import IResult from "./IResult";
 import BTongjiModule from "./baidu_tongji/BTongjiModule";
 import BuglyModule from "./bugly/BuglyModule";

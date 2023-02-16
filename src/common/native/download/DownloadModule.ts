@@ -23,7 +23,7 @@ export default class DownloadModule {
     private static nativeListeners: String[] = []
 
 
-    private __construtor(): void { }
+    private constructor() { }
 
     static getInstance(): DownloadModule {
         if (DownloadModule.instance === null) {

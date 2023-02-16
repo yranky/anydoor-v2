@@ -12,7 +12,6 @@
 import IResult from "../IResult"
 
 export interface IBuglyOption {
-    appId: String
     deviceId?: String
     appChannel?: String
     appVersion?: String
