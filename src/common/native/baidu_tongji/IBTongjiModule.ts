@@ -1,10 +1,18 @@
+/*
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-02-04 20:28:26
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-02-16 21:16:29
+ * @FilePath: \anydoor-v2\src\common\native\baidu_tongji\IBTongjiModule.ts
+ * @Description: 百度统计接口
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+ */
 import IResult from "../IResult"
 
 
 
 export interface IBTongjiOption {
-    appId: string
-    appChannel: string
     appVersion?: string
 }
 
