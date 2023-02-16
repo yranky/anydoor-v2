@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:02:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 10:28:05
+ * @LastEditTime: 2023-02-16 21:20:03
  * @FilePath: \anydoor-v2\src\common\native\baidu_tongji\BTongjiModule.ts
  * @Description: 百度统计模块
  * 
@@ -23,15 +23,11 @@ export default class BTongjiModule {
     private __construtor(): void {
         //初始化
         this.MODULE && this.MODULE.init({
-            appId: config.baidu_tongji.appId,
-            appChannel: config.baidu_tongji.appChannel,
             appVersion: config.baidu_tongji.appVersion
         }, debugTool<IResult<undefined>>((res) => {
             if (res.success) {
                 //取消掉debug
                 this.MODULE.setAuthorizedState(debugTool(() => {
-                    //自动埋点
-                    this.MODULE.setAutoTrace(true, debugTool())
                     //允许获取mac地址
                     this.MODULE.setEnableMacId(true, debugTool())
                     //如果全局开启了debug

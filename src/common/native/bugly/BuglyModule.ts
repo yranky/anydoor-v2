@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 10:17:51
+ * @LastEditTime: 2023-02-16 20:49:38
  * @FilePath: \anydoor-v2\src\common\native\bugly\BuglyModule.ts
  * @Description: 初始化
  * 
@@ -28,7 +28,7 @@ export default class BuglyModule {
             appChannel: config.bugly.appChannel,
             appVersion: config.bugly.appVersion,
             deviceModel: config.bugly.deviceModel,
-            debug: config.bugly.debug
+            debug: config.global.debug
         }, debugTool((res) => {
             if (!res.success) {
                 ToastModule.show({

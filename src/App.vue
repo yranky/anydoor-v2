@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-03 11:07:43
+ * @LastEditTime: 2023-02-16 20:22:14
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -14,6 +14,7 @@ import {
 } from "@dcloudio/uni-app"
 import Toast from "./common/toast/toast";
 import nativeInit from "./common/native/nativeInit";
+import BTongjiModule from "./common/native/baidu_tongji/BTongjiModule";
 
 onLaunch(function () {
 	//修改userAgent
@@ -23,13 +24,15 @@ onLaunch(function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
-	
+
 
 	Toast.show({
 		text: "测试"
 	})
 
 	nativeInit()
+
+	BTongjiModule.getInstance().MODULE.startDebugPage()
 })
 </script>
 <style>

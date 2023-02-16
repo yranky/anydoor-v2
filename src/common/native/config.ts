@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:06:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-16 16:17:33
+ * @LastEditTime: 2023-02-16 20:48:57
  * @FilePath: \anydoor-v2\src\common\native\config.ts
  * @Description: 
  * 
@@ -10,23 +10,20 @@
  */
 export default {
     global: {
-        debug: true
+        debug: false
     },
     bugly: {
         appId: '6c3a24368a',
         deviceId: '',
         appChannel: '',
         appVersion: '',
-        deviceModel: '',
-        debug: false
+        deviceModel: ''
     },
     toast: {
 
     },
     baidu_tongji: {
-        appId: 'c41d788dc4',
-        appChannel: '',
-        appVersion: ''
+        appVersion: '1.0'
     },
     download: {
 

@@ -63,7 +63,21 @@
 				}
 			],
 			"integrateType": "aar",
-			"minSdkVersion": 23
+			"minSdkVersion": 23,
+			"parameters":{
+				"BTongji_appid":{
+					"key":"BTongji_appid",
+					"des":"百度统计的appid"
+				},
+				"BTongji_channel":{
+					"key":"BTongji_channel",
+					"des":"百度统计的渠道"
+				},
+				"Bugly_appid":{
+					"key":"Bugly_appid",
+					"des":"bugly的appid"
+				}
+			}
 		}
 	}
 }
