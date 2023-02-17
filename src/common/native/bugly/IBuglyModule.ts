@@ -2,8 +2,8 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-02 21:59:00
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-02 22:18:13
- * @FilePath: \测试2\common\native\bugly\IBuglyModule.ts
+ * @LastEditTime: 2023-02-17 12:42:53
+ * @FilePath: \anydoor-v2\src\common\native\bugly\IBuglyModule.ts
  * @Description: 
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
@@ -13,7 +13,6 @@ import IResult from "../IResult"
 
 export interface IBuglyOption {
     deviceId?: String
-    appChannel?: String
     appVersion?: String
     deviceModel?: String
     debug?: boolean
