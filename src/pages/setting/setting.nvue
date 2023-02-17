@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 19:42:26
+ * @LastEditTime: 2023-02-17 23:42:24
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -23,8 +23,15 @@
 			<anydoor-text text="深色模式" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="跟随系统">
 				<template v-slot:right>
-					<tm-switch barIcon="" linear="left" linearDeep="accent" :defaultValue="true"
-						:margin="[12, 0]"></tm-switch>
+					<tm-switch barIcon="" linear="left" linearDeep="accent" v-model="themeConfig.followSystem"
+						:margin="[12, 0]" @click="changeThemeFollowSystem"></tm-switch>
+				</template>
+			</tm-cell>
+
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="深色模式" v-if="!themeConfig.followSystem">
+				<template v-slot:right>
+					<tm-switch barIcon="" linear="left" linearDeep="accent" :margin="[12, 0]"
+						:default-value="store.tmStore.dark" @click="changeTheme"></tm-switch>
 				</template>
 			</tm-cell>
 			<anydoor-text text="其它" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
@@ -39,4 +46,43 @@ import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmSwitch from "@/tmui/components/tm-switch/tm-switch.vue"
+import { reactive } from "vue"
+import Theme from "@/common/theme/Theme"
+import { IThemeDatabaseKeys } from "@/common/theme/IThemeDatabase"
+import { onBeforeMount, watch } from "vue"
+import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
+
+const store = useTmpiniaStore()
+
+//主题配置
+const themeConfig = reactive({
+	followSystem: true
+})
+
+//初始化样式等
+const initItems = async () => {
+	//主题bufen
+	const ThemeInstance = await Theme.getInstance()
+	//获取是否开启了跟随
+	const res: any = await ThemeInstance.getThemeData()
+	//跟随系统
+	themeConfig.followSystem = res[IThemeDatabaseKeys.FOLLOW_SYSTEM] || false
+}
+//在挂载之前获取
+onBeforeMount(() => {
+	initItems()
+})
+
+//修改深色模式
+const changeThemeFollowSystem = async () => {
+	//主题bufen
+	const ThemeInstance = await Theme.getInstance()
+	//取反
+	ThemeInstance.setSystemFirst(themeConfig.followSystem)
+}
+//修改主题
+const changeTheme = () => {
+	store.setTmVuetifyDark(!store.tmStore.dark)
+}
+
 </script>

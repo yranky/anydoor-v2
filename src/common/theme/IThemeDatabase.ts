@@ -1,3 +1,5 @@
+import { ValueType } from "../database/tools"
+
 export enum IThemeDatabaseKeys {
     //跟随系统
     FOLLOW_SYSTEM = "follow_system",
@@ -12,16 +14,25 @@ export enum IThemeMode {
 }
 
 export type IThemeDataResult = {
-    [key in IThemeDatabaseKeys]: IThemeMode | String
+    [key in IThemeDatabaseKeys]?: IThemeMode | String | any
 }
 
-//初始化数据
+//类型和默认值
 export const ThemeDefaultVal: IThemeDefaultVal = {
-    [IThemeDatabaseKeys.FOLLOW_SYSTEM]: "1",
-    [IThemeDatabaseKeys.CURRENT_MODE]: "auto"
+    [IThemeDatabaseKeys.FOLLOW_SYSTEM]: {
+        type: ValueType.BOOLEAN,
+        default: "1"
+    },
+    [IThemeDatabaseKeys.CURRENT_MODE]: {
+        type: ValueType.STRING,
+        default: "auto"
+    }
 }
 
 //初始数据
 export type IThemeDefaultVal = {
-    [key in IThemeDatabaseKeys]: IThemeMode | String
+    [key in IThemeDatabaseKeys]: {
+        type: ValueType,
+        default: string
+    }
 }

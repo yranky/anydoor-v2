@@ -7,11 +7,14 @@ import { IThemeDataResult, IThemeDatabaseKeys, IThemeMode, ThemeDefaultVal } fro
 import Toast from "../toast/toast";
 import ERROR_TARGET from "../errorHandler/ERROR_TARGET";
 import { insertKeyAndValueDefault } from "../database/tools";
+import ThemeFilter from "./ThemeFilter";
 
 export default class Theme {
     private static instance: Theme | null = null
     //sqlite对象
     private sql: SQLite | undefined
+
+    public static time: number = 1
 
     private constructor() {
         //初始化sql
@@ -20,6 +23,7 @@ export default class Theme {
 
     //获取instance
     static async getInstance() {
+        console.log(Theme.instance)
         if (Theme.instance === null) {
             Theme.instance = new Theme()
             //初始化主题设置相关数据表
@@ -64,33 +68,50 @@ export default class Theme {
 
     //从数据库里面获取主题模式并序列化
     async getThemeData(): Promise<IThemeDataResult> {
-        const result = await this.sql?.selectSql(`select * from ${SETTING_TABLES_NAME.THEME} where key='${IThemeDatabaseKeys.CURRENT_MODE}'`)
+        const result = await this.sql?.selectSql(`select * from ${SETTING_TABLES_NAME.THEME}`)
         if (result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
             Toast.show({ text: "主题信息获取失败!" })
         }
-        return result?.data || []
+        return ThemeFilter(result?.data || [])
     }
 
     //初始化
     async init() {
         //首先从数据库里面获取
-
+        const res = await this.getThemeData()
         //store
         const store = useTmpiniaStore()
+        //获取当前系统的样式
         const currentMode = uni.getSystemInfoSync().theme
-        //如果当前是夜间模式
-        if (currentMode === "dark") {
-            store.setTmVuetifyDark(true)
-        } else {
-            store.setTmVuetifyDark(false)
-        }
-        //主题切换监听
-        uni.onThemeChange((res: OnThemeChangeCallbackResult) => {
-            console.log(res.theme)
-            if (res.theme === "dark") {
+        //如果是跟随系统
+        if (res.follow_system === true) {
+            //设置跟随系统
+            plus.nativeUI.setUIStyle("auto")
+            if (currentMode === "dark") {
                 store.setTmVuetifyDark(true)
             } else {
                 store.setTmVuetifyDark(false)
+            }
+        } else {
+            plus.nativeUI.setUIStyle(res.current_mode)
+            //如果当前是夜间模式
+            if (res.current_mode === "dark") {
+                store.setTmVuetifyDark(true)
+            } else {
+                store.setTmVuetifyDark(false)
+            }
+        }
+        //主题切换监听
+        uni.onThemeChange(async (res: OnThemeChangeCallbackResult) => {
+            //从数据库里面获取
+            const ress = await this.getThemeData()
+            //如果是跟随系统
+            if (ress.follow_system === true) {
+                if (res.theme === "dark") {
+                    store.setTmVuetifyDark(true)
+                } else {
+                    store.setTmVuetifyDark(false)
+                }
             }
         })
     }

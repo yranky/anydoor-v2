@@ -5,7 +5,7 @@ import Theme from "./common/theme/Theme";
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:21:50
+ * @LastEditTime: 2023-02-18 00:11:08
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -16,7 +16,4 @@ export default async function init() {
     nativeInit()
     //主题部分
     const ThemeInstance = await Theme.getInstance()
-    ThemeInstance.getThemeData().then(res => {
-        console.log(res)
-    })
 }
