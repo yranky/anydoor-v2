@@ -30,9 +30,6 @@ export default class DownloadModule {
             DownloadModule.instance = new DownloadModule()
             //初始化
             DownloadModule.MODULE && DownloadModule.MODULE.register(debugTool(res => {
-                ToastModule.show({
-                    text: "初始化成功!"
-                })
                 //获取任务列表,
                 DownloadModule.MODULE.getTaskList(debugTool((res) => {
                     res.data?.forEach((item) => {
