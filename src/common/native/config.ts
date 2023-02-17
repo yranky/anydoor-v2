@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:06:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-16 22:07:40
+ * @LastEditTime: 2023-02-17 12:43:13
  * @FilePath: \anydoor-v2\src\common\native\config.ts
  * @Description: 
  * 
@@ -15,7 +15,6 @@ export default {
     bugly: {
         appId: '6c3a24368a',
         deviceId: '',
-        appChannel: '1',
         appVersion: '3.2.2',
         deviceModel: '11'
     },
