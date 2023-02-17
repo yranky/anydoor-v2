@@ -24,6 +24,8 @@
             "autoclose" : true,
             "delay" : 0
         },
+        "darkmode" : true,
+        "themeLocation" : "theme.json",
         /* 模块配置 */
         "modules" : {
             /* 使用Canvas模块 */

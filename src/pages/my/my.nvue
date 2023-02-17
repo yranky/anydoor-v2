@@ -3,17 +3,17 @@
 		<anydoorPage>
 			<template #navBar>
 				<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
-							backgroundColor:navbarBg
-						}">
+
+				}">
 					<view class="index-navbar flex flex-row flex-nowrap" :style="{
-								paddingTop:statusBarHeight
-							}">
+						paddingTop: statusBarHeight
+					}">
 						<view class="flex-1 pl-32 pr-16">
 							<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
 						</view>
 						<view class="navbar-action flex flex-center flex-row pl-16 pr-16">
 							<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"></tm-icon>
-							<tm-icon @click="onChangeDark" :color="store.tmStore.dark?'primary':''" _class="pl-16 pr-16"
+							<tm-icon @click="onChangeDark" :color="store.tmStore.dark ? 'primary' : ''" _class="pl-16 pr-16"
 								:font-size="42" name="tmicon-ios-sunny"></tm-icon>
 						</view>
 					</view>
@@ -21,7 +21,7 @@
 			</template>
 			<template #content>
 				<!-- 填充占位元素 -->
-				<view :style="{width:'100%',height:statusBarHeight,marginTop:'70rpx'}"></view>
+				<view :style="{ width: '100%', height: statusBarHeight, marginTop: '70rpx' }"></view>
 
 				<navigator url="/pages/article/article-web"><text>111</text></navigator>
 				<navigator url="/pages/user/login"><text>222</text></navigator>
@@ -54,22 +54,19 @@
 				<!-- 社区信息 -->
 				<view class="user-community flex flex-row">
 					<view class="user-community-itme flex-1">
-						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold
-							style="text-align: center;">
+						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
 						</anydoor-text>
 						<anydoor-text text="动态" :fontSize="25" :lines="1" lineHeight="40" color="grey"
 							style="text-align: center;"></anydoor-text>
 					</view>
 					<view class="user-community-itme flex-1">
-						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold
-							style="text-align: center;">
+						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
 						</anydoor-text>
 						<anydoor-text text="关注" :fontSize="25" :lines="1" lineHeight="40" color="grey"
 							style="text-align: center;"></anydoor-text>
 					</view>
 					<view class="user-community-itme flex-1">
-						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold
-							style="text-align: center;">
+						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
 						</anydoor-text>
 						<anydoor-text text="粉丝" :fontSize="25" :lines="1" lineHeight="40" color="grey"
 							style="text-align: center;"></anydoor-text>
@@ -78,8 +75,8 @@
 				<!-- 账户登录信息 -->
 				<view class="user-account-login">
 					<view class="user-account-login-item flex flex-row round-5" :style="{
-								backgroundColor:vipBg
-							}" v-for="item in 2" :key="item">
+						backgroundColor: vipBg
+					}" v-for="item in 2" :key="item">
 						<view class="flex flex-row flex-col flex-1 mr-n10">
 							<view class="flex flex-1 flex-row">
 								<tm-icon :font-size="32" name="tmicon-gem" _class="pr-10" color="vip"></tm-icon>
@@ -90,7 +87,7 @@
 								lineHeight="40" color="white">
 							</anydoor-text>
 						</view>
-						<view class="user-account-item-action round-3" :style="{backgroundColor:vipTextColor}">
+						<view class="user-account-item-action round-3" :style="{ backgroundColor: vipTextColor }">
 							<anydoor-text text="已登录" :fontSize="25" :lines="1" lineHeight="50" color="black" bold>
 							</anydoor-text>
 						</view>
@@ -252,120 +249,126 @@
 </template>
 
 <script lang="ts" setup>
-	import {
-		getCurrentInstance,
-		computed,
-		ref,
-		onMounted
-	} from "vue"
-	import {
-		language
-	} from "@/tmui/tool/lib/language"
-	import {
-		useTmpiniaStore
-	} from '@/tmui/tool/lib/tmpinia';
+import {
+	getCurrentInstance,
+	computed,
+	ref,
+	onMounted
+} from "vue"
+import {
+	language
+} from "@/tmui/tool/lib/language"
+import {
+	useTmpiniaStore
+} from '@/tmui/tool/lib/tmpinia';
 
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
-	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
-	import tmAvatar from "@/tmui/components/tm-avatar/tm-avatar.vue"
-	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
-	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
-	import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
-	import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
-	import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
-	import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
-	import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-	import {
-		onPageScroll
-	} from "@dcloudio/uni-app"
-	import {
-		throttle
-	} from "lodash"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
+import tmAvatar from "@/tmui/components/tm-avatar/tm-avatar.vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
+import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
+import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import {
+	onPageScroll
+} from "@dcloudio/uni-app"
+import {
+	throttle
+} from "lodash"
 
 
-	const store = useTmpiniaStore();
-	const {
-		proxy
-	} = getCurrentInstance();
-	// 主题工具
-	import theme from "@/tmui/tool/theme/theme"
+const store = useTmpiniaStore();
+const {
+	proxy
+} = getCurrentInstance();
+// 主题工具
+import theme from "@/tmui/tool/theme/theme"
 
-	//账户背景
-	const vipBg = computed(() => {
-		return theme.getColor("vipBg").value
-	})
-	//字体
-	const vipTextColor = computed(() => {
-		return theme.getColor("vip").value
-	})
+//账户背景
+const vipBg = computed(() => {
+	return theme.getColor("vipBg").value
+})
+//字体
+const vipTextColor = computed(() => {
+	return theme.getColor("vip").value
+})
 
-	function onChangeDark() {
-		proxy.$refs.app.setDark()
+function onChangeDark() {
+	//如果是暗黑模式
+	if (store.tmStore.dark) {
+		plus.nativeUI.setUIStyle("light")
+	} else {
+		plus.nativeUI.setUIStyle("dark")
 	}
-	//导航栏背景
-	// const navbarBg = computed(() => {
-	// 	if (store.tmStore.dark)
-	// 		return `rgba(0, 0, 0, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
-	// 	else {
-	// 		return `rgba(255, 255, 255, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
-	// 	}
-	// })
-	// const pageScrollY = ref(0)
-	// const num = 70
-	// //页面滚动
-	// onPageScroll((e) => {
-	// 	throttle(() => {
-	// 		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
-	// 	}, 1000 / 120)()
-	// })
-	// //navbarHeight
-	const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+	proxy.$refs.app.setDark()
+}
+//导航栏背景
+// const navbarBg = computed(() => {
+// 	if (store.tmStore.dark)
+// 		return `rgba(0, 0, 0, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
+// 	else {
+// 		return `rgba(255, 255, 255, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
+// 	}
+// })
+// const pageScrollY = ref(0)
+// const num = 70
+// //页面滚动
+// onPageScroll((e) => {
+// 	throttle(() => {
+// 		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
+// 	}, 1000 / 120)()
+// })
+// //navbarHeight
+const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 </script>
 
 <style scoped lang="scss">
-	.index-navbar-box {
-		width: 750rpx;
+.index-navbar-box {
+	width: 750rpx;
 
-		.index-navbar {
-			padding: 15rpx 0;
-		}
+	.index-navbar {
+		padding: 15rpx 0;
 	}
+}
 
 
+
+.user-info {
+	.user-avatar {
+		margin: 20rpx 40rpx;
+		width: 120rpx;
+	}
 
 	.user-info {
-		.user-avatar {
-			margin: 20rpx 40rpx;
-			width: 120rpx;
-		}
-
-		.user-info {
-			margin: 20rpx 0;
-		}
-
-		.user-action {
-			width: 100rpx;
-		}
+		margin: 20rpx 0;
 	}
 
-	.user-community {
-		margin: 20rpx 60rpx;
+	.user-action {
+		width: 100rpx;
 	}
+}
 
-	.user-account-login {
-		margin: 10rpx 30rpx;
+.user-community {
+	margin: 20rpx 60rpx;
+}
 
-		.user-account-login-item {
-			margin: 10rpx;
-			padding: 20rpx 40rpx;
+.user-account-login {
+	margin: 10rpx 30rpx;
 
-			.user-account-item-action {
-				height: 50rpx;
-				padding: 0 20rpx;
-				align-self: center;
-			}
+	.user-account-login-item {
+		margin: 10rpx;
+		padding: 20rpx 40rpx;
+
+		.user-account-item-action {
+			height: 50rpx;
+			padding: 0 20rpx;
+			align-self: center;
 		}
 	}
+}
 </style>

@@ -13,6 +13,7 @@ import ERROR_TARGET from "../errorHandler/ERROR_TARGET"
 import ErrorHandler from "../errorHandler/ErrorHandler"
 import LESSON_TABLES from "./tables/lesson"
 import MPROGRAM_TABLES from "./tables/mprogram"
+import SETTING_TABLES from "./tables/setting"
 
 
 //数据库名称
@@ -20,7 +21,9 @@ export enum DATA {
     //微应用
     MPROGRAM = "mprogram",
     //课程数据
-    LESSON = "lesson"
+    LESSON = "lesson",
+    //设置数据
+    SETTTING = "setting"
 }
 
 let path: string = "_doc/"
@@ -59,6 +62,10 @@ export const databases = {
     [DATA.LESSON]: {
         path: path + DATA.LESSON + '.db',
         tables: LESSON_TABLES
+    },
+    [DATA.SETTTING]: {
+        path: path + DATA.SETTTING + '.db',
+        tables: SETTING_TABLES
     }
 }
 

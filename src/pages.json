@@ -133,10 +133,10 @@
 
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "@navigationTextStyle",
 		"navigationBarTitleText": "任意门",
-		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#FFFFFF"
+		"navigationBarBackgroundColor": "@bgColor",
+		"backgroundColor": "@bgColor"
 	},
 	"tabBar": {
 		"backgroundColor": "#f3f3f6",

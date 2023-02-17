@@ -12,9 +12,7 @@
 import {
 	onLaunch
 } from "@dcloudio/uni-app"
-import Toast from "./common/toast/toast";
-import nativeInit from "./common/native/nativeInit";
-import BTongjiModule from "./common/native/baidu_tongji/BTongjiModule";
+import init from "./init";
 
 onLaunch(function () {
 	//修改userAgent
@@ -24,8 +22,8 @@ onLaunch(function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
-
-	nativeInit()
+	//初始化
+	init()
 })
 </script>
 <style>
