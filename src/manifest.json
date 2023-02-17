@@ -111,6 +111,9 @@
         },
         "nativePlugins": {
             "anydoor_ui_tool": {
+                "BTongji_appid": "c41d788dc4",
+                "BTongji_channel": "debug",
+                "Bugly_appid": "6c3a24368a",
                 "__plugin_info__": {
                     "name": "任意门原生插件",
                     "description": "任意门原生插件",
@@ -121,7 +124,23 @@
                     "isCloud": false,
                     "bought": -1,
                     "pid": "",
-                    "parameters": {}
+                    "parameters": {
+                        "BTongji_appid": {
+                            "des": "百度统计的appid",
+                            "key": "BTongji_appid",
+                            "value": ""
+                        },
+                        "BTongji_channel": {
+                            "des": "百度统计的渠道",
+                            "key": "BTongji_channel",
+                            "value": ""
+                        },
+                        "Bugly_appid": {
+                            "des": "bugly的appid",
+                            "key": "Bugly_appid",
+                            "value": ""
+                        }
+                    }
                 }
             }
         },
@@ -164,7 +183,7 @@
     },
     "uniStatistics": {
         "enable": false,
-        "version": "2"
+        "version": "1"
     },
     "vueVersion": "3",
     "h5": {

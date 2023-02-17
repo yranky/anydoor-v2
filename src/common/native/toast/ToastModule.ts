@@ -7,7 +7,7 @@ export default class ToastModule {
 
     //监听
     private static instance: ToastModule | null = null
-    private __construtor(): void { }
+    private constructor() { }
 
     static getInstance(): ToastModule {
         if (ToastModule.instance === null) {

@@ -25,14 +25,7 @@ onLaunch(function () {
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
 
-
-	Toast.show({
-		text: "测试"
-	})
-
 	nativeInit()
-
-	BTongjiModule.getInstance().MODULE.startDebugPage()
 })
 </script>
 <style>

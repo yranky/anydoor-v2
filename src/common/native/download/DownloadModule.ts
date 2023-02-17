@@ -23,16 +23,13 @@ export default class DownloadModule {
     private static nativeListeners: String[] = []
 
 
-    private __construtor(): void { }
+    private constructor() { }
 
     static getInstance(): DownloadModule {
         if (DownloadModule.instance === null) {
             DownloadModule.instance = new DownloadModule()
             //初始化
             DownloadModule.MODULE && DownloadModule.MODULE.register(debugTool(res => {
-                ToastModule.show({
-                    text: "初始化成功!"
-                })
                 //获取任务列表,
                 DownloadModule.MODULE.getTaskList(debugTool((res) => {
                     res.data?.forEach((item) => {
