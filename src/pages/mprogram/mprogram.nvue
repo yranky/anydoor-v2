@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-10-06 16:04:14
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:19:22
+ * @LastEditTime: 2023-02-18 17:02:14
  * @FilePath: \anydoor-v2\src\pages\mprogram\mprogram.nvue
  * @Description: 
  * 
@@ -18,10 +18,6 @@
 <script lang="ts" setup>
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-import Toast from "@/common/toast/toast"
-import {
-	position
-} from "@/common/toast/interface/define"
 import MProgram, {
 	IMProgramStatusResult,
 	MPROGRAM_STATUS_CODE
@@ -32,10 +28,7 @@ async function openMp() {
 	const MProgramInstance = await MProgram.getInstance()
 	MProgramInstance.start("__UNI__43CDF4D", "/static/__UNI__43CDF4D.wgt").then((res: IMProgramStatusResult) => {
 		if (res.code !== MPROGRAM_STATUS_CODE.SUCCSS) {
-			Toast.show({
-				text: res.msg,
-				postion: position.center
-			})
+
 		}
 	})
 }

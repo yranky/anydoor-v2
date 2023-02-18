@@ -4,10 +4,10 @@ import SQLite, { SQLITE_STATUS_CODE } from "../sql/SQLite";
 import databases, { DATA } from "../database/database";
 import { SETTING_TABLES_NAME } from "../database/tables/setting";
 import { IThemeDataResult, IThemeDatabaseKeys, IThemeMode, ThemeDefaultVal } from "./IThemeDatabase";
-import Toast from "../toast/toast";
 import ERROR_TARGET from "../errorHandler/ERROR_TARGET";
 import { insertKeyAndValueDefault } from "../database/tools";
 import ThemeFilter from "./ThemeFilter";
+import ToastModule from "../native/toast/ToastModule";
 
 export default class Theme {
     //sqlite对象
@@ -66,7 +66,7 @@ export default class Theme {
     async getThemeData(): Promise<IThemeDataResult> {
         const result = await this.sql?.selectSql(`select * from ${SETTING_TABLES_NAME.THEME}`)
         if (result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "主题信息获取失败!" })
+            ToastModule.show({ text: "主题信息获取失败!" })
         }
         const res = ThemeFilter(result?.data || [])
         //是否跟随系统

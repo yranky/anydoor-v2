@@ -2,18 +2,18 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 16:53:34
+ * @LastEditTime: 2023-02-18 17:03:08
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 
+import ToastModule from "@/common/native/toast/ToastModule"
 import SQLite from "../../sql/SQLite"
 import databases, { DATA } from "../database"
-import { position } from "../../toast/interface/define"
-import Toast from "../../toast/toast"
 import { MPROGRAM_TABLES_NAME } from "../tables/mprogram"
+import { TOAST_POSITION } from "@/common/native/toast/IToastModule"
 
 
 export default class MProgram {
@@ -92,9 +92,9 @@ export default class MProgram {
     reloadMP() {
         this.times++
         if (!uni.$anydoor_native.MP) {
-            Toast.show({
+            ToastModule.show({
                 text: "模块加载失败，请尝试应用升级版本,重试:" + this.times,
-                postion: position.center
+                position: TOAST_POSITION.CENTER
             })
             if (this.times <= MProgram.MAX_TIMES) this.reloadMP()
         }
