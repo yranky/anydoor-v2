@@ -12,26 +12,23 @@ import IResult from "../IResult";
 import config from "../config";
 import { debugTool } from "../nativeInit";
 import ToastModule from "../toast/ToastModule";
-import IBTonbgjiModuleNative from "./IBTongjiModule";
 
 
 export default class BTongjiModule {
-    // @ts-ignore
-    public MODULE: IBTonbgjiModuleNative = uni.requireNativePlugin("anydoor_baidu_tongji")
     private constructor() {
         //初始化
-        this.MODULE && this.MODULE.init({
+        uni.$anydoor_native.BTongji_Module && uni.$anydoor_native.BTongji_Module.init({
             appVersion: config.baidu_tongji.appVersion
         }, debugTool<IResult<undefined>>((res) => {
             if (res.success) {
                 //取消掉debug
-                this.MODULE.setAuthorizedState(debugTool(() => {
+                uni.$anydoor_native.BTongji_Module.setAuthorizedState(debugTool(() => {
                     //允许获取mac地址
-                    this.MODULE.setEnableMacId(true, debugTool())
+                    uni.$anydoor_native.BTongji_Module.setEnableMacId(true, debugTool())
                     //如果全局开启了debug
-                    if (config.global.debug === true) this.MODULE.setDebug(true, debugTool())
+                    if (config.global.debug === true) uni.$anydoor_native.BTongji_Module.setDebug(true, debugTool())
                     //开始
-                    this.MODULE.start(debugTool())
+                    uni.$anydoor_native.BTongji_Module.start(debugTool())
                 }))
             } else {
                 ToastModule.show({

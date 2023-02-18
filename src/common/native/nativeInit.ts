@@ -2,7 +2,17 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-16 22:16:31
+ * @LastEditTime: 2023-02-18 16:59:59
+ * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+ */
+/*
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-02-04 20:28:26
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-02-18 16:52:23
  * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
  * @Description: 
  * 
@@ -16,6 +26,19 @@ import DownloadModule from "./download/DownloadModule";
 import ToastModule from "./toast/ToastModule";
 
 export default function nativeInit() {
+    //初始化native
+    uni.$anydoor_native = {
+        //数据库模块
+        SQLite_Module: uni.requireNativePlugin("anydoor_sqlite"),
+        MP: uni.requireNativePlugin('uniMP'),
+        BTongji_Module: uni.requireNativePlugin("anydoor_baidu_tongji"),
+        Bugly_Module: uni.requireNativePlugin("anydoor_bugly"),
+        Download_Module: uni.requireNativePlugin("anydoor_download"),
+        Toast_Module: uni.requireNativePlugin("anydoor_toast")
+
+    }
+
+
     //初始化toast模块
     ToastModule.getInstance()
     //初始化百度统计模块

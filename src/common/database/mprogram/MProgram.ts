@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 15:39:54
+ * @LastEditTime: 2023-02-18 16:53:34
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -17,8 +17,6 @@ import { MPROGRAM_TABLES_NAME } from "../tables/mprogram"
 
 
 export default class MProgram {
-    //小程序模块
-    private static MP = uni.requireNativePlugin('uniMP')
     //最大的重试次数
     private static MAX_TIMES = 5
     //重试的次数
@@ -40,12 +38,12 @@ export default class MProgram {
     //构造函数
     private constructor() {
         //如果没有就重新加载
-        if (!MProgram.MP) this.reloadMP()
+        if (!uni.$anydoor_native.MP) this.reloadMP()
     }
     //启动应用
     start(appid: string, path?: string, password?: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
-            MProgram.MP.openUniMP({
+            uni.$anydoor_native.MP.openUniMP({
                 appid,
                 ...option
             }, async (e: any) => {
@@ -74,7 +72,7 @@ export default class MProgram {
     //安装应用
     install(appid: string, path: string, password?: string): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
-            MProgram.MP.installUniMP({
+            uni.$anydoor_native.MP.installUniMP({
                 appid: appid,
                 wgtFile: path,
                 password
@@ -93,14 +91,14 @@ export default class MProgram {
     //重新加载 小程序模块
     reloadMP() {
         this.times++
-        if (!MProgram.MP) {
+        if (!uni.$anydoor_native.MP) {
             Toast.show({
                 text: "模块加载失败，请尝试应用升级版本,重试:" + this.times,
                 postion: position.center
             })
             if (this.times <= MProgram.MAX_TIMES) this.reloadMP()
         }
-        MProgram.MP = uni.requireNativePlugin('uniMP')
+        uni.$anydoor_native.MP = uni.requireNativePlugin('uniMP')
     }
     //初始化小程序表
     async initDataTable() {

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 15:42:43
+ * @LastEditTime: 2023-02-18 16:56:38
  * @FilePath: \anydoor-v2\src\common\native\bugly\BuglyModule.ts
  * @Description: 初始化
  * 
@@ -14,12 +14,10 @@ import ToastModule from "../toast/ToastModule";
 import IBuglyModuleNative from "./IBuglyModule";
 
 export default class BuglyModule {
-    // @ts-ignore
-    public MODULE: IBuglyModuleNative = uni.requireNativePlugin("anydoor_bugly")
     //初始化模块
     private constructor() {
         //初始化
-        this.MODULE && this.MODULE.init({
+        uni.$anydoor_native.Bugly_Module && uni.$anydoor_native.Bugly_Module.init({
             deviceId: config.bugly.deviceId,
             appVersion: config.bugly.appVersion,
             deviceModel: config.bugly.deviceModel,

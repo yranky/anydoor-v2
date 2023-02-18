@@ -2,9 +2,6 @@ import { debugTool } from "../nativeInit";
 import IToastModuleNative, { IToastShowOption } from "./IToastModule";
 
 export default class ToastModule {
-    // @ts-ignore
-    private static MODULE: IToastModuleNative = uni.requireNativePlugin("anydoor_toast")
-
     private constructor() { }
 
     static getInstance(): ToastModule {
@@ -16,10 +13,10 @@ export default class ToastModule {
 
     //显示通知
     static show(option: IToastShowOption) {
-        ToastModule.MODULE.show(option, debugTool())
+        uni.$anydoor_native.Toast_Module.show(option, debugTool())
     }
     //取消显示通知
     static hide() {
-        ToastModule.MODULE.hide(debugTool())
+        uni.$anydoor_native.Toast_Module.hide(debugTool())
     }
 }

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:27:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 18:20:33
+ * @LastEditTime: 2023-02-18 16:40:04
  * @FilePath: \anydoor-v2\src\common\sql\SQLite.ts
  * @Description: sql
  * 
@@ -34,8 +34,6 @@ export default class SQLite {
     private name: DATA
     //数据库路径
     private path: string
-    // @ts-ignore
-    private static MODULE = uni.requireNativePlugin("anydoor_sqlite")
 
     constructor(name: DATA, path?: string) {
         this.name = name
@@ -44,12 +42,18 @@ export default class SQLite {
         if (!SQLite.queue[name]) SQLite.queue[name] = []
     }
     private static queue: IQueue = {}
+
+    //获取module
+    public static getModule() {
+        return uni.$anydoor_native.SQLite_Module
+    }
+
     //执行sql语句
     executeSql(sql: string[], failTag: string = "unknown", failHandler?: Function): Promise<ISQLiteStatusResult> {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
-            SQLite.MODULE.executeSql({
+            SQLite.getModule().executeSql({
                 path: this.path,
                 sql
             }, (res) => {
@@ -76,7 +80,7 @@ export default class SQLite {
         const promise: Promise<ISQLiteStatusResult> = new Promise(async (resolve) => {
             //等待
             await (SQLite.queue[this.name]!.splice(SQLite.queue[this.name]!.length - 1, 1)[0] || Promise.resolve())
-            SQLite.MODULE.selectSql({
+            SQLite.getModule().selectSql({
                 path: this.path,
                 sql
             }, (res) => {

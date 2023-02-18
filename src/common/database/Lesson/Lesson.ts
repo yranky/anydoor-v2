@@ -12,7 +12,7 @@ import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 15:39:45
+ * @LastEditTime: 2023-02-18 16:13:38
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -151,9 +151,9 @@ export default class Lesson {
             name: item,
             semester: semesterTag
         })) as ILessonNameItem[]
-        // console.log(lesson_name_arr)
         //更新
         const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name_arr, semesterTag)
+        console.log(lesson_name_result)
         //更新temp
         await this.updateLessonTempStorage(data, lesson_name_result, semesterTag)
 
