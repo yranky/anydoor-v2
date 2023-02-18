@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 23:42:24
+ * @LastEditTime: 2023-02-18 11:03:49
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -24,7 +24,8 @@
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="跟随系统">
 				<template v-slot:right>
 					<tm-switch barIcon="" linear="left" linearDeep="accent" v-model="themeConfig.followSystem"
-						:margin="[12, 0]" @click="changeThemeFollowSystem"></tm-switch>
+						:margin="[12, 0]" @click="changeThemeFollowSystem"
+						:default-value="themeConfig.followSystem"></tm-switch>
 				</template>
 			</tm-cell>
 
@@ -61,12 +62,8 @@ const themeConfig = reactive({
 
 //初始化样式等
 const initItems = async () => {
-	//主题bufen
-	const ThemeInstance = await Theme.getInstance()
-	//获取是否开启了跟随
-	const res: any = await ThemeInstance.getThemeData()
-	//跟随系统
-	themeConfig.followSystem = res[IThemeDatabaseKeys.FOLLOW_SYSTEM] || false
+	const data = uni.$anydoor.Theme!.getClassData()
+	themeConfig.followSystem = data?.follow_system
 }
 //在挂载之前获取
 onBeforeMount(() => {
@@ -82,7 +79,7 @@ const changeThemeFollowSystem = async () => {
 }
 //修改主题
 const changeTheme = () => {
-	store.setTmVuetifyDark(!store.tmStore.dark)
+	uni.$anydoor.Theme?.changeTheme(!store.tmStore.dark)
 }
 
 </script>

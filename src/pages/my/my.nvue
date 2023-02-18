@@ -13,8 +13,6 @@
 						</view>
 						<view class="navbar-action flex flex-center flex-row pl-16 pr-16">
 							<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"></tm-icon>
-							<tm-icon @click="onChangeDark" :color="store.tmStore.dark ? 'primary' : ''" _class="pl-16 pr-16"
-								:font-size="42" name="tmicon-ios-sunny"></tm-icon>
 						</view>
 					</view>
 				</view>
@@ -297,16 +295,6 @@ const vipBg = computed(() => {
 const vipTextColor = computed(() => {
 	return theme.getColor("vip").value
 })
-
-function onChangeDark() {
-	//如果是暗黑模式
-	if (store.tmStore.dark) {
-		plus.nativeUI.setUIStyle("light")
-	} else {
-		plus.nativeUI.setUIStyle("dark")
-	}
-	proxy.$refs.app.setDark()
-}
 //导航栏背景
 // const navbarBg = computed(() => {
 // 	if (store.tmStore.dark)

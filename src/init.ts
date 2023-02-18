@@ -12,6 +12,8 @@ import Theme from "./common/theme/Theme";
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 export default async function init() {
+    //初始化uni
+    uni.$anydoor = {}
     //初始化原生插件
     nativeInit()
     //主题部分
