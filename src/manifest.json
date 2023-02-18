@@ -57,8 +57,9 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
                 "minSdkVersion" : 23,
-                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
-                "targetSdkVersion" : 30
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a" ],
+                "targetSdkVersion" : 30,
+                "schemes" : "anydoor"
             },
             /* ios打包配置 */
             "ios" : {
@@ -143,7 +144,8 @@
             }
         },
         "nvueLaunchMode" : "",
-        "nvueCompiler" : "uni-app"
+        "nvueCompiler" : "uni-app",
+        "renderer" : "native"
     },
     /* 快应用特有相关 */
     "quickapp" : {},

@@ -8,16 +8,6 @@
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
-/*
- * @Author: yranky douye@douye.top
- * @Date: 2023-02-04 20:28:26
- * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 16:52:23
- * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
- * @Description: 
- * 
- * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
- */
 import IResult from "./IResult";
 import BTongjiModule from "./baidu_tongji/BTongjiModule";
 import BuglyModule from "./bugly/BuglyModule";
@@ -34,8 +24,8 @@ export default function nativeInit() {
         BTongji_Module: uni.requireNativePlugin("anydoor_baidu_tongji"),
         Bugly_Module: uni.requireNativePlugin("anydoor_bugly"),
         Download_Module: uni.requireNativePlugin("anydoor_download"),
-        Toast_Module: uni.requireNativePlugin("anydoor_toast")
-
+        Toast_Module: uni.requireNativePlugin("anydoor_toast"),
+        Tool_Module: uni.requireNativePlugin("anydoor_tool")
     }
 
 
