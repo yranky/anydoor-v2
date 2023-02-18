@@ -133,7 +133,7 @@ const reverseAniPrefxname = computed(() => (computedReverse.value ? "-reverse" :
 const animationClassName = ref(animationName.value + reverseAniPrefxname.value);
 //动画播放状态。0未开始,结束播放，1开始播放中,2结束。
 const animationStatus = ref(0);
-const tmid = ref(Number(uni.$tm.u.getUid(3, 5)));
+const tmid = ref(Number(uni.$tm.u.getUid(3)));
 //是否渲染完成。
 const isLoadEl = ref(false);
 //css3动画数据。
