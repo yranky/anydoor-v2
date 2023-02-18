@@ -10,8 +10,6 @@ export interface IDownloadTask extends IDownloadInfo {
 export default class DownloadModule {
     // @ts-ignore
     private static MODULE: IDownloadModuleNative = uni.requireNativePlugin("anydoor_download")
-    //监听
-    private static instance: DownloadModule | null = null
 
     //订阅者
     private static suscriber: Array<Function> = []
@@ -26,8 +24,8 @@ export default class DownloadModule {
     private constructor() { }
 
     static getInstance(): DownloadModule {
-        if (DownloadModule.instance === null) {
-            DownloadModule.instance = new DownloadModule()
+        if (uni.$anydoor.DownloadModule === undefined) {
+            uni.$anydoor.DownloadModule = new DownloadModule()
             //初始化
             DownloadModule.MODULE && DownloadModule.MODULE.register(debugTool(res => {
                 //获取任务列表,
@@ -44,7 +42,7 @@ export default class DownloadModule {
 
             }))
         }
-        return DownloadModule.instance
+        return uni.$anydoor.DownloadModule
     }
 
     create(url: string): void {

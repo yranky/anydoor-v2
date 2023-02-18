@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:17:53
+ * @LastEditTime: 2023-02-18 15:39:54
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -23,21 +23,19 @@ export default class MProgram {
     private static MAX_TIMES = 5
     //重试的次数
     private times = 0
-    //对象
-    private static instance: MProgram | null = null
     //sqlite对象
     private sql: SQLite | undefined
 
     //获取实例对象
     static async getInstance() {
-        if (MProgram.instance === null) {
-            MProgram.instance = new MProgram()
+        if (uni.$anydoor.MProgram === undefined) {
+            uni.$anydoor.MProgram = new MProgram()
             //初始化sql
-            MProgram.instance.sql = new SQLite(DATA.MPROGRAM)
+            uni.$anydoor.MProgram.sql = new SQLite(DATA.MPROGRAM)
             //等待创建完成
-            await MProgram.instance.initDataTable()
+            await uni.$anydoor.MProgram.initDataTable()
         }
-        return MProgram.instance
+        return uni.$anydoor.MProgram
     }
     //构造函数
     private constructor() {

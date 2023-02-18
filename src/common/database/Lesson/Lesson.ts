@@ -12,15 +12,13 @@ import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:28:33
+ * @LastEditTime: 2023-02-18 15:39:45
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 export default class Lesson {
-    //对象
-    private static instance: Lesson | null = null
     //sqlite对象
     private sql: SQLite | undefined
     //构造函数
@@ -28,14 +26,14 @@ export default class Lesson {
 
     //获取实例对象
     static async getInstance() {
-        if (Lesson.instance === null) {
-            Lesson.instance = new Lesson()
+        if (uni.$anydoor.Lesson === undefined) {
+            uni.$anydoor.Lesson = new Lesson()
             //初始化工作
-            Lesson.instance.sql = new SQLite(DATA.LESSON)
+            uni.$anydoor.Lesson.sql = new SQLite(DATA.LESSON)
             //需要等待完成才能
-            await Lesson.instance.initDataTable()
+            await uni.$anydoor.Lesson.initDataTable()
         }
-        return Lesson.instance
+        return uni.$anydoor.Lesson
     }
 
     //初始化课程数据

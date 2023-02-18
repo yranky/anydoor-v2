@@ -5,17 +5,13 @@ export default class ToastModule {
     // @ts-ignore
     private static MODULE: IToastModuleNative = uni.requireNativePlugin("anydoor_toast")
 
-    //监听
-    private static instance: ToastModule | null = null
     private constructor() { }
 
     static getInstance(): ToastModule {
-        if (ToastModule.instance === null) {
-            ToastModule.instance = new ToastModule()
+        if (uni.$anydoor.ToastModule === undefined) {
+            uni.$anydoor.ToastModule = new ToastModule()
         }
-
-
-        return ToastModule.instance
+        return uni.$anydoor.ToastModule
     }
 
     //显示通知

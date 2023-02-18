@@ -11,6 +11,12 @@
 /// <reference types="vite/client" />
 
 import Theme from "@/common/theme/Theme"
+import Lesson from "./common/database/Lesson/Lesson"
+import MProgram from "./common/database/mprogram/MProgram"
+import BTongjiModule from "./common/native/baidu_tongji/BTongjiModule"
+import BuglyModule from "./common/native/bugly/BuglyModule"
+import DownloadModule from "./common/native/download/DownloadModule"
+import ToastModule from "./common/native/toast/ToastModule"
 
 declare module '*.vue' {
   import { DefineComponent } from 'vue'
@@ -22,7 +28,13 @@ declare module '*.vue' {
 
 declare global {
   interface $anydoor {
-    Theme?: Theme
+    Theme?: Theme,
+    Lesson?: Lesson,
+    MProgram?: MProgram,
+    BTongjiModule?: BTongjiModule,
+    BuglyModule?: BuglyModule,
+    DownloadModule?: DownloadModule,
+    ToastModule?: ToastModule
   }
   interface Uni {
     $anydoor: $anydoor

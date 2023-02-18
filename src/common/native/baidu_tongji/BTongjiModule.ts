@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:02:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-16 22:12:21
+ * @LastEditTime: 2023-02-18 15:42:01
  * @FilePath: \anydoor-v2\src\common\native\baidu_tongji\BTongjiModule.ts
  * @Description: 百度统计模块
  * 
@@ -18,8 +18,6 @@ import IBTonbgjiModuleNative from "./IBTongjiModule";
 export default class BTongjiModule {
     // @ts-ignore
     public MODULE: IBTonbgjiModuleNative = uni.requireNativePlugin("anydoor_baidu_tongji")
-    //监听
-    private static instance: BTongjiModule | null = null
     private constructor() {
         //初始化
         this.MODULE && this.MODULE.init({
@@ -44,9 +42,9 @@ export default class BTongjiModule {
     }
     //初始化
     static getInstance(): BTongjiModule {
-        if (BTongjiModule.instance === null) {
-            BTongjiModule.instance = new BTongjiModule()
+        if (uni.$anydoor.BTongjiModule === undefined) {
+            uni.$anydoor.BTongjiModule = new BTongjiModule()
         }
-        return BTongjiModule.instance
+        return uni.$anydoor.BTongjiModule
     }
 }

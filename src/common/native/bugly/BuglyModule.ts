@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:10:07
+ * @LastEditTime: 2023-02-18 15:42:43
  * @FilePath: \anydoor-v2\src\common\native\bugly\BuglyModule.ts
  * @Description: 初始化
  * 
@@ -16,8 +16,6 @@ import IBuglyModuleNative from "./IBuglyModule";
 export default class BuglyModule {
     // @ts-ignore
     public MODULE: IBuglyModuleNative = uni.requireNativePlugin("anydoor_bugly")
-    //bug
-    private static instance: BuglyModule | null = null
     //初始化模块
     private constructor() {
         //初始化
@@ -35,9 +33,9 @@ export default class BuglyModule {
         }))
     }
     static getInstance(): BuglyModule {
-        if (BuglyModule.instance === null) {
-            BuglyModule.instance = new BuglyModule()
+        if (uni.$anydoor.BuglyModule === undefined) {
+            uni.$anydoor.BuglyModule = new BuglyModule()
         }
-        return BuglyModule.instance
+        return uni.$anydoor.BuglyModule
     }
 }
