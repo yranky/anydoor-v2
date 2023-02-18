@@ -101,7 +101,7 @@ const onNewWindow = (e) => {
 }
 // const src = ref("http://nas.douye.top:10000/webview")
 // const src = ref("http://usc.douyeblog.top")
-const src = ref("http://www.ip33.com/browser.html")
+const src = ref("http://faisalman.github.io/ua-parser-js/")
 onLoad((e) => {
 	if (e && e.url) src.value = decodeURIComponent(e.url)
 })

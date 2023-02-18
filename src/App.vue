@@ -22,6 +22,7 @@ onLaunch(function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
+	plus.navigator.setLogs(true)
 	//初始化
 	init()
 })
