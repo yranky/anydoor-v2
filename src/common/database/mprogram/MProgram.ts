@@ -2,52 +2,48 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:17:53
+ * @LastEditTime: 2023-02-18 17:03:08
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 
+import ToastModule from "@/common/native/toast/ToastModule"
 import SQLite from "../../sql/SQLite"
 import databases, { DATA } from "../database"
-import { position } from "../../toast/interface/define"
-import Toast from "../../toast/toast"
 import { MPROGRAM_TABLES_NAME } from "../tables/mprogram"
+import { TOAST_POSITION } from "@/common/native/toast/IToastModule"
 
 
 export default class MProgram {
-    //小程序模块
-    private static MP = uni.requireNativePlugin('uniMP')
     //最大的重试次数
     private static MAX_TIMES = 5
     //重试的次数
     private times = 0
-    //对象
-    private static instance: MProgram | null = null
     //sqlite对象
     private sql: SQLite | undefined
 
     //获取实例对象
     static async getInstance() {
-        if (MProgram.instance === null) {
-            MProgram.instance = new MProgram()
+        if (uni.$anydoor.MProgram === undefined) {
+            uni.$anydoor.MProgram = new MProgram()
             //初始化sql
-            MProgram.instance.sql = new SQLite(DATA.MPROGRAM)
+            uni.$anydoor.MProgram.sql = new SQLite(DATA.MPROGRAM)
             //等待创建完成
-            await MProgram.instance.initDataTable()
+            await uni.$anydoor.MProgram.initDataTable()
         }
-        return MProgram.instance
+        return uni.$anydoor.MProgram
     }
     //构造函数
     private constructor() {
         //如果没有就重新加载
-        if (!MProgram.MP) this.reloadMP()
+        if (!uni.$anydoor_native.MP) this.reloadMP()
     }
     //启动应用
     start(appid: string, path?: string, password?: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
-            MProgram.MP.openUniMP({
+            uni.$anydoor_native.MP.openUniMP({
                 appid,
                 ...option
             }, async (e: any) => {
@@ -76,7 +72,7 @@ export default class MProgram {
     //安装应用
     install(appid: string, path: string, password?: string): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
-            MProgram.MP.installUniMP({
+            uni.$anydoor_native.MP.installUniMP({
                 appid: appid,
                 wgtFile: path,
                 password
@@ -95,14 +91,14 @@ export default class MProgram {
     //重新加载 小程序模块
     reloadMP() {
         this.times++
-        if (!MProgram.MP) {
-            Toast.show({
+        if (!uni.$anydoor_native.MP) {
+            ToastModule.show({
                 text: "模块加载失败，请尝试应用升级版本,重试:" + this.times,
-                postion: position.center
+                position: TOAST_POSITION.CENTER
             })
             if (this.times <= MProgram.MAX_TIMES) this.reloadMP()
         }
-        MProgram.MP = uni.requireNativePlugin('uniMP')
+        uni.$anydoor_native.MP = uni.requireNativePlugin('uniMP')
     }
     //初始化小程序表
     async initDataTable() {

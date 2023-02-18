@@ -2,28 +2,21 @@ import { debugTool } from "../nativeInit";
 import IToastModuleNative, { IToastShowOption } from "./IToastModule";
 
 export default class ToastModule {
-    // @ts-ignore
-    private static MODULE: IToastModuleNative = uni.requireNativePlugin("anydoor_toast")
-
-    //监听
-    private static instance: ToastModule | null = null
     private constructor() { }
 
     static getInstance(): ToastModule {
-        if (ToastModule.instance === null) {
-            ToastModule.instance = new ToastModule()
+        if (uni.$anydoor.ToastModule === undefined) {
+            uni.$anydoor.ToastModule = new ToastModule()
         }
-
-
-        return ToastModule.instance
+        return uni.$anydoor.ToastModule
     }
 
     //显示通知
     static show(option: IToastShowOption) {
-        ToastModule.MODULE.show(option, debugTool())
+        uni.$anydoor_native.Toast_Module.show(option, debugTool())
     }
     //取消显示通知
     static hide() {
-        ToastModule.MODULE.hide(debugTool())
+        uni.$anydoor_native.Toast_Module.hide(debugTool())
     }
 }

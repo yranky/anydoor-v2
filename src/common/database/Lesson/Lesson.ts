@@ -1,26 +1,24 @@
 import { flatten } from "lodash"
 import ERROR_TARGET from "../../errorHandler/ERROR_TARGET"
 import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
-import Toast from "../../toast/toast"
 import databases, { DATA } from "../database"
 import { LESSON_TABLES_NAME } from "../tables/lesson"
 import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
 import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
 import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
+import ToastModule from "@/common/native/toast/ToastModule"
 
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 22:28:33
+ * @LastEditTime: 2023-02-18 17:05:33
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 export default class Lesson {
-    //对象
-    private static instance: Lesson | null = null
     //sqlite对象
     private sql: SQLite | undefined
     //构造函数
@@ -28,14 +26,14 @@ export default class Lesson {
 
     //获取实例对象
     static async getInstance() {
-        if (Lesson.instance === null) {
-            Lesson.instance = new Lesson()
+        if (uni.$anydoor.Lesson === undefined) {
+            uni.$anydoor.Lesson = new Lesson()
             //初始化工作
-            Lesson.instance.sql = new SQLite(DATA.LESSON)
+            uni.$anydoor.Lesson.sql = new SQLite(DATA.LESSON)
             //需要等待完成才能
-            await Lesson.instance.initDataTable()
+            await uni.$anydoor.Lesson.initDataTable()
         }
-        return Lesson.instance
+        return uni.$anydoor.Lesson
     }
 
     //初始化课程数据
@@ -79,7 +77,7 @@ export default class Lesson {
         //执行sql语句
         const res_update = await this.sql?.executeSql(sqls, ERROR_TARGET.LESSON_CLASS)
         if (res_update?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "学期信息更新失败!(数据错误)" })
+            ToastModule.show({ text: "学期信息更新失败!(数据错误)" })
         }
         //最终信息
         const last_result = await this.getSemester()
@@ -90,7 +88,7 @@ export default class Lesson {
         //最终的结果
         const last_result = await this.sql?.selectSql(`select * from ${LESSON_TABLES_NAME.SEMESTER}`, ERROR_TARGET.LESSON_CLASS)
         if (last_result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "学期信息获取失败!(数据错误)" })
+            ToastModule.show({ text: "学期信息获取失败!(数据错误)" })
         }
         return last_result
     }
@@ -125,7 +123,7 @@ export default class Lesson {
         //执行sql语句
         const res_update = await this.sql?.executeSql(sqls, ERROR_TARGET.LESSON_CLASS)
         if (res_update?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "课程名称信息更新失败!(数据错误)" })
+            ToastModule.show({ text: "课程名称信息更新失败!(数据错误)" })
         }
         //最终信息
         const last_result = await this.getLessonName()
@@ -136,7 +134,7 @@ export default class Lesson {
         //最终的结果
         const last_result = await this.sql?.selectSql(`select * from ${LESSON_TABLES_NAME.NAME}`, ERROR_TARGET.LESSON_CLASS)
         if (last_result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "课程名称信息更新失败!(数据错误)" })
+            ToastModule.show({ text: "课程名称信息更新失败!(数据错误)" })
         }
         return last_result
     }
@@ -153,9 +151,9 @@ export default class Lesson {
             name: item,
             semester: semesterTag
         })) as ILessonNameItem[]
-        // console.log(lesson_name_arr)
         //更新
         const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name_arr, semesterTag)
+        console.log(lesson_name_result)
         //更新temp
         await this.updateLessonTempStorage(data, lesson_name_result, semesterTag)
 
@@ -182,7 +180,7 @@ export default class Lesson {
     async updateLessonTempStorage(rawData: ILessonItemsResult[], lessonNames: ILessonNameItem[], semester: string) {
         const reset_result = await this.resetLessonTempStorage()
         if (reset_result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "课程数据缓存清除失败" })
+            ToastModule.show({ text: "课程数据缓存清除失败" })
             return
         }
         //首先解析数据 ，递归为一维数组
@@ -208,7 +206,7 @@ export default class Lesson {
             , ERROR_TARGET.LESSON_CLASS
         )
         if (result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            Toast.show({ text: "课程数据信息获取失败!" })
+            ToastModule.show({ text: "课程数据信息获取失败!" })
         } else {
             result.data = Filter_ILessonTempResult(result.data)
         }

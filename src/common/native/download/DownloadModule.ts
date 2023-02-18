@@ -8,10 +8,6 @@ export interface IDownloadTask extends IDownloadInfo {
 }
 
 export default class DownloadModule {
-    // @ts-ignore
-    private static MODULE: IDownloadModuleNative = uni.requireNativePlugin("anydoor_download")
-    //监听
-    private static instance: DownloadModule | null = null
 
     //订阅者
     private static suscriber: Array<Function> = []
@@ -26,29 +22,29 @@ export default class DownloadModule {
     private constructor() { }
 
     static getInstance(): DownloadModule {
-        if (DownloadModule.instance === null) {
-            DownloadModule.instance = new DownloadModule()
+        if (uni.$anydoor.DownloadModule === undefined) {
+            uni.$anydoor.DownloadModule = new DownloadModule()
             //初始化
-            DownloadModule.MODULE && DownloadModule.MODULE.register(debugTool(res => {
+            uni.$anydoor_native.Download_Module && uni.$anydoor_native.Download_Module.register(debugTool(res => {
                 //获取任务列表,
-                DownloadModule.MODULE.getTaskList(debugTool((res) => {
+                uni.$anydoor_native.Download_Module.getTaskList(debugTool((res) => {
                     res.data?.forEach((item) => {
                         DownloadModule.tasks.push(item)
                     })
                     console.log(DownloadModule.tasks)
                 }))
                 //创建监听器
-                DownloadModule.MODULE.listen(debugTool((res) => {
+                uni.$anydoor_native.Download_Module.listen(debugTool((res) => {
                     DownloadModule.listenCallBack(res)
                 }))
 
             }))
         }
-        return DownloadModule.instance
+        return uni.$anydoor.DownloadModule
     }
 
     create(url: string): void {
-        DownloadModule.MODULE && DownloadModule.MODULE.create({
+        uni.$anydoor_native.Download_Module && uni.$anydoor_native.Download_Module.create({
             url: url,
             mode: DOWNLOAD_PATH_MODE.EXTERNAL_FILE_DIR,
             path: 'download',
@@ -59,7 +55,7 @@ export default class DownloadModule {
                     text: "任务创建成功!"
                 })
                 //将新任务加入
-                res.data?.taskId && DownloadModule.MODULE.getDetail(res.data?.taskId, (result: IResult<IDownloadInfo>) => {
+                res.data?.taskId && uni.$anydoor_native.Download_Module.getDetail(res.data?.taskId, (result: IResult<IDownloadInfo>) => {
                     result.data && DownloadModule.tasks.push(result.data)
                 })
             }
