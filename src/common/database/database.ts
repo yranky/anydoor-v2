@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:31:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 17:37:14
+ * @LastEditTime: 2023-02-18 14:57:31
  * @FilePath: \anydoor-v2\src\common\database\database.ts
  * @Description: 数据库一些常量
  * 
@@ -26,31 +26,31 @@ export enum DATA {
     SETTTING = "setting"
 }
 
-let path: string = "_doc/"
+let path: string = "anydoor/"
 
-if (uni.getSystemInfoSync().platform == "android") {
-    try {
-        const context = plus.android.runtimeMainActivity()
-        const t = plus.android.invoke(context, "getFilesDir")
-        const p = plus.android.invoke(t, "getAbsolutePath")
-        const newP: string = p + "/db_storage/"
-        if (p !== null) {
+// if (uni.getSystemInfoSync().platform == "android") {
+//     try {
+//         const context = plus.android.runtimeMainActivity()
+//         const t = plus.android.invoke(context, "getFilesDir")
+//         const p = plus.android.invoke(t, "getAbsolutePath")
+//         const newP: string = p + "/db_storage/"
+//         if (p !== null) {
 
-            //创建目录
-            const fileContext = plus.android.newObject("java.io.File", newP)
-            const isExist = plus.android.invoke(fileContext, "exists")
-            //如果不存在则先创建
-            if (!isExist) {
-                plus.android.invoke(fileContext, "mkdirs")
-                plus.android.invoke(fileContext, "exists")
-            }
-            //赋值过去
-            path = newP
-        }
-    } catch (e) {
-        ErrorHandler.push(ERROR_TARGET.DATEBASE_FILES, JSON.stringify(e))
-    }
-}
+//             //创建目录
+//             const fileContext = plus.android.newObject("java.io.File", newP)
+//             const isExist = plus.android.invoke(fileContext, "exists")
+//             //如果不存在则先创建
+//             if (!isExist) {
+//                 plus.android.invoke(fileContext, "mkdirs")
+//                 plus.android.invoke(fileContext, "exists")
+//             }
+//             //赋值过去
+//             path = newP
+//         }
+//     } catch (e) {
+//         ErrorHandler.push(ERROR_TARGET.DATEBASE_FILES, JSON.stringify(e))
+//     }
+// }
 
 
 export const databases = {
