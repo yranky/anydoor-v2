@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:31:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 14:57:31
+ * @LastEditTime: 2023-02-18 15:12:50
  * @FilePath: \anydoor-v2\src\common\database\database.ts
  * @Description: 数据库一些常量
  * 
@@ -26,7 +26,7 @@ export enum DATA {
     SETTTING = "setting"
 }
 
-let path: string = "anydoor/"
+let path: string = "anydoor_"
 
 // if (uni.getSystemInfoSync().platform == "android") {
 //     try {
