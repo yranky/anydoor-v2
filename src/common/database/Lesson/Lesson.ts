@@ -12,7 +12,7 @@ import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 18:48:32
+ * @LastEditTime: 2023-02-17 22:28:33
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -20,19 +20,22 @@ import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
  */
 export default class Lesson {
     //对象
-    private static instance = new Lesson()
+    private static instance: Lesson | null = null
     //sqlite对象
     private sql: SQLite | undefined
+    //构造函数
+    private constructor() { }
 
     //获取实例对象
-    static getInstance() {
+    static async getInstance() {
+        if (Lesson.instance === null) {
+            Lesson.instance = new Lesson()
+            //初始化工作
+            Lesson.instance.sql = new SQLite(DATA.LESSON)
+            //需要等待完成才能
+            await Lesson.instance.initDataTable()
+        }
         return Lesson.instance
-    }
-    //构造函数
-    private constructor() {
-        //初始化sql
-        this.sql = new SQLite(DATA.LESSON)
-        this.initDataTable()
     }
 
     //初始化课程数据
@@ -153,7 +156,6 @@ export default class Lesson {
         // console.log(lesson_name_arr)
         //更新
         const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name_arr, semesterTag)
-        console.log(lesson_name_result)
         //更新temp
         await this.updateLessonTempStorage(data, lesson_name_result, semesterTag)
 

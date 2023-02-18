@@ -24,6 +24,8 @@
             "autoclose": true,
             "delay": 0
         },
+        "darkmode": true,
+        "themeLocation": "theme.json",
         /* 模块配置 */
         "modules": {
             /* 使用Canvas模块 */
@@ -113,7 +115,7 @@
             }
         },
         "uniStatistics": {
-            "enable": false
+            "enable": true
         },
         "nativePlugins": {
             "anydoor_ui_tool": {
@@ -160,35 +162,35 @@
         },
         "usingComponents": true,
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-alipay": {
         "usingComponents": true,
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-baidu": {
         "usingComponents": true,
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-toutiao": {
         "usingComponents": true,
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "uniStatistics": {
-        "enable": false,
+        "enable": true,
         "version": "1"
     },
     "vueVersion": "3",
     "h5": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         },
         "title": "任意门",
         "router": {
@@ -206,32 +208,32 @@
     },
     "mp-jd": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-kuaishou": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-lark": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "mp-qq": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "quickapp-webview-huawei": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     },
     "quickapp-webview-union": {
         "uniStatistics": {
-            "enable": false
+            "enable": true
         }
     }
 }

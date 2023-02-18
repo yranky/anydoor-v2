@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 12:43:08
+ * @LastEditTime: 2023-02-17 22:10:07
  * @FilePath: \anydoor-v2\src\common\native\bugly\BuglyModule.ts
  * @Description: 初始化
  * 
@@ -27,7 +27,6 @@ export default class BuglyModule {
             deviceModel: config.bugly.deviceModel,
             debug: config.global.debug
         }, debugTool((res) => {
-            console.log(res)
             if (!res.success) {
                 ToastModule.show({
                     text: '统计模块初始化失败!' + res.msg
