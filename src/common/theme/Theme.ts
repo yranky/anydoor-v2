@@ -8,6 +8,7 @@ import ERROR_TARGET from "../errorHandler/ERROR_TARGET";
 import { insertKeyAndValueDefault } from "../database/tools";
 import ThemeFilter from "./ThemeFilter";
 import ToastModule from "../native/toast/ToastModule";
+import ToolModule from "../native/tool/ToolModule";
 
 export default class Theme {
     //sqlite对象
@@ -36,10 +37,12 @@ export default class Theme {
     setSystemFirst(open: boolean) {
         this.follow_system = open
         if (open === true) {
-            //设置跟随系统
-            plus.nativeUI.setUIStyle("auto")
             //获取当前状态
             const currentMode = uni.getSystemInfoSync().theme
+            //设置跟随系统
+            // plus.nativeUI.setUIStyle("auto")
+            if (currentMode === "dark") ToolModule.setDark(true)
+            else ToolModule.setDark(false)
             //如果是夜间模式,修改tmui的样式
             this.changeTheme(currentMode === "dark" ? true : false)
             this.sql?.executeSql([
@@ -50,8 +53,10 @@ export default class Theme {
         else {
             //获取当前的系统状态
             const currentMode = uni.getSystemInfoSync().theme
+            // plus.nativeUI.setUIStyle(currentMode as "light" | "auto" | "dark")
+            if (currentMode === "dark") ToolModule.setDark(true)
+            else ToolModule.setDark(false)
 
-            plus.nativeUI.setUIStyle(currentMode as "light" | "auto" | "dark")
             //修改tmui样式
             this.changeTheme(currentMode === "dark" ? true : false)
             //设置系统状态到数据库
@@ -91,12 +96,16 @@ export default class Theme {
         //如果是跟随系统
         if (res.follow_system === true) {
             //设置跟随系统
-            plus.nativeUI.setUIStyle("auto")
+            // plus.nativeUI.setUIStyle("auto")
+            if (currentMode === "dark") ToolModule.setDark(true)
+            else ToolModule.setDark(false)
             //修改tmui样式
             const store = useTmpiniaStore()
             this.changeTheme(currentMode === "dark" ? true : false)
         } else {
-            plus.nativeUI.setUIStyle(res.current_mode)
+            // plus.nativeUI.setUIStyle(res.current_mode)
+            if (currentMode === "dark") ToolModule.setDark(true)
+            else ToolModule.setDark(false)
             //修改tmui样式
             this.changeTheme(res.current_mode === "dark" ? true : false)
         }

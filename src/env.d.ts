@@ -46,7 +46,8 @@ declare global {
     BTongji_Module: IBTonbgjiModuleNative,
     Bugly_Module: IBuglyModuleNative,
     Download_Module: IDownloadModuleNative,
-    Toast_Module: IToastModuleNative
+    Toast_Module: IToastModuleNative,
+    Tool_Module: any
   }
   interface Uni {
     $anydoor: $anydoor,
