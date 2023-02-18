@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 16:01:15
+ * @LastEditTime: 2023-02-18 22:42:58
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -136,6 +136,8 @@ const updateSwiper = (e: {
 	const s = current - currentSwiperIndex.value
 	//当前的符号，如果是1就是加，-1就是减
 	let r = 1
+	//如果相等
+	if (currentSwiperIndex.value === e.detail.current) r = 0
 	//判断是加还是减
 	currentSwiperIndex.value = current
 	//更新信息,触发的是上一个

@@ -2,120 +2,120 @@
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
 		<anydoor-webview ref="webview" :src="src" :config="{
-						height:webviewHeight+'px',
-						windowsAutomatically:true,
-						multipleWindow:true,
-						zoom:false,
-						cache:false
-					}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
-			@onImagePress="onImagePress">
+			height: webviewHeight + 'px',
+			windowsAutomatically: true,
+			multipleWindow: true,
+			zoom: false,
+			cache: false
+		}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
+			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate" @onImagePress="onImagePress">
 		</anydoor-webview>
 	</tm-app>
 </template>
 
 <script setup lang="ts">
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	// import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
-	import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
-	import {
-		computed,
-		getCurrentInstance,
-		ref,
-		reactive,
-		nextTick
-	} from "vue"
-	import {
-		onReady,
-		onLoad
-	} from "@dcloudio/uni-app"
-	import {
-		throttle
-	} from "lodash"
-	const {
-		proxy
-	} = getCurrentInstance()
-	// 主题工具
-	import theme from "@/tmui/tool/theme/theme"
-	const dom = uni.requireNativePlugin("dom")
-	//webview的高度
-	const webviewHeight = ref(0)
-	//webview的style样式
-	const webviewStyle = reactive({
-		progress: {
-			color: theme.getColor("primary").value
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+// import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
+import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
+import {
+	computed,
+	getCurrentInstance,
+	ref,
+	reactive,
+	nextTick
+} from "vue"
+import {
+	onReady,
+	onLoad
+} from "@dcloudio/uni-app"
+import {
+	throttle
+} from "lodash"
+const {
+	proxy
+} = getCurrentInstance()
+// 主题工具
+import theme from "@/tmui/tool/theme/theme"
+const dom = uni.requireNativePlugin("dom")
+//webview的高度
+const webviewHeight = ref(0)
+//webview的style样式
+const webviewStyle = reactive({
+	progress: {
+		color: theme.getColor("primary").value
+	}
+})
+const loadWebviewHeight = throttle(function () {
+	//加载高度
+	dom.getComponentRect(proxy.$refs.navBar, (option) => {
+		if (option && option.result) {
+			const navBarHeight = option.size.height
+			//如果没获取到
+			if (navBarHeight === 0) loadWebviewHeight()
+			else {
+				webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+			}
+			// console.log(uni.getSystemInfoSync().windowHeight - navBarHeight)
+			// console.log("windowHeight", uni.getSystemInfoSync().windowHeight)
+			// console.log("navBarHeight", navBarHeight)
+			// console.log("webviewHeight", webviewHeight.value)
 		}
 	})
-	const loadWebviewHeight = throttle(function() {
-		//加载高度
-		dom.getComponentRect(proxy.$refs.navBar, (option) => {
-			if (option && option.result) {
-				const navBarHeight = option.size.height
-				//如果没获取到
-				if (navBarHeight === 0) loadWebviewHeight()
-				else {
-					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
-				}
-				// console.log(uni.getSystemInfoSync().windowHeight - navBarHeight)
-				// console.log("windowHeight", uni.getSystemInfoSync().windowHeight)
-				// console.log("navBarHeight", navBarHeight)
-				// console.log("webviewHeight", webviewHeight.value)
-			}
-		})
-	}, 200)
-	const webview = ref(null)
-	//拦截的url
-	const interceptUrl = (e) => {
-		console.log(e)
-	}
-	//标题
-	const navTitle: {
-		value: string
-	} = ref("")
-	const titleUpdate = (e) => {
-		//不显示网址
-		navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
-	}
-	//加载完成之后，定义拦截
-	const pageReady = (e) => {
-		// console.log(e)
-		// webview.value.sendMessage("张三的消息")
-		// webview.value.getUrl().then(url => {
-		// 	console.log(url);
-		// })
-		// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
-	}
-	//页面加载异常
-	const pageError = (e) => {
-		console.log(e)
-	}
-	const onNewWindow = (e) => {
-		uni.showToast({
-			icon: "none",
-			title: JSON.stringify(e)
-		})
-		uni.navigateTo({
-			url: "/pages/article/article-web?url=" + encodeURIComponent(e.url),
-			animationType: "slide-in-right"
-		})
-	}
-	// const src = ref("http://nas.douye.top:10000/webview")
-	const src = ref("http://usc.douyeblog.top")
-	onLoad((e) => {
-		if (e && e.url) src.value = decodeURIComponent(e.url)
+}, 200)
+const webview = ref(null)
+//拦截的url
+const interceptUrl = (e) => {
+	console.log(e)
+}
+//标题
+const navTitle: {
+	value: string
+} = ref("")
+const titleUpdate = (e) => {
+	//不显示网址
+	navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
+}
+//加载完成之后，定义拦截
+const pageReady = (e) => {
+	// console.log(e)
+	// webview.value.sendMessage("张三的消息")
+	// webview.value.getUrl().then(url => {
+	// 	console.log(url);
+	// })
+	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
+}
+//页面加载异常
+const pageError = (e) => {
+	console.log(e)
+}
+const onNewWindow = (e) => {
+	uni.showToast({
+		icon: "none",
+		title: JSON.stringify(e)
 	})
-	//加载webview的配置
-	onReady(() => {
-		loadWebviewHeight()
+	uni.navigateTo({
+		url: "/pages/article/article-web?url=" + encodeURIComponent(e.url),
+		animationType: "slide-in-right"
 	})
-	const onImagePress = (e) => {
-		console.log(e)
-	}
+}
+// const src = ref("http://nas.douye.top:10000/webview")
+// const src = ref("http://usc.douyeblog.top")
+const src = ref("http://faisalman.github.io/ua-parser-js/")
+onLoad((e) => {
+	if (e && e.url) src.value = decodeURIComponent(e.url)
+})
+//加载webview的配置
+onReady(() => {
+	loadWebviewHeight()
+})
+const onImagePress = (e) => {
+	console.log(e)
+}
 </script>
 
 <style lang="scss" scoped>
-	.error-show {
-		margin-top: 200rpx;
-	}
+.error-show {
+	margin-top: 200rpx;
+}
 </style>

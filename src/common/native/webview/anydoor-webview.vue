@@ -10,13 +10,13 @@
 		</view>
 		<view :style="{ height: info.error.show ? 0 : '' }">
 			<anydoorNativeWebview ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
-				:agent="props.userAgent" @onPageStart="pageStart" @onPageReady="pageReady"
+				:userAgent="props.userAgent" @onPageStart="pageStart" @onPageReady="pageReady"
 				@onLoadResource="loadResource" @onUrlLoadingPatern="intercept" @onError="pluginError"
 				@onPageError="pageError" @onPageHttpError="httpError" @onPageSSLError="sslError"
-				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate"
-				@onPageAlert="pageAlert" @onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole"
-				@onNewWindow="onNewWindow" @onLinkPress="onLinkPress" @onImagePress="onImagePress"
-				@onLinkClick="onLinkClick" @onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme"/>
+				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate" @onPageAlert="pageAlert"
+				@onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole" @onNewWindow="onNewWindow"
+				@onLinkPress="onLinkPress" @onImagePress="onImagePress" @onLinkClick="onLinkClick"
+				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme" />
 		</view>
 	</view>
 </template>
@@ -64,10 +64,9 @@ const props = defineProps({
 	},
 	userAgent: {
 		type: String,
-		default: "",
+		default: plus.navigator.getUserAgent(),
 	},
 })
-
 import {
 	ACTION as NETErrorAction
 } from "@/common/network/NETError"

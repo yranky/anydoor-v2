@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:31:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 15:29:44
+ * @LastEditTime: 2023-02-18 20:19:57
  * @FilePath: \anydoor-v2\src\common\database\database.ts
  * @Description: 数据库一些常量
  * 
@@ -31,8 +31,16 @@ let path: string = "_doc/"
 if (uni.getSystemInfoSync().platform == "android") {
     try {
         const context = plus.android.runtimeMainActivity()
-        const t = plus.android.invoke(context, "getDataDir")
-        const p = plus.android.invoke(t, "getAbsolutePath")
+        let t = plus.android.invoke(context, "getDataDir")
+        let p = plus.android.invoke(t, "getAbsolutePath")
+        //适配低版本安卓，使用getFilesDir
+        if (t === null) {
+            t = plus.android.invoke(context, "getFilesDir")
+            p = plus.android.invoke(t, "getAbsolutePath")
+            //split
+            p = p.split("/")
+            p = p.slice(0, p.length - 1).join("/")
+        }
         const newP: string = p + "/databases/anydoor/"
         if (p !== null) {
 
