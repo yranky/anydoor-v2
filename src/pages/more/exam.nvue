@@ -1,15 +1,39 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2022-08-08 10:15:29
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-09 21:04:39
+ * @FilePath: \anydoor-v2\src\pages\more\exam.nvue
+ * @Description: 考试列表
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="考试查询"></tm-navbar>
-
+		<anydoorPage>
+			<template #navBar>
+				<tm-navbar title="考试查询"></tm-navbar>
+			</template>
+			<template #content>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="概率论与数理统计" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+			</template>
+		</anydoorPage>
 	</tm-app>
 </template>
 
 <script lang="ts" setup>
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCard from "@/tmui/components/tm-card/tm-card.vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

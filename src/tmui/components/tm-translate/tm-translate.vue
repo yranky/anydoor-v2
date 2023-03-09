@@ -1,20 +1,34 @@
 <template>
-  <view ref="bodywk" @click="hanlder" :class="[customClass, 'overflow']" :style="[
-    computedHeight ? { height: computedHeight } : '',
-    computedWidth ? { width: computedWidth } : '',
-    customCSSStyle,
-  ]">
+  <view
+    ref="bodywk"
+    @click="hanlder"
+    :class="[customClass, 'overflow']"
+    :style="[
+      computedHeight ? { height: computedHeight } : '',
+      computedWidth ? { width: computedWidth } : '',
+      customCSSStyle,
+    ]"
+  >
     <!-- #ifdef APP-NVUE -->
-    <view v-if="isLoadEl" ref="nvueElAni" :animation="animationData"
-      :class="['flex-col flex trani', animationName + reverseAniPrefxname, customClass]">
+    <view
+      v-if="isLoadEl"
+      ref="nvueElAni"
+      :animation="animationData"
+      :class="['flex-col flex trani', animationName + reverseAniPrefxname, customClass]"
+    >
       <slot name="default"></slot>
     </view>
     <!-- #endif -->
     <!-- #ifndef APP-NVUE -->
-    <view v-if="isLoadEl" ref="nvueElAni" :style="{
-      transitionDuration: `${props.duration}ms`,
-      transitionTimingFunction: 'ease',
-    }" :class="['flex-col flex trani', animationClassName, customClass]">
+    <view
+      v-if="isLoadEl"
+      ref="nvueElAni"
+      :style="{
+        transitionDuration: `${props.duration}ms`,
+        transitionTimingFunction: 'ease',
+      }"
+      :class="['flex-col flex trani', animationClassName, customClass]"
+    >
       <slot name="default"></slot>
     </view>
     <!-- #endif -->
@@ -160,8 +174,8 @@ function play() {
   clearTimeout(tmid.value);
   nextTick(function () {
     tmid.value = setTimeout(function () {
-      emits("start");
-      nvueAmatons();
+		emits("start");
+		nvueAmatons();
     }, 50);
   });
   // #endif
@@ -267,12 +281,12 @@ function noNvueAmations() {
     } else {
       animationClassName.value = animationName.value + "-reverse";
     }
-    tmid.value = setTimeout(() => {
-      emits("end");
-    }, props.duration);
-
+	tmid.value = setTimeout(() => {
+	  emits("end");
+	}, props.duration);
+	
   }, 20);
-
+  
 }
 </script>
 
@@ -280,7 +294,6 @@ function noNvueAmations() {
 .fade {
   opacity: 0;
 }
-
 .fade-reverse {
   opacity: 1;
 }

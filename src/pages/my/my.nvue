@@ -22,9 +22,17 @@
 				<view :style="{ width: '100%', height: statusBarHeight, marginTop: '70rpx' }"></view>
 
 				<navigator url="/pages/article/article-web"><text>111</text></navigator>
+				<navigator url="/pages/article/article"><text>111</text></navigator>
 				<navigator url="/pages/user/login"><text>222</text></navigator>
 				<navigator url="/pages/mprogram/mprogram"><text>333</text></navigator>
 				<navigator url="/pages/setting/setting"><text>333</text></navigator>
+				<navigator url="/pages/article/list"><text>文章列表</text></navigator>
+				<navigator url="/pages/notice/list"><text>通知列表</text></navigator>
+				<navigator url="/pages/notice/detail"><text>通知详情</text></navigator>
+				<navigator url="/pages/more/exam"><text>考试查询</text></navigator>
+				<navigator url="/pages/more/score"><text>成绩查询</text></navigator>
+				<navigator url="/pages/more/plan"><text>教学计划</text></navigator>
+				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
 
 				<!-- 用户主信息 -->
 				<navigator url="/pages/my/detail">
@@ -96,8 +104,10 @@
 				<tm-divider :border="5"></tm-divider>
 				<view>
 					<!-- <tm-cell :margin="[20, 0]" :titleFontSize="32" title="应用中心" transprent> </tm-cell> -->
-					<tm-cell :margin="[20, 0]" :titleFontSize="32" title="设置" transprent> </tm-cell>
-					<tm-cell :margin="[20, 0]" :titleFontSize="32" title="我的下载" transprent> </tm-cell>
+					<tm-cell @click="linkTo('/pages/setting/setting')" :margin="[20, 0]" :titleFontSize="32" title="设置"
+						transprent> </tm-cell>
+					<tm-cell @click="linkTo('/pages/download/download')" :margin="[20, 0]" :titleFontSize="32" title="我的下载"
+						transprent> </tm-cell>
 				</view>
 				<tm-divider :border="5"></tm-divider>
 				<!-- 菜单功能 -->
@@ -279,6 +289,7 @@ import {
 	throttle
 } from "lodash"
 
+import { linkTo } from "@/common/utils/link"
 
 const store = useTmpiniaStore();
 const {
