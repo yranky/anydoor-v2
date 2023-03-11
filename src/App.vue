@@ -13,6 +13,7 @@ import {
 	onLaunch
 } from "@dcloudio/uni-app"
 import init from "./init";
+import { listArticle } from "./common/service/article";
 
 onLaunch(function () {
 	//修改userAgent
@@ -25,6 +26,11 @@ onLaunch(function () {
 	plus.navigator.setLogs(true)
 	//初始化
 	init()
+
+	listArticle({}).then(data => {
+		console.log(data)
+	})
+
 })
 </script>
 <style>

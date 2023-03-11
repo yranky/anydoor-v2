@@ -47,8 +47,10 @@
         "@dcloudio/uni-mp-weixin": "3.0.0-3061820230117001",
         "@dcloudio/uni-quickapp-webview": "3.0.0-3061820230117001",
         "echarts": "5.3.2",
+        "json-bigint": "^1.0.0",
         "lodash": "^4.17.21",
         "pinia": "^2.0.17",
+        "uni-axios-ts": "^1.0.4",
         "vue": "^3.2.45",
         "vue-i18n": "^9.1.9"
     },
@@ -59,6 +61,7 @@
         "@dcloudio/uni-stacktracey": "3.0.0-3061820230117001",
         "@dcloudio/uvm": "^0.1.1",
         "@dcloudio/vite-plugin-uni": "3.0.0-3061820230117001",
+        "@types/json-bigint": "^1.0.1",
         "@types/lodash": "^4.14.182",
         "@types/node": "^17.0.45",
         "autoprefixer": "^10.4.8",
