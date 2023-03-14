@@ -1,34 +1,73 @@
+/*
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-03-11 21:50:42
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-12 16:04:08
+ * @FilePath: \anydoor-v2\src\common\service\login.ts
+ * @Description: login service
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+ */
 import { isEmpty } from 'lodash'
 import CODE, { restful, success, TYPE } from '../define/code'
 import { post } from '../request/http'
+import { IUserRuleResult } from '../IForm/login/login'
+import ToastModule from '../native/toast/ToastModule'
 
-// 根据token登录
-const loginWithToken = async (code: string | undefined, deviceId: string): Promise<restful> => {
-  if (isEmpty(code) || isEmpty(deviceId)) {
-    return {
-      code: CODE.ERROR,
-      msg: '参数错误'
-    }
-  }
-  const data: any = await post('login_code', {
-    code,
-    device_id: deviceId
-  })
-  if (data.code === CODE.SUCCESS) {
-    // 保存token
-    localStorage.setItem('token', data.data.token)
-    localStorage.setItem('refresh_token', data.data.refresh_token)
-    return success
+
+//获取用户验证规则
+export async function getUserRule(): Promise<IUserRuleResult> {
+  const data: any = await post('user_rule', {})
+  if (data.code !== CODE.SUCCESS) {
+    ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
   } else {
-    return {
-      code: CODE.ERROR,
-      msg: data.msg
-    }
+    try {
+      for (let key in data.data) {
+        data.data[key].reg = data.data[key].reg.split('/').join("")
+      }
+    } catch { }
   }
+  return data.data || {}
 }
 
-// 刷新token
-const refreshToken = async (): Promise<restful> => {
+//登录操作
+export async function login(formData: any): Promise<restful<any>> {
+  const data: any = await post('user_login', formData)
+  if (data.code !== CODE.SUCCESS) {
+    ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+  }
+  return data || {}
+}
+
+
+
+// 根据token登录
+// const loginWithToken = async (code: string | undefined, deviceId: string): Promise<restful> => {
+//   if (isEmpty(code) || isEmpty(deviceId)) {
+//     return {
+//       code: CODE.ERROR,
+//       msg: '参数错误'
+//     }
+//   }
+//   const data: any = await post('login_code', {
+//     code,
+//     device_id: deviceId
+//   })
+//   if (data.code === CODE.SUCCESS) {
+//     // 保存token
+//     localStorage.setItem('token', data.data.token)
+//     localStorage.setItem('refresh_token', data.data.refresh_token)
+//     return success
+//   } else {
+//     return {
+//       code: CODE.ERROR,
+//       msg: data.msg
+//     }
+//   }
+// }
+
+// // 刷新token
+export async function refreshToken(): Promise<restful> {
   const refreshTokenItem = localStorage.getItem('refresh_token')
   if (isEmpty(refreshTokenItem)) {
     return {
@@ -56,7 +95,8 @@ const refreshToken = async (): Promise<restful> => {
   }
 }
 
-export {
-  loginWithToken,
-  refreshToken
-}
+// export {
+//   // loginWithToken,
+//   // refreshToken,
+//   getUserRule
+// }

@@ -1,22 +1,33 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2022-08-06 07:05:05
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-12 18:55:28
+ * @FilePath: \anydoor-v2\src\pages\user\login.nvue
+ * @Description: 登录
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
 <template>
 	<tm-app ref="app" color="whiteBg">
+		<tm-message ref="msg"></tm-message>
 		<tm-navbar title=""></tm-navbar>
 		<view style="margin: 10rpx 40rpx;">
-			<tm-tabs :itemFontSize="35" :activeFontSize="50" :itemHeight="80" :list="loginTab" :height="80"
-				default-name="1" :style="{
-				margin:'0 10rpx'
-			}">
+			<tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
+				:list="loginTab" :height="80" :default-name="1" :style="{
+					margin: '0 10rpx'
+				}">
 			</tm-tabs>
 			<view style="margin: 60rpx 0;">
-				<tm-input placeholder="用户名/手机号/邮箱" transprent :margin="[0,20]"></tm-input>
-				<tm-input placeholder="密码" :margin="[0,20]" transprent></tm-input>
-				<tm-button :width="670" label="登录" :margin="[0,20]"></tm-button>
+				<tm-input v-model="form.user" placeholder="用户名/邮箱" transprent :margin="[0, 20]"></tm-input>
+				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
+				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
 				<view class="flex flex-row flex-between">
 					<anydoor-text text="忘记密码" color="grey"></anydoor-text>
 					<anydoor-text text="注册" color="primary"></anydoor-text>
 				</view>
 			</view>
-				<tm-divider align="center" label="第三方登录"></tm-divider>
+			<tm-divider align="center" label="第三方登录"></tm-divider>
 			<view>
 			</view>
 		</view>
@@ -24,21 +35,165 @@
 </template>
 
 <script lang="ts" setup>
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
-	import tmInput from "@/tmui/components/tm-input/tm-input.vue"
-	import tmButton from "@/tmui/components/tm-button/tm-button.vue"
-	import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
-	import {
-		ref
-	} from "vue"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
+import tmInput from "@/tmui/components/tm-input/tm-input.vue"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+import {
+	ref
+} from "vue"
+import { onLoad } from "@dcloudio/uni-app"
 
-	const loginTab = ref([{
-		key: "1",
-		title: "账号登录"
-	}, {
-		key: "3",
-		title: "验证码登录"
-	}])
+import { getUserRule, login } from "@/common/service/login"
+import { IUserRuleResult, LoginForm } from "@/common/IForm/login/login"
+import { LOGIN_TYPE } from "@/common/define/login"
+import ToastModule from "@/common/native/toast/ToastModule"
+import md5 from "md5"
+import useDeviceStore from "@/store/device"
+import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
+import User from "@/common/database/user/User"
+
+//加载
+const msg = ref<InstanceType<typeof tmMessage> | null>(null)
+
+//初始化
+onLoad(() => {
+	getUserRuleList()
+})
+
+//登录的表单
+const form = ref<LoginForm>({
+	username: "",
+	device_id: "",
+	password: "",
+	mail: "",
+	phone: "",
+	vercode: "",
+	code: "",
+	type: LOGIN_TYPE.USERNAME,
+	user: ''
+})
+
+//验证
+const formRule = ref<IUserRuleResult>({})
+
+//登录的形式
+const loginTab = ref([{
+	key: 1,
+	title: "账号"
+}, {
+	key: 2,
+	title: "手机号"
+},
+	// {
+	// 	key: 3,
+	// 	title: "验证码"
+	// }
+])
+const tabActive = ref<number>(1)
+
+//登录操作
+const doLogin = (): void => {
+	//收起键盘
+	uni.hideKeyboard()
+
+	msg.value && msg.value.show({ model: 'load', text: "登录中，请稍等" })
+	const postData: any = {
+		type: LOGIN_TYPE.USERNAME,
+		username: form.value.user,
+		device_id: useDeviceStore().$state.deviceId
+	}
+	//先判空
+	if (form.value.user.trim() === '') {
+		ToastModule.show({ text: '请输入用户名/邮箱/手机号' })
+		msg.value && msg.value.hide()
+		return;
+	}
+	//验证是不是用户名/邮箱
+	if (tabActive.value === 1) {
+		//说明是邮箱
+		if (form.value.user.trim().indexOf('@') > -1 && formRule.value.mail) {
+			//验证邮箱
+			const reg = new RegExp(formRule.value.mail.reg as string);
+			if (!reg.test(form.value.user.trim())) {
+				ToastModule.show({ text: formRule.value.mail.msg as string })
+				msg.value && msg.value.hide()
+				return;
+			}
+			//说明是邮箱登录
+			postData['type'] = LOGIN_TYPE.MAIL
+			postData['mail'] = form.value.user.trim()
+		} else if (formRule.value.username) {
+			//验证用户名
+			const reg = new RegExp(formRule.value.username.reg as string)
+			if (!reg.test(form.value.user.trim())) {
+				ToastModule.show({ text: formRule.value.username.msg as string })
+				msg.value && msg.value.hide()
+				return;
+			}
+			//说明是用户名登录
+			postData['type'] = LOGIN_TYPE.USERNAME
+			postData['username'] = form.value.user.trim()
+		}
+		//手机号登录
+	} else if (tabActive.value === 2) {
+		if (formRule.value.phone) {
+			//验证用户名
+			const reg = new RegExp(formRule.value.phone.reg as string)
+			if (!reg.test(form.value.user.trim())) {
+				ToastModule.show({ text: formRule.value.phone.msg as string })
+				msg.value && msg.value.hide()
+				return;
+			}
+			postData['type'] = LOGIN_TYPE.PHONE
+			postData['phone'] = form.value.user.trim()
+		} else {
+			if (form.value.user.trim() === '') {
+				ToastModule.show({ text: '请输入手机号' })
+				msg.value && msg.value.hide()
+				return;
+			}
+			postData['type'] = LOGIN_TYPE.PHONE
+			postData['phone'] = form.value.user.trim()
+		}
+	}
+	//验证密码
+	if (formRule.value.password) {
+		//验证用户名
+		const reg = new RegExp(formRule.value.password.reg as string)
+		if (!reg.test(form.value.password.trim())) {
+			ToastModule.show({ text: formRule.value.password.msg as string })
+			msg.value && msg.value.hide()
+			return;
+		}
+		postData['password'] = md5(form.value.password.trim())
+	} else {
+		if (form.value.password.trim() === '') {
+			ToastModule.show({ text: '请输入密码' })
+			msg.value && msg.value.hide()
+			return;
+		}
+		postData['password'] = md5(form.value.password.trim())
+	}
+
+	//进行登录操作
+	login(postData).then(res => {
+		console.log(res)
+	}).then(async res => {
+		//插入表中
+		(await User.getInstance()).insertUserAccount('1', '1')
+	}).finally(() => {
+		msg.value && msg.value.hide()
+	})
+
+}
+
+//加载表单验证规则
+const getUserRuleList = (): void => {
+	getUserRule().then(res => {
+		formRule.value = res
+	})
+}
 </script>

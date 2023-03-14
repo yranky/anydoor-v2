@@ -6,7 +6,11 @@ enum ERROR_TARGET {
     //common/database/database
     DATEBASE_FILES = "database_files",
     //common/theme
-    THEME_CLASS = "theme_class"
+    THEME_CLASS = "theme_class",
+    //common/database/device
+    DEVICE_CLASS = "device_class",
+    //common/database/class
+    USER_CLASS = "user_class"
 }
 
 export default ERROR_TARGET

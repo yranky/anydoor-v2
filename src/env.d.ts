@@ -21,6 +21,8 @@ import IBTonbgjiModuleNative from "./common/native/baidu_tongji/IBTongjiModule"
 import IBuglyModuleNative from "./common/native/bugly/IBuglyModule"
 import IDownloadModuleNative from "./common/native/download/IDownloadModule"
 import IToastModuleNative from "./common/native/toast/IToastModule"
+import Device from "./common/database/device/Device"
+import User from "./common/database/user/User"
 
 declare module '*.vue' {
   import { DefineComponent } from 'vue'
@@ -38,7 +40,9 @@ declare global {
     BTongjiModule?: BTongjiModule,
     BuglyModule?: BuglyModule,
     DownloadModule?: DownloadModule,
-    ToastModule?: ToastModule
+    ToastModule?: ToastModule,
+    Device?: Device,
+    User?: User
   }
   interface $anydoor_native {
     SQLite_Module: any,

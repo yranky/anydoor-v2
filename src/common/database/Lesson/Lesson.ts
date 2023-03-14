@@ -1,13 +1,3 @@
-import { flatten } from "lodash"
-import ERROR_TARGET from "../../errorHandler/ERROR_TARGET"
-import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
-import databases, { DATA } from "../database"
-import { LESSON_TABLES_NAME } from "../tables/lesson"
-import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
-import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
-import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
-import ToastModule from "@/common/native/toast/ToastModule"
-
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
@@ -18,6 +8,16 @@ import ToastModule from "@/common/native/toast/ToastModule"
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+import { flatten } from "lodash"
+import ERROR_TARGET from "../../errorHandler/ERROR_TARGET"
+import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
+import databases, { DATA } from "../database"
+import { LESSON_TABLES_NAME } from "../tables/lesson"
+import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
+import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
+import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
+import ToastModule from "@/common/native/toast/ToastModule"
+
 export default class Lesson {
     //sqlite对象
     private sql: SQLite | undefined
