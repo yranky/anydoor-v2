@@ -22,3 +22,5 @@ export const theme = {
 	"vip": "#edc387",
 	"vipBg": "#2b3840"
 }
+
+export default theme
