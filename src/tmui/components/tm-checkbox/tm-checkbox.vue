@@ -26,7 +26,7 @@
         :borderStyle="props.borderStyle"
         :transprent="props.transprent"
         :padding="[0, 0]"
-        :margin="props.margin"
+        :margin="[16, 8]"
         :color="_disabled ? 'white' : props.color"
         :round="props.round"
         _class="flex-row flex-row-center-center"
@@ -93,7 +93,7 @@ import {
   watch,
   inject,
   getCurrentInstance,
-  PropType,
+  watchEffect,
   ComponentInternalInstance,
   ComputedRef,
   onMounted,
@@ -195,10 +195,6 @@ const props = defineProps({
     type: String,
     default: "opacity-5",
   },
-  margin:{
-    type:Array as PropType<number[]>,
-    default:()=>[16, 8]
-  }
 });
 let timed:any = NaN;
 const _checked = ref(props.defaultChecked ?? false);

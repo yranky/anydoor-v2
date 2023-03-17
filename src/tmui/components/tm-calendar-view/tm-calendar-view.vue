@@ -151,7 +151,6 @@ import monthDay from "./month-day.vue";
 import rangeDay from "./range-day.vue";
 import monthQuarter from "./month-quarter.vue";
 import tmSheet from "../tm-sheet/tm-sheet.vue";
-import * as dayjs from "../../tool/dayjs/esm/index";
 import {
   monthDayItem,
   dateItemStyle,
@@ -274,11 +273,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  /**modelStr的格式化输出选项，不会影响value值，只对输出值有效 */
-  format: {
-    type: String,
-    default: "YYYY/MM/DD",
-  },
 });
 const _value = ref(props.defaultValue);
 const _modelType = computed(() => props.model);
@@ -290,9 +284,7 @@ watch(
 watch(
   _value,
   () => {
-    let fmar = _value.value.map((el) => dayjs.default(el).format(props.format));
-    let fm = fmar.join("~");
-    emits("update:modelStr", fm);
+    emits("update:modelStr", _value.value.join("~"));
   },
   { deep: true }
 );

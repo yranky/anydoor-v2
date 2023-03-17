@@ -23,22 +23,22 @@
     <slot name="title">
       <tm-text
         v-if="props.title"
-        _class="pb-16"
+        _class="pb-12"
         :label="props.title"
         :font-size="30"
       ></tm-text>
     </slot>
     <view
-      class="flex tmDescriptions flex-wrap "
-      :style="[{ flexDirection: _cellWidth == 'auto' ? 'column' : 'row' }]"
+      class="flex tmDescriptions"
+      :style="[{ flexFlow: _cellWidth == 'auto' ? 'column' : 'row wrap' }]"
     >
       <slot>
-        <block v-for="(item, index) in _dataList" :key="index">
+        <view v-for="(item, index) in _dataList" :key="index">
           <tm-descriptions-item
             :label="item.label"
             :value="item.value"
           ></tm-descriptions-item>
-        </block>
+        </view>
       </slot>
     </view>
   </tm-sheet>
@@ -133,11 +133,6 @@ const props = defineProps({
     type: [String, Number],
     default: "",
   },
-  //定标签为等宽
-  width: {
-    type: [Number],
-    default: 0,
-  },
 });
 const _dataList = computed(() => {
   return props.data.map((el: any) => {
@@ -148,9 +143,6 @@ const _dataList = computed(() => {
   });
 });
 const _cellWidth = ref("0px");
-
-
-
 function nvueGetRect() {
   // #ifdef APP-PLUS-NVUE
   if (Number(props.column) <= 1) {
@@ -184,12 +176,11 @@ function nvueGetRect() {
     .boundingClientRect()
     .exec(function (res) {
       _cellWidth.value = res[0].width / Number(props.column) + "px";
-  
+
       if (res[0].width == 0) {
         nvueGetRect();
       }
     });
-  
   // #endif
   // #ifdef APP-VUE || H5
   if (Number(props.column) <= 1) {

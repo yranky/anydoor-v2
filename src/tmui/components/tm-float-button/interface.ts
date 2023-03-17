@@ -25,5 +25,4 @@ export interface actionsItem {
     fontColor?:string,
     linear?:string,
     linearDeep?:string
-    [key:string]:any
 }

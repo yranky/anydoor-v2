@@ -300,7 +300,6 @@ import theme from "@/tmui/tool/theme/theme"
 
 //账户背景
 const vipBg = computed(() => {
-	console.log(theme.getColor("vipBg"))
 	return theme.getColor("vipBg").value
 })
 //字体

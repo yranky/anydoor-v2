@@ -7,15 +7,13 @@
       :padding="props.padding"
     >
       <view :class="[`py-${props.margin[1]}`]">
-        <view v-if="props.showError&&props.showTopErrorGap" style="height: 30rpx"> </view>
+        <view v-if="props.showError" style="height: 30rpx"> </view>
         <view
           :class="[
             'flex',
             tmFormLayout == 'horizontal' ? 'flex-row ' : ' ',
             tmFormLayout == 'horizontal' && !props.align ? 'flex-row-center-start' : '',
-			<!-- #ifndef APP-NVUE -->
-            tmFormLayout == 'vertical' && !props.align ? 'flex-col' : '',
-			<!-- #endif -->
+            tmFormLayout == 'vertical' && !props.align ? '' : '',
             props.align,
             props.parentClass,
           ]"
@@ -161,11 +159,6 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  /**当显示错误信息标题时，是否隐藏顶部的间隙，当连续的布局时有用，可以减少之间的间隙大小。 */
-  showTopErrorGap:{
-    type: Boolean,
-    default: true,
-  },
   //校验不通过时，是否让标题跟着变化文字颜色，默认是。
   requiredTitleChangeColor: {
     type: Boolean,
@@ -255,7 +248,6 @@ provide(
     return defaultrs;
   })
 );
-// provide("tmFormItemVaildata",item.value.isRequiredError)
 const Rules = computed(() => {
   let defaultrs: Array<rulesItem> = [];
   if (Array.isArray(props?.rules)) {
@@ -318,17 +310,11 @@ watch(
     if (_required.value) {
       clearTimeout(tid);
       tid = setTimeout(async () => {
-        let vaild = await checkVal();
-        item.value = { ...(vaild) };
+        item.value = { ...(await checkVal()) };
         nextTick(() => {
           pushCom();
-          if(parent){
-           
-            parent?.checkValidate(vaild)
-            // item.value.isRequiredError = vaild.isRequiredError
-          }
         });
-      }, 200);
+      }, 300);
     }
   },
   { deep: true }

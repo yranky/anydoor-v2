@@ -2,7 +2,7 @@
   <view
     v-if="_width != '0px' && _width != '0%'"
     :style="[_width ? { width: _width } : '']"
-    class="flex flex-row flex-row-center-start "
+    class="flex flex-row flex-row-center-start py-8"
   >
     <view
       :style="[labelWidth ? { width: labelWidth + 'rpx' } : '']"

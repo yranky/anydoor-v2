@@ -1,7 +1,9 @@
+
+// #ifdef H5
+// var clipboardJS = require( from ''./clipboardJS'');
+// import clipboardJS from './clipboardJS'
+// #endif
 import { ComponentInternalInstance } from 'vue'
-interface Data {
-	[key: string]: any;
-}
 /**
  * 预览图片。
  @param {Object} url 必填 当前预览的图片链接。
@@ -11,184 +13,26 @@ interface Data {
 import { preview } from "./preview.js"
 export default preview;
 /**
- * 检测是否是数字
- * @param arg 待检测的字符
- * @param defaultNum 0,如果不符合值时设置默认值
- * @returns number类型数值
- */
-export function isNumber(arg: string | number | undefined | null, defaultNum = 0):number {
-	const p = Number(arg);
-	return p || defaultNum;
-}
-/**
- * 检测是否是字符串
- * @param arg 待检测的字符
- * @param defaultNum 默认"",如果不符合值是设置默认值
- * @returns 字符串
- */
-export function isString(arg: string | number | undefined | null, defaultStr = ""):string {
-	let p = "";
-	if (typeof arg === "string" && arg != null) {
-		p = String(arg);
-	} else p = defaultStr;
-	return p;
-}
-/**
- * 把一个数字进行分页返回数字数组
- * @param total 总数
- * @param pageSize 分页大小
- * @returns 数字数组
- */
-export function paginate(total: number, pageSize: number): number[] {
-	const pages = Math.ceil(total / pageSize);
-	const pageArr: number[] = [];
-	for (let i = 0; i < pages; i++) {
-		pageArr.push(i + 1);
-	}
-	return pageArr;
-}
-
-
-/**
-   * 取对象数据值（可深层次取值）
-   * @example getValue(data,"a.b.c")
-   * @param data 对象数据
-   * @param keys 键值
-   * @returns 返回值
-   * @description 注意不会去改变原来的数据
-   */
-export function getValue(data: Data, keys: string): any {
-	const keyArr = keys.split(".");
-	let result = { ...data };
-
-	for (const key of keyArr) {
-		result = result[key];
-		if (result === undefined || result === null) {
-			return result;
-		}
-	}
-
-	return result;
-}
-/**
- * 设置对象键值（可深层次设置值）
- * @example setValue(data,"a.b.c","haha")
- * @param data 对象数据
- * @param keys 键值
- * @returns 修改后的对象数据。
- * @description 改变原来的数据
- */
-/**
- * 设置对象键值（可深层次设置值）
- * @example setValue(data,"a.b.c","haha")
- * @param data 对象数据
- * @param keys 键值
- * @returns 修改后的对象数据。
- * @description 改变原来的数据
- */
-export function setValue(data: Data, keys: string, value: any): void {
-	const keyArr = keys.split(".");
-	let obj = data;
-	for (let i = 0; i < keyArr.length - 1; i++) {
-		const key = keyArr[i];
-		if (!(key in obj)) {
-			obj[key] = {};
-		}
-		obj = obj[key];
-	}
-	obj[keyArr[keyArr.length - 1]] = value;
-}
-/**
- * 计算并返回一个对象中最大的层级数
- * @param data 待检测对象数据
- * @returns 最大层级数
- */
-export function getMaxDepth(data: Data): number {
-	let maxDepth = 0;
-
-	function traverse(obj: any, depth: number): void {
-		if (typeof obj !== "object" || obj === null) {
-			maxDepth = Math.max(maxDepth, depth);
-			return;
-		}
-		for (const key in obj) {
-			// deno-lint-ignore no-prototype-builtins
-			if (obj.hasOwnProperty(key)) {
-				traverse(obj[key], depth + 1);
-			}
-		}
-	}
-
-	traverse(data, 0);
-
-	return maxDepth;
-}
-
-/**
- * 深度合并对象
- * @param FirstOBJ 需要合并的对象
- * @param SecondOBJ 被合并的对象
- * @returns 返回合并后的对象 
- */
-export function deepObjectMerge<T>(FirstOBJ: Data, SecondOBJ: Data): Data { // 深度合并对象
-	for (var key in SecondOBJ) {
-		FirstOBJ[key] = FirstOBJ[key] && FirstOBJ[key]?.toString() === "[object Object]" ?
-			deepObjectMerge(FirstOBJ[key], SecondOBJ[key]) : FirstOBJ[key] = SecondOBJ[key];
-	}
-	return FirstOBJ;
-}
-
-/**
 * 数据分组
 * @param {Array} oArr - 原数组列表
 * @param {Number} length - 单个数组长度
 * @return {Array}  arr - 分组后的新数组
 */
-export function splitData<T>(arr: Array<T> = [], size = 1): Array<T[]> {
-	const result = [];
-	for (let i = 0; i < arr.length; i += size) {
-		result.push(arr.slice(i, i + size));
-	}
-	return result as T[][];
-}
-
-
-/**
- * 深度克隆
- * @param {T} data 待大克隆复制的数据
- * @return {T} any
- */
-export function deepClone<T>(data: T): T {
-	// 对常见的“非”值，直接返回原来值
-	if (data === null || typeof data !== "object") {
-		return data;
-	}
-	if (Array.isArray(data)) {
-		const clone: any[] = [];
-		for (const item of data) {
-			clone.push(deepClone(item));
+export function splitData(oArr: Array<any> = [], length = 1) {
+	let arr: Array<any> = [];
+	let minArr: Array<any> = [];
+	oArr.forEach(c => {
+		if (minArr.length === length) {
+			minArr = [];
 		}
-		return clone as any;
-	}
-	if (data instanceof Date) {
-		return new Date(data.getTime()) as unknown as T;
-	}
-	if (data instanceof RegExp) {
-		const flags = data.flags;
-		return new RegExp(data.source, flags) as unknown as T;
-	}
-	if (typeof data === "function") {
-		return data as unknown as T;
-	}
-	const clone = {} as T;
-	for (const key in data) {
-		if (Object.prototype.hasOwnProperty.call(data, key)) {
-			clone[key] = deepClone(data[key]);
+		if (minArr.length === 0) {
+			arr.push(minArr);
 		}
-	}
-	return clone;
-}
+		minArr.push(c);
+	});
 
+	return arr;
+}
 
 /**
 * 剩余时间格式化
@@ -249,7 +93,7 @@ export function getDateToNewData(timestamp: number | string | Date = new Date().
 	var minC = diffValue / minute;
 
 	// 数值补0方法
-	var zero = function(value: number) {
+	var zero = function (value: number) {
 		if (value < 10) {
 			return '0' + value;
 		}
@@ -259,7 +103,7 @@ export function getDateToNewData(timestamp: number | string | Date = new Date().
 	// 使用
 	if (monthC > 12) {
 		// 超过1年，直接显示年月日
-		return (function() {
+		return (function () {
 			var date = new Date(timestamp);
 			return date.getFullYear() + '年' + zero(date.getMonth() + 1) + '月' + zero(date.getDate()) + '日';
 		})();
@@ -460,7 +304,7 @@ export function getQueryString(url: string, key: string): string {
  * rdix 随机因子,
  * length 取的长度.
  */
-export function getUid(rdix = 1, length = 12, isAddStr = false) {
+export function getUid(rdix = 1, length = 5, isAddStr = false) {
 	return Math.floor(Math.random() * rdix * Math.floor(Math.random() * Date.now())).toString(isAddStr ? 16 : 10).substring(0, length);
 }
 
@@ -471,7 +315,7 @@ export function getUid(rdix = 1, length = 12, isAddStr = false) {
 	@param {Number} wait 延迟的时间
 	@param{Boolean} immediate 是否要立即执行
 */
-var timeout: any = getUid(1)
+var timeout = getUid(1)
 export function debounce(func: Function, wait = 500, immediate = false) {
 	// 清除定时器
 	if (timeout !== null) clearTimeout(timeout);
@@ -499,14 +343,13 @@ export function debounce(func: Function, wait = 500, immediate = false) {
  * @param {Boolean} immediate 是否立即执行
  * @return null
  */
-var timesr:any = NaN
-export function throttle(func: Function, wait = 500, immediate = true,  flag = false) {
+export function throttle(func: Function, wait = 500, immediate = true, timer = 85688, flag = false) {
 	if (immediate) {
 		if (!flag) {
 			flag = true;
 			// 如果是立即执行，则在wait毫秒内开始时执行
 			typeof func === 'function' && func();
-			timesr = setTimeout(() => {
+			timer = setTimeout(() => {
 				flag = false;
 			}, wait);
 		}
@@ -514,7 +357,7 @@ export function throttle(func: Function, wait = 500, immediate = true,  flag = f
 		if (!flag) {
 			flag = true
 			// 如果是非立即执行，则在wait毫秒内的结束处执行
-			timesr = setTimeout(() => {
+			timer = setTimeout(() => {
 				flag = false
 				typeof func === 'function' && func();
 			}, wait);
@@ -524,37 +367,44 @@ export function throttle(func: Function, wait = 500, immediate = true,  flag = f
 };
 
 
+// 深度克隆
+export function deepClone(obj: any) {
+	// 对常见的“非”值，直接返回原来值
+	if ([null, undefined, NaN, false].includes(obj)) return obj;
+	if (typeof obj !== "object" && typeof obj !== 'function') {
+		//原始类型直接返回
+		return obj;
+	}
+	var o: any = Array.isArray(obj) ? [] : {};
+	for (let i in obj) {
+		if (obj.hasOwnProperty(i)) {
+			o[i] = typeof obj[i] === "object" ? deepClone(obj[i]) : obj[i];
+		}
+	}
+	return o;
+}
 
-
-
-/**等同：queryDom */
-export function quereyDom(t: ComponentInternalInstance, node: string): Promise<UniApp.NodeInfo | UniApp.NodeInfo[]> {
-
+export function quereyDom(t: ComponentInternalInstance, node: string) {
+	// #ifdef APP-NVUE
+	const dom: any = uni.requireNativePlugin('dom')
 	return new Promise((res, rej) => {
-		// #ifdef APP-NVUE
-		const dom: any = uni.requireNativePlugin('dom')
-		setTimeout(function() {
+		setTimeout(function () {
 			node = node.replace(/^[#\.]/g, '')
-			dom.getComponentRect(t.refs[node], function(el: any) {
-				res(el?.size);
+			dom.getComponentRect(t.refs[node], function (el: any) {
+				res(el.size);
 			})
 		}, 60)
-		// #endif
-		// #ifndef APP-NVUE
+	})
+	// #endif
+	// #ifndef APP-NVUE
+	return new Promise((res, rej) => {
 		const query = uni.createSelectorQuery().in(t);
 		query.select(node).boundingClientRect(el => {
 			res(el);
 		}).exec();
-		// #endif
 	})
+	// #endif
 }
-/**
- * 查询文档节点信息
- * @param t Vue上下文对象
- * @param node 提供带#的id比如：'#id',在nvue中应该是元素上写明ref='id'
- * @returns vue页面返回查询的节点信息，nvue返回weex的节点信息。
- */
-export const queryDom = quereyDom
 
 /**
  * 是否是手机号码
@@ -755,9 +605,9 @@ export function getWindow(): { width: number, height: number, top: number, botto
 
 	// #endif
 
-	let results = { bottom: bottom, height: height, width: sysinfo.windowWidth, top: top, isCustomHeader: isCustomHeader, statusBarHeight: sysinfo.statusBarHeight || 0, sysinfo: sysinfo };
+	let reulst = { bottom: bottom, height: height, width: sysinfo.windowWidth, top: top, isCustomHeader: isCustomHeader, statusBarHeight: sysinfo.statusBarHeight, sysinfo: sysinfo };
 
-	return results;
+	return reulst;
 }
 type openUrlType = "navigate" | "redirect" | "reLaunch" | "switchTab" | "navigateBack"
 /**
@@ -833,26 +683,4 @@ export function torpx(v: number, screenWidth: number = 0) {
  */
 export function topx(v: number) {
 	return Math.ceil(uni.upx2px(Number(v)))
-}
-var lastTime = 0;
-/**
- * 在下一次前执行回调函数
- * @param callback 回调函数
- * @returns 一个id值，取消时cancelAnimationFrame(id)来取消
- */
-export function requestAnimationFrame(callback: Function): number {
-	const currentTime = new Date().getTime();
-	const timeToCall = Math.max(0, 16 - (currentTime - lastTime));
-	const id = <any>setTimeout(() => {
-		callback(currentTime + timeToCall);
-	}, timeToCall);
-	lastTime = currentTime + timeToCall;
-	return id;
-}
-/**
- * 取消回调执行
- * @param id requestAnimationFrame产生的id
- */
-export function cancelAnimationFrame(id: number): void {
-	clearTimeout(id)
 }

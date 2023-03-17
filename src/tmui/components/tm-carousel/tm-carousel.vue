@@ -273,17 +273,10 @@ const props = defineProps({
     type: Array as PropType<Array<number>>,
     default: () => [0, 0],
   },
-  /**
-   * 轮播图的数据列表
-   * 可以是图片地址数组，也可以是对象数组（需要提供rangKey字段，默认url）
-   */
   list: {
     type: Array as PropType<Array<string | listItem>>,
     default: () => [],
   },
-  /**
-   * 当list为对象时，需要提供key名称以获取图片地址。
-   */
   rangKey: {
     type: String,
     default: "url",
@@ -292,35 +285,27 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  /**
-   * 指示点的位置
-   * top,left,right,bottom
-   */
+  //指示点的位置
+  //top,left,right,bottom
   dotPosition: {
-    type: String as PropType<'top'|'left'|'right'|'bottom'>,
+    type: String,
     default: "bottom",
   },
-  /**
-   * 内容居对齐，左，中，右
-   * left,center,right
-  **/
+  //内容居对齐，左，中，右，在dotPosition为left,right时，align的left和right表示，上下对齐。
+  //left,center,right
   align: {
-    type: String as PropType<'left'|'right'|'center'>,
+    type: String,
     default: "center",
   },
-  /**
-   * 指示点类型 dot,number,rect
-   */
+  //dot,number,rect
   model: {
-    type: String as PropType<'dot'|'number'|'rect'>,
+    type: String,
     default: "number",
   },
-  /**间隔时间 */
   interval: {
     type: Number,
     default: 5000,
   },
-  /**动画时间 */
   duration: {
     type: Number,
     default: 500,
@@ -329,7 +314,6 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  /**是否垂直轮播 */
   vertical: {
     type: Boolean,
     default: false,

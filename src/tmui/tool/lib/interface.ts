@@ -39,9 +39,7 @@ export interface cssStyleConfig {
     outlined?: boolean,
     text?: boolean,
     borderStyle?:string,
-	blur?:boolean,
-    /**边线颜色，可以不提供。不提供使用自动计算的值。 */
-    borderColor?:string
+	blur?:boolean
 }
 
 
@@ -65,8 +63,6 @@ export interface cssstyle {
     textDisableColor?: string,//文本禁用色.暗黑下
     isBlackAndWhite?:boolean,//该主题是否是黑白色系。
     color?:string//原始颜色未处理过的。
-    /**linearDirection对应css的方向 */
-    linearDirectionStr?:string,
 }
 
 //颜色主题对象。

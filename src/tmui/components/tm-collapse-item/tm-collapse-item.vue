@@ -63,51 +63,24 @@
         </view>
       </view>
     </tm-sheet>
-
-	<!-- #ifndef APP-NVUE -->
-	<view
-	class="flex overflow content"
-	:style="[isActiveAfter?{ height: _contentHeight }:{ height: '0px', overflow: 'hidden' }]"
-	>
-	  <view
-		ref="contentIds" id="contentIds"
-	    class="flex  flex-col flex-1 on"
-	  >
-	    <slot></slot>
-	  </view>
-	</view>
-	
-	
-	<!-- #endif -->
-    
-	<!-- #ifdef APP-NVUE -->
-	
-	<!-- v-if="_contentHeight" -->
-	<view  
-	v-if="_contentHeight && isActive"
-	class="flex overflow content"
-	:style="[isActiveAfter?{ height: _contentHeight }:{ height: '0px', overflow: 'hidden' }]"
-	>
-	  <view
-		ref="contentIds" id="contentIds"
-	    class="flex  flex-col flex-1 on"
-	  >
-	    <slot></slot>
-	  </view>
-	</view>
-	
-	<view v-if="!_contentHeight && isActive" class="flex overflow content" >
-	  <view ref="contentIds" id="contentIds" class="flex  flex-col flex-1" >
-	    <slot></slot>
-	  </view>
-	</view>
-	
-	<!-- #endif -->
-
-
-	
-	
-	
+    <!-- v-if="isActive" -->
+    <view v-if="_contentHeight" class="flex overflow">
+      <view
+        class="flex content flex-col flex-1"
+        :class="[isActiveAfter ? 'on' : '']"
+        :style="[
+          _contentHeight && isActiveAfter ? { height: _contentHeight } : '',
+          _contentHeight && !isActiveAfter ? { height: '0px', overflow: 'hidden' } : '',
+        ]"
+      >
+        <slot></slot>
+      </view>
+    </view>
+    <view v-if="!_contentHeight && isActive" class="flex overflow">
+      <view class="flex content flex-col flex-1" :class="[isActiveAfter ? 'on' : '']">
+        <slot></slot>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -125,9 +98,6 @@ import {
   nextTick,
   ComponentInternalInstance,
   PropType,
-  onMounted,
-  onUpdated,
-  Ref
 } from "vue";
 import tmSheet from "../tm-sheet/tm-sheet.vue";
 import tmText from "../tm-text/tm-text.vue";
@@ -212,24 +182,19 @@ const _tmCollapseopenIcon = inject(
   computed(() => "tmicon-sort-down")
 );
 const _leftIcon = computed(() => props.leftIcon);
-const _contentHeight:Ref<number|string> = ref(setcontentHeight(props.contentHeight))
-const _contentHeightNumber:Ref<number|string> = ref(0)
+const _contentHeight = computed(() => {
+  if (!props.contentHeight) return 0;
+  if (typeof props.contentHeight == "string") return props.contentHeight;
+  return uni.upx2px(props.contentHeight) + "px";
+});
 const isNvue = ref(false);
 // #ifdef APP-NVUE
 isNvue.value = true;
 // #endif
 const isActiveAfter = ref(false);
-let tid:any = NaN
-
-computed(() => {
-  if (!props.contentHeight) return 0;
-  if (typeof props.contentHeight == "string") return props.contentHeight;
-  return uni.upx2px(props.contentHeight) + "px";
-});
-
-
 //父级方法。
 let parent: any = proxy?.$parent;
+
 while (parent) {
   if (parent?.tmCollapse == "tmCollapse" || !parent) {
     break;
@@ -241,19 +206,6 @@ if (parent) {
   //向父级缓存本子组件的key值。
   parent?.pushKey(props.name);
 }
-
-//是否在嵌套中。
-let parentTmCollapseItem: any = proxy?.$parent;
-while (parentTmCollapseItem) {
-  if (parentTmCollapseItem?.tmCollapseItem == "tmCollapseItem" || !parentTmCollapseItem) {
-    break;
-  } else {
-    parentTmCollapseItem = parentTmCollapseItem?.$parent ?? undefined;
-  }
-}
-
-
-
 const cborder = ref(props.border ? props.border : parent?.border);
 const isActive = computed(() => {
   let index = _activekeyArray.value.findIndex((el) => {
@@ -271,81 +223,23 @@ watchEffect(() => {
   if (isActive.value) {
     setTimeout(function () {
       isActiveAfter.value = true;
-	  updateHeight()
     }, 20);
   } else {
     isActiveAfter.value = false;
-	
   }
-  clearTimeout(tid)
-  tid = setTimeout(function() {
-	  if (parentTmCollapseItem) {
-	    // 处于嵌套中,找需要找到第一层即可.
-	  	parentTmCollapseItem?.updateHeight()
-	  }
-  }, 60);
-
-
 });
-
-onMounted(()=>{
-	updateHeight()
-})
-onUpdated(()=>{
-	updateHeight()
-})
-function setcontentHeight(h:number|string=0,unit:'rpx'|'px'='rpx'){
-	if(!h) return 0
-	if (typeof h == "string"){
-		if(h.indexOf('rpx')){
-			_contentHeightNumber.value = uni.upx2px(Number(h))
-		}else{
-			_contentHeightNumber.value = Number(h)
-		}
-		 return h;
-	}
-	if(unit=='rpx'){
-		_contentHeightNumber.value = uni.upx2px(Number(h))
-		return  uni.upx2px(Number(h)) + "px";
-	}
-	_contentHeightNumber.value = Number(h)
-	return  Number(h) + "px";
-}
-function updateHeight(h:number=0){
-	
-	// #ifdef APP-NVUE
-	_contentHeight.value = setcontentHeight(props.contentHeight ,'rpx')
-	
-	// #endif
-	// #ifndef APP-NVUE
-
-	if(props.contentHeight){
-		_contentHeight.value = setcontentHeight(props.contentHeight ,'rpx')
-		return
-	}
-	uni.$tm.u.quereyDom(proxy,'#contentIds').then(el=>{
-		if(el){
-			_contentHeight.value = setcontentHeight( el.height+h ,'px')
-		}
-	})
-	
-	// #endif
-	
-}
 function openAndClose(e: Event) {
   emits("click", e);
   if (props.disabled) return;
   parent?.setKey(props.name);
-  
 }
-defineExpose({tmCollapseItem:'tmCollapseItem',updateHeight})
 </script>
 
 <style scoped>
 /* #ifdef APP-NVUE */
 .content {
   transition-duration: 0.6s;
-  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(.53,.07,.44,1.19);
   transition-delay: 0ms;
   transition-property: height;
 }
@@ -354,22 +248,22 @@ defineExpose({tmCollapseItem:'tmCollapseItem',updateHeight})
 
 /* #ifndef APP-NVUE */
 .content {
-  transition-duration: .34s;
-  transition-timing-function:ease;
+  transition-duration: 1.2s;
+  transition-timing-function:linear;
   transition-delay: 0ms;
-/*  max-height: 0px; */
-  transition-property: height;
+  max-height: 0px;
+  transition-property: max-height;
   overflow: hidden;
   box-sizing: border-box;
-  will-change: height;
+  will-change: max-height;
 }
 .content.on {
   flex: 1 1 auto;
-  /* max-height: 1200px; */
+  max-height: 1200px;
  
 }
 .content.off {
-  /* max-height: 0px; */
+  max-height: 0px;
 }
 /* #endif */
 </style>

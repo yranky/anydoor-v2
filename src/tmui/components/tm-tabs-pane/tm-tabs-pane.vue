@@ -233,14 +233,13 @@ const isShowRender = computed(() => {
 });
 
 watch(
-  [() => props.title, () => props.icon, () => props.dot, () => props.dotColor,()=>props.count],
+  [() => props.title, () => props.icon, () => props.dot, () => props.dotColor],
   () => {
     parent?.setTitle({
       key: _pname.value,
       title: props.title,
       icon: props.icon,
       dot: props.dot,
-	  count: props.count,
       dotColor: props.dotColor,
     });
   }

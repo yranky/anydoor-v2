@@ -27,9 +27,7 @@
 <!-- #endif -->
 <script lang="ts" setup>
 import { ref, inject, computed, unref, PropType,getCurrentInstance } from 'vue';
-
 // #ifdef APP-NVUE
-// @ts-ignore
 var dom = weex.requireModule("dom");
 const Binding = uni.requireNativePlugin("bindingx");
 const animation = uni.requireNativePlugin("animation");
@@ -87,7 +85,7 @@ const towxsShareData = ref({
 	duration: props.duration
 });
 let position = {x:0,y:0};
-function getEl(el: any) {
+function getEl(el: HTMLElement) {
   if (typeof el === "string" || typeof el === "number") return el;
   if (WXEnvironment) {
     return el.ref;
@@ -97,9 +95,9 @@ function getEl(el: any) {
 }
 function spinNvueAniEnd(start: number,end:number, duration = props.duration) {
   // #ifdef APP-NVUE
-  if (!proxy?.$refs?.adsorb) return;
+  if (!proxy.$refs?.adsorb) return;
   animation.transition(
-    proxy?.$refs.adsorb,
+    proxy.$refs.adsorb,
     {
       styles: {
         transform: `translate(${start}px,${end}px)`,
@@ -120,9 +118,9 @@ function spinNvueAniEnd(start: number,end:number, duration = props.duration) {
 function touchstart(e: TouchEvent) {
   
   // #ifdef APP-NVUE
-  if (!proxy?.$refs?.adsorb) return;
+  if (!proxy.$refs?.adsorb) return;
 
-  let icon = getEl(proxy?.$refs.adsorb);
+  let icon = getEl(proxy.$refs.adsorb);
   let icon_bind = Binding.bind(
     {
       anchor: icon,
@@ -145,7 +143,7 @@ function touchstart(e: TouchEvent) {
 		position.x+=res.deltaX
 		position.y+=res.deltaY
 		if(towxsShareData.value.adsorb){
-			dom.getComponentRect(proxy?.$refs.adsorb, function (res:UniApp.NodeInfo|UniApp.NodeField) {
+			dom.getComponentRect(proxy.$refs.adsorb, function (res) {
 			  if (res?.size) {
 				let left=0
 				let top=0

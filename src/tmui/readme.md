@@ -1,4 +1,4 @@
-# tmui3.0
+# TM-VUETIFY for V3
 
 ### [有问题点开此链接提交](https://gitee.com/LYTB/tmui-design)
 
