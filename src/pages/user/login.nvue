@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-12 18:55:28
+ * @LastEditTime: 2023-03-18 09:13:17
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -179,9 +179,9 @@ const doLogin = (): void => {
 	}
 
 	//进行登录操作
-	login(postData).then(res => {
-		console.log(res)
-	}).then(async res => {
+	login(postData).then(async res => {
+
+		console.log(res);
 		//插入表中
 		(await User.getInstance()).insertUserAccount('1', '1')
 	}).finally(() => {

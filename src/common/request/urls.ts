@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-12 15:51:46
+ * @LastEditTime: 2023-03-18 12:03:10
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -26,12 +26,24 @@ const urls: Array<url> = [
     name: 'user_login',
     url: BASE_URL + '/center/app_login',
     token: false
+  },
+  //通知列表
+  {
+    name: 'notice_list',
+    url: BASE_URL + '/api/notice/list',
+    token: false
+  },
+  //通知详情
+  {
+    name: 'notice_detail',
+    url: BASE_URL + '/api/notice/detail',
+    token: false
   }
 ]
 
 const getUrlByName = function url(name: string): url {
   const res = urls.find((item) => item.name === name)
-  console.log(res)
+  // console.log(res)
   return isUndefined(res)
     ? {
       name,
