@@ -173,7 +173,7 @@ export interface IOnLinkClickResult {
     url: string
 }
 export interface IOnImageClickResult {
-    url: string
+    img: string
 }
 
 export interface IOnBackResult {

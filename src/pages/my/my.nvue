@@ -33,7 +33,7 @@
 				<navigator url="/pages/more/score"><text>成绩查询</text></navigator>
 				<navigator url="/pages/more/plan"><text>教学计划</text></navigator>
 				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
-
+				<text @click="toWebviewTest">webview测试</text>
 				<!-- 用户主信息 -->
 				<navigator url="/pages/my/detail">
 					<view class="user-info flex flex-row">
@@ -297,6 +297,12 @@ const {
 } = getCurrentInstance();
 // 主题工具
 import theme from "@/tmui/tool/theme/theme"
+
+const toWebviewTest = () => {
+	linkTo(`/pages/webview/webview?item=` + encodeURIComponent(JSON.stringify({
+		url: "http://192.168.0.229:5500/webviewtest.html"
+	})))
+}
 
 //账户背景
 const vipBg = computed(() => {

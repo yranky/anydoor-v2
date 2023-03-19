@@ -86,14 +86,6 @@
 			}
 		},
 		{
-			"path": "pages/notice/notice-web",
-			"style": {
-				"navigationBarTitleText": "通知详情",
-				"enablePullDownRefresh": false,
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/user/login",
 			"style": {
 				"navigationBarTitleText": "登录",
@@ -153,6 +145,14 @@
 			"path": "pages/lesson/setting",
 			"style": {
 				"navigationBarTitleText": "课程表设置",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/webview/webview",
+			"style": {
+				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
 			}

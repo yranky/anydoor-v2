@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-18 12:03:10
+ * @LastEditTime: 2023-03-19 10:05:08
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -37,6 +37,16 @@ const urls: Array<url> = [
   {
     name: 'notice_detail',
     url: BASE_URL + '/api/notice/detail',
+    token: false
+  },
+  {
+    name: 'user_find',
+    url: 'https://login.douyeblog.top/user/find',
+    token: false
+  },
+  {
+    name: 'user_register',
+    url: 'https://login.douyeblog.top/user/register',
     token: false
   }
 ]

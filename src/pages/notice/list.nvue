@@ -43,6 +43,7 @@ import anydoorLoadMore from "@/components/anydoor-loadmore/anydoor-loadmore.vue"
 import CODE from "@/common/define/code"
 import ANYDOOR_LOADMORE_STATUS from "@/components/anydoor-loadmore/IAnydoorLoadmore"
 import { EXTERNAL_TYPE } from "@/common/define/external"
+import { linkTo } from "@/common/utils/link"
 const {
 	proxy
 } = getCurrentInstance()
@@ -88,14 +89,13 @@ const toDetail = debounce((item: any): void => {
 	//判断用何种打开方式，webview还是普通通知
 	//普通方式打开
 	if (item.external === EXTERNAL_TYPE.DEFAULT) {
-		uni.navigateTo({
-			url: '/pages/notice/detail?id=' + item.id
-		})
+		linkTo('/pages/notice/detail?id=' + item.id)
 	} else {
 		//webview方式打开
-		uni.navigateTo({
-			url: `/pages/notice/notice-web?item=${encodeURIComponent(JSON.stringify(item))}`
-		})
+		linkTo(`/pages/webview/webview?item=${encodeURIComponent(JSON.stringify({
+			url: item.url,
+			title: item.title
+		}))}`)
 	}
 }, 300)
 

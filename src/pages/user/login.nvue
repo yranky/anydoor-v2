@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-18 09:13:17
+ * @LastEditTime: 2023-03-19 10:11:13
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -23,8 +23,8 @@
 				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
 				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
 				<view class="flex flex-row flex-between">
-					<anydoor-text text="忘记密码" color="grey"></anydoor-text>
-					<anydoor-text text="注册" color="primary"></anydoor-text>
+					<anydoor-text text="忘记密码" color="grey" @click="findPassword"></anydoor-text>
+					<anydoor-text text="注册" color="primary" @click="register"></anydoor-text>
 				</view>
 			</view>
 			<tm-divider align="center" label="第三方登录"></tm-divider>
@@ -54,9 +54,25 @@ import md5 from "md5"
 import useDeviceStore from "@/store/device"
 import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
 import User from "@/common/database/user/User"
+import { linkTo } from "@/common/utils/link"
+import getUrlByName from "@/common/request/urls"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
+
+//找回密码
+const findPassword = () => {
+	linkTo('/pages/webview/webview?item=' + encodeURIComponent(JSON.stringify({
+		url: getUrlByName("user_find").url
+	})))
+}
+
+//注册
+const register = () => {
+	linkTo('/pages/webview/webview?item=' + encodeURIComponent(JSON.stringify({
+		url: getUrlByName("user_register").url
+	})))
+}
 
 //初始化
 onLoad(() => {
