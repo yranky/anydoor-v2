@@ -1,0 +1,48 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2022-08-08 10:12:17
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-09 21:08:41
+ * @FilePath: \anydoor-v2\src\pages\more\plan.nvue
+ * @Description: 教学计划
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<anydoorPage>
+			<template #navBar>
+				<tm-navbar title="教学计划"></tm-navbar>
+				<tm-filterMenu :fixed="false">
+					<tm-filterMenu-item title="价格排序">
+						<tm-text :font-size="24" _class="font-weight-b" label="数据由用户处理"></tm-text>
+					</tm-filterMenu-item>
+				</tm-filterMenu>
+			</template>
+			<template #content>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="概率论与数理统计" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+			</template>
+		</anydoorPage>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCard from "@/tmui/components/tm-card/tm-card.vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import tmText from "@/tmui/components/tm-text/tm-text.vue"
+import tmFilterMenu from "@/tmui/components/tm-filterMenu/tm-filterMenu.vue"
+import tmFilterMenuItem from "@/tmui/components/tm-filterMenu-item/tm-filterMenu-item.vue"
+
+</script>
+
+<style lang="scss" scoped></style>

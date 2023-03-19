@@ -25,8 +25,8 @@
     }
   },
   "include": [
-    "tmui/**/*.ts",
-    "tmui/**/*.d.ts",
+    "src/tmui/**/*.ts",
+    "src/tmui/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

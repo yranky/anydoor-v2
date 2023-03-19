@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import tmResult from "@/tmui/components/tm-result/tm-result.vue"
-import anydoorNativeWebview from "./anydoor-native-webview"
+import anydoorNativeWebview from "./anydoor-native-webview.vue"
 import tmProgress from "@/tmui/components/tm-progress/tm-progress.vue"
 import {
 	ref,

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:31:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 20:19:57
+ * @LastEditTime: 2023-03-12 16:45:28
  * @FilePath: \anydoor-v2\src\common\database\database.ts
  * @Description: 数据库一些常量
  * 
@@ -11,9 +11,11 @@
 
 import ERROR_TARGET from "../errorHandler/ERROR_TARGET"
 import ErrorHandler from "../errorHandler/ErrorHandler"
+import DEVICE_TABLES from "./tables/device"
 import LESSON_TABLES from "./tables/lesson"
 import MPROGRAM_TABLES from "./tables/mprogram"
 import SETTING_TABLES from "./tables/setting"
+import USER_TABLES from "./tables/user"
 
 
 //数据库名称
@@ -23,7 +25,11 @@ export enum DATA {
     //课程数据
     LESSON = "lesson",
     //设置数据
-    SETTTING = "setting"
+    SETTTING = "setting",
+    //设备数据
+    DEVICE = "device",
+    //用户部分
+    USER = "user"
 }
 
 let path: string = "_doc/"
@@ -74,6 +80,14 @@ export const databases = {
     [DATA.SETTTING]: {
         path: path + DATA.SETTTING + '.db',
         tables: SETTING_TABLES
+    },
+    [DATA.DEVICE]: {
+        path: path + DATA.DEVICE + '.db',
+        tables: DEVICE_TABLES
+    },
+    [DATA.USER]: {
+        path: path + DATA.USER + '.db',
+        tables: USER_TABLES
     }
 }
 

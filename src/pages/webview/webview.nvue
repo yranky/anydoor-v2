@@ -1,0 +1,188 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
+		<anydoor-webview ref="webview" :src="src" :config="{
+			height: webviewHeight + 'px',
+			windowsAutomatically: true,
+			multipleWindow: true,
+			zoom: false,
+			cache: false
+		}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
+			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate" @onImagePress="onImagePress"
+			@onImageClick="onImageClick" @on-message="onMessage" @onNameMessage="onMessage">
+		</anydoor-webview>
+	</tm-app>
+</template>
+
+<script setup lang="ts">
+
+// 主题工具
+import theme from "@/tmui/tool/theme/theme"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+// import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
+import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
+import {
+	computed,
+	getCurrentInstance,
+	ref,
+	reactive,
+	nextTick
+} from "vue"
+import {
+	onReady,
+	onLoad
+} from "@dcloudio/uni-app"
+import {
+	throttle
+} from "lodash"
+import { linkTo } from "@/common/utils/link"
+import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
+import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
+import ToastModule from "@/common/native/toast/ToastModule"
+const {
+	proxy
+} = getCurrentInstance()
+const dom = uni.requireNativePlugin("dom")
+//webview的高度
+const webviewHeight = ref(0)
+//webview的style样式
+const webviewStyle = reactive({
+	progress: {
+		color: theme.getColor("primary").value
+	}
+})
+const loadWebviewHeight = throttle(function () {
+	//加载高度
+	dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
+		if (option && option.result) {
+			const navBarHeight = option.size.height
+			//如果没获取到
+			if (navBarHeight === 0) loadWebviewHeight()
+			else {
+				webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+			}
+		}
+	})
+}, 200)
+const webview = ref(null)
+//webview的配置
+const webviewConfig = ref<IWebviewItem>()
+
+//messgae
+const onMessage = (e: IMessageResult) => {
+	console.log(e)
+}
+
+
+//加载时调用
+onLoad((e: any) => {
+	try {
+		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item)))
+		src.value = webviewConfig.value.url
+		navTitle.value = webviewConfig.value.title
+		console.log(webviewConfig.value)
+	} catch { }
+})
+
+
+//拦截的url
+const interceptUrl = (e: IUrlLoadingPaternResult) => {
+	console.log(e)
+}
+//标题
+const navTitle = ref<string>("")
+
+//标题更新了
+const titleUpdate = (e: ITitleUpdateResult) => {
+	//不显示网址
+	//如果可以changeTitle
+	if (webviewConfig.value?.titleChange) navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
+}
+//加载完成之后，定义拦截
+const pageReady = (e: IPageReadyResult) => {
+
+	webview.value && webview.value.registerHandler("default")
+	// console.log(e)
+	setTimeout(() => {
+		webview.value && webview.value.send(JSON.stringify({
+			msg: 'ok',
+			code: 200
+		}))
+	}, 3000)
+
+	// webview.value.getUrl().then(url => {
+	// 	console.log(url);
+	// })
+	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
+}
+//页面加载异常
+const pageError = (e: IPageErrorResult) => {
+	console.log(e)
+}
+//打开新窗口
+const onNewWindow = (e: IOnNewWindowResult) => {
+	linkTo(`/pages/webview/webview?item=${encodeURIComponent(JSON.stringify({ url: e.url }))}`)
+}
+//页面的链接
+const src = ref("")
+//加载webview的配置
+onReady(() => {
+	loadWebviewHeight()
+})
+//图片点击
+const onImageClick = (e: IOnImageClickResult) => {
+	//如果为点击预览图片
+	if (webviewConfig.value?.clickPreviewImage) {
+		uni.previewImage({
+			urls: [e.img],
+		})
+	}
+}
+
+//图片长按
+const onImagePress = (e: IOnImagePressResult) => {
+	if (webviewConfig.value?.pressSaveImage) {
+		uni.showActionSheet({
+			itemList: ['保存图片'],
+			success: function (sheetResult: any) {
+				if (sheetResult.tapIndex === 0) {
+					//下载
+					uni.downloadFile({
+						url: e.url,
+						success: (downloadResult: any) => {
+							//保存
+							uni.saveImageToPhotosAlbum({
+								filePath: downloadResult.tempFilePath,
+								success: function () {
+									ToastModule.show({
+										text: "成功保存到相册"
+									})
+								},
+								fail: (fail) => {
+									console.log(fail)
+									ToastModule.show({
+										text: "保存失败" + (fail.code === 12 ? ',权限获取失败' : '')
+									})
+								}
+							});
+						},
+						fail: () => {
+							ToastModule.show({
+								text: "保存失败,未能加载图片"
+							})
+						}
+					});
+
+				}
+			}
+		});
+	}
+}
+</script>
+
+<style lang="scss" scoped>
+.error-show {
+	margin-top: 200rpx;
+}
+</style>

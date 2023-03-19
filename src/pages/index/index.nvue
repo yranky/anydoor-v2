@@ -184,7 +184,6 @@ import tmImage from "@/tmui/components/tm-image/tm-image.vue"
 import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 import tmAlert from "@/tmui/components/tm-alert/tm-alert.vue"
 import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
-import anydoorDelay from "@/components/anydoor-delay/anydoor-delay.vue"
 import {
 	useTmpiniaStore
 } from '@/tmui/tool/lib/tmpinia'

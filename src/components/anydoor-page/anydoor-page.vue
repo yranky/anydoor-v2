@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 10:29:16
+ * @LastEditTime: 2023-03-18 17:01:06
  * @FilePath: \anydoor-v2\src\components\anydoor-page\anydoor-page.vue
  * @Description: page
  * 
@@ -16,11 +16,8 @@
 		</view>
 		<list :bounce="true" :style="{
 			height: listHeight
-		}">
+		}" @loadmore="loadmore" ref="slotPageList">
 			<refresh @refresh="onrefresh" @pullingdown="onpullingdown" :display="refreshing ? 'show' : 'hide'">
-				<!-- <div>
-					<text class="loading-text">{{refreshText}}</text>
-				</div> -->
 				<anydoorPullLoading :marginTop="navBarHeight" unit="px" />
 			</refresh>
 			<cell>
@@ -33,8 +30,10 @@
 <script lang="ts" setup>
 import anydoorPullLoading from "@/components/anydoor-pull-loading/anydoor-pull-loading.vue"
 import {
+	onReady,
 	onShow
 } from "@dcloudio/uni-app";
+import { watch } from "vue";
 import {
 	ref,
 	onMounted,
@@ -42,6 +41,12 @@ import {
 	nextTick
 } from "vue"
 
+const props = defineProps({
+	refreshComplete: {
+		type: Boolean,
+		default: true
+	}
+})
 
 
 //正在加载
@@ -49,18 +54,38 @@ const refreshing = ref<boolean>(false)
 //加载显示的文字
 const refreshText = ref<string>()
 
-const onrefresh = () => {
-	console.log(111)
-	refreshing.value = true
-	refreshText.value = "刷新中..."
-	setTimeout(() => {
+const emits = defineEmits(["update:refreshComplete", 'refresh', 'loadmore'])
+
+//监听刷新完成
+watch(() => props.refreshComplete, (newValue) => {
+	if (newValue === true) {
 		refreshing.value = false
-		refreshText.value = "已刷新"
-	}, 2000)
+	}
+})
+
+//加载更多
+const loadmore = () => {
+	emits("loadmore")
+	//重置
+	resetLoadMore()
 }
 
-const onpullingdown = (e) => {
-	console.log(e)
+const slotPageList = ref<any>(null)
+//重置loadmore
+const resetLoadMore = () => {
+	console.log(slotPageList)
+	slotPageList.value && slotPageList.value.resetLoadmore()
+}
+
+const onrefresh = () => {
+	//上报刷新中
+	emits("refresh")
+	emits("update:refreshComplete", false)
+	refreshing.value = true
+	refreshText.value = "刷新中..."
+}
+
+const onpullingdown = (e: any) => {
 	if (refreshing.value) return
 
 	if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
@@ -78,7 +103,7 @@ onMounted(() => {
 
 onShow(() => {
 	nextTick(() => {
-		setListHeight()
+		setTimeout(setListHeight, 100)
 	})
 })
 
@@ -92,6 +117,7 @@ const setListHeight = (): void => {
 		query.select("#slotNavBar").boundingClientRect((data: any) => {
 			const windowHeight = uni.getSystemInfoSync().windowHeight
 			navBarHeight.value = data.height
+			// console.log(uni.getSystemInfoSync(),windowHeight, data.height)
 			listHeight.value = (windowHeight - data.height) + 'px'
 		}).exec()
 	} catch (e) {
@@ -100,6 +126,4 @@ const setListHeight = (): void => {
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

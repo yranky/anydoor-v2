@@ -5,133 +5,161 @@
 	// 		"^tm-(.*)": "@/tmui/components/tm-$1/tm-$1.vue"
 	// 	}
 	// },
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "首页",
-			"navigationStyle": "custom"
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/my/detail",
+			"style": {
+				"navigationBarTitleText": "我的信息",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/lesson/lesson",
+			"style": {
+				"navigationBarTitleText": "课程表",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/article/list",
+			"style": {
+				"navigationBarTitleText": "文章列表",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/article/article",
+			"style": {
+				"navigationBarTitleText": "文章详情",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/article/article-web",
+			"style": {
+				"navigationBarTitleText": "文章详情",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/notice/list",
+			"style": {
+				"navigationBarTitleText": "通知列表",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/notice/detail",
+			"style": {
+				"navigationBarTitleText": "通知详情",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/more/score",
+			"style": {
+				"navigationBarTitleText": "成绩",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/more/exam",
+			"style": {
+				"navigationBarTitleText": "考试查询",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/setting/setting",
+			"style": {
+				"navigationBarTitleText": "我的设置",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/download/download",
+			"style": {
+				"navigationBarTitleText": "我的下载",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/mprogram/mprogram",
+			"style": {
+				"navigationBarTitleText": "微应用",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/more/plan",
+			"style": {
+				"navigationBarTitleText": "教学计划",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/lesson/setting",
+			"style": {
+				"navigationBarTitleText": "课程表设置",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/webview/webview",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
 		}
-	}, {
-		"path": "pages/my/my",
-		"style": {
-			"navigationBarTitleText": "我的",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/my/detail",
-		"style": {
-			"navigationBarTitleText": "我的信息",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/lesson/lesson",
-		"style": {
-			"navigationBarTitleText": "课程表",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/search/search",
-		"style": {
-			"navigationBarTitleText": "搜索",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/article/list",
-		"style": {
-			"navigationBarTitleText": "文章列表",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/article/article",
-		"style": {
-			"navigationBarTitleText": "文章详情",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/article/article-web",
-		"style": {
-			"navigationBarTitleText": "文章详情",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/notice/list",
-		"style": {
-			"navigationBarTitleText": "通知列表",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/notice/detail",
-		"style": {
-			"navigationBarTitleText": "通知详情",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/user/login",
-		"style": {
-			"navigationBarTitleText": "登录",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/more/score",
-		"style": {
-			"navigationBarTitleText": "成绩",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/more/exam",
-		"style": {
-			"navigationBarTitleText": "考试查询",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/setting/setting",
-		"style": {
-			"navigationBarTitleText": "我的设置",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/download/download",
-		"style": {
-			"navigationBarTitleText": "我的下载",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}, {
-		"path": "pages/mprogram/mprogram",
-		"style": {
-			"navigationBarTitleText": "微应用",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
-		}
-
-	}],
-	"subPackages": [
-
 	],
-	"preloadRule": [
-
-	],
+	"subPackages": [],
+	"preloadRule": [],
 	"globalStyle": {
 		"navigationBarTextStyle": "@navigationTextStyle",
 		"navigationBarTitleText": "任意门",
@@ -145,44 +173,50 @@
 		"iconfontSrc": "static/tabbar/iconfont.ttf",
 		"borderStyle": "white",
 		"color": "#494949",
-		"list": [{
-			"pagePath": "pages/index/index",
-			"iconfont": {
-				"text": "\ue703",
-				"selectedText": "\ue702",
-				"color": "#494949",
-				"selectedColor": "#4f52ff",
-				"fontSize": "25"
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconfont": {
+					"text": "\ue703",
+					"selectedText": "\ue702",
+					"color": "#494949",
+					"selectedColor": "#4f52ff",
+					"fontSize": "25"
+				},
+				"text": "首页"
 			},
-			"text": "首页"
-		}, {
-			"pagePath": "pages/lesson/lesson",
-			"iconfont": {
-				"text": "\ue6de",
-				"selectedText": "\ue6df",
-				"color": "#494949",
-				"selectedColor": "#4f52ff",
-				"fontSize": "25"
+			{
+				"pagePath": "pages/lesson/lesson",
+				"iconfont": {
+					"text": "\ue6de",
+					"selectedText": "\ue6df",
+					"color": "#494949",
+					"selectedColor": "#4f52ff",
+					"fontSize": "25"
+				},
+				"text": "课程表"
 			},
-			"text": "课程表"
-		}, {
-			"pagePath": "pages/my/my",
-			"iconfont": {
-				"text": "\ue716",
-				"selectedText": "\ue715",
-				"color": "#494949",
-				"selectedColor": "#4f52ff",
-				"fontSize": "25"
-			},
-			"text": "我"
-		}]
+			{
+				"pagePath": "pages/my/my",
+				"iconfont": {
+					"text": "\ue716",
+					"selectedText": "\ue715",
+					"color": "#494949",
+					"selectedColor": "#4f52ff",
+					"fontSize": "25"
+				},
+				"text": "我"
+			}
+		]
 	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
-		"list": [{
-			"name": "", //模式名称
-			"path": "", //启动页面，必选
-			"query": "" //启动参数，在页面的onLoad函数里面得到
-		}]
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
 	}
 }
