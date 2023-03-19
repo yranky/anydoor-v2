@@ -11,58 +11,47 @@
 				{
 					"type": "module",
 					"name": "anydoor_toast",
-					"class": "com.top_anydoor.toast.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.toast.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-webview",
-					"class": "com.top_anydoor.webview.Index",
-					"dependencies": [
-						"jsbridge-1.0.4.aar"
-					]
+					"class": "com.top_anydoor.webview.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_tool",
-					"class": "com.top_anydoor.tool.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.tool.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-lottie",
-					"class": "com.top_anydoor.lottie.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.lottie.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_bugly",
-					"class": "com.top_anydoor.bugly.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.bugly.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_baidu_tongji",
-					"class": "com.top_anydoor.baidu_tongji.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.baidu_tongji.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_download",
-					"class": "com.top_anydoor.download.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.download.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-scroll",
-					"class": "com.top_anydoor.scroll.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.scroll.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_sqlite",
-					"class": "com.top_anydoor.sqlite.Index",
-					"dependencies": []
+					"class": "com.top_anydoor.sqlite.Index"
 				}
 			],
 			"integrateType": "aar",

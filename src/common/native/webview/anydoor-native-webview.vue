@@ -2,13 +2,12 @@
     <view>
         <anydoor-native-webview ref="mWebview" :src="props.src" :agent="props.userAgent" :bugly="props.bugly"
             :style="{ width: '750rpx', height: viewHeight }" :config="props.config" @on-back="onBack"
-            @page-start="pageStart" @on-scheme="onScheme" @url-loading-pattern="urlLoadingPatern"
-            @page-ready="pageReady" @page-error="pageError" @page-http-error="pageHttpError"
-            @page-s-s-l-error="pageSSLError" @load-resource="loadResource" @on-download="onDownload"
-            @on-message="onMessage" @on-name-messgae="onNameMessage" @on-error="onError" @title-update="titleUpdate"
-            @page-alert="pageAlert" @on-progress="onProgress" @on-console="onConsole" @on-new-window="onNewWindow"
-            @on-link-press="onLinkPress" @on-image-press="onImagePress" @on-link-click="onLinkClick"
-            @on-image-click="onImageClick">
+            @page-start="pageStart" @on-scheme="onScheme" @url-loading-pattern="urlLoadingPatern" @page-ready="pageReady"
+            @page-error="pageError" @page-http-error="pageHttpError" @page-s-s-l-error="pageSSLError"
+            @load-resource="loadResource" @on-download="onDownload" @on-message="onMessage" @on-name-message="onNameMessage"
+            @on-error="onError" @title-update="titleUpdate" @page-alert="pageAlert" @on-progress="onProgress"
+            @on-console="onConsole" @on-new-window="onNewWindow" @on-link-press="onLinkPress" @on-image-press="onImagePress"
+            @on-link-click="onLinkClick" @on-image-click="onImageClick">
         </anydoor-native-webview>
     </view>
 </template>
@@ -97,10 +96,12 @@ const onDownload = (res: IAnydoorEventResult<IDownloadResult>) => {
 }
 //消息
 const onMessage = (res: IAnydoorEventResult<IMessageResult>) => {
+    console.log(res)
     emits("onMessage", res.detail)
 }
 //有名称的消息
 const onNameMessage = (res: IAnydoorEventResult<INameMessageResult>) => {
+    console.log(res)
     emits("onNameMessage", res.detail)
 }
 //错误
