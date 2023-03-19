@@ -104,12 +104,6 @@ const pageReady = (e: IPageReadyResult) => {
 
 	webview.value && webview.value.registerHandler("default")
 	// console.log(e)
-	setTimeout(() => {
-		webview.value && webview.value.send(JSON.stringify({
-			msg: 'ok',
-			code: 200
-		}))
-	}, 3000)
 
 	// webview.value.getUrl().then(url => {
 	// 	console.log(url);
