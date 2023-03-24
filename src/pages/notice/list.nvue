@@ -6,7 +6,7 @@
 			</template>
 			<template #content>
 				<list>
-					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete">
+					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete&&noticeList.length===0">
 						<view style="margin: 0 20rpx;">
 							<tm-skeleton-line :height="100"></tm-skeleton-line>
 						</view>

@@ -1,3 +1,13 @@
+/*
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-03-19 11:55:28
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-24 20:19:12
+ * @FilePath: \anydoor-v2\src\common\database\user\User.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+ */
 import SQLite, { SQLITE_STATUS_CODE } from "@/common/sql/SQLite"
 import databases, { DATA } from "../database"
 import ERROR_TARGET from "@/common/errorHandler/ERROR_TARGET"
@@ -54,7 +64,7 @@ export default class User {
         } catch { }
         const time: number = new Date().getTime() / 1000
         //将当前行的id加入current,将token也保存
-        await this.sql?.executeSql([`insert into  ${USER_TABLES_NAME.CURRENT} (id) values (${id})`,
+        await this.sql?.executeSql([`insert into  ${USER_TABLES_NAME.CURRENT} (uid) values (${id})`,
         //将token也保存
         `insert into  ${USER_TABLES_NAME.TOKEN} (token,refresh_token,create_time,update_time,uid) values (${token},${refresh_token},${time},${time},${id})`
         ], ERROR_TARGET.USER_CLASS)

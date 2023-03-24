@@ -300,7 +300,7 @@ import theme from "@/tmui/tool/theme/theme"
 
 const toWebviewTest = () => {
 	linkTo(`/pages/webview/webview?item=` + encodeURIComponent(JSON.stringify({
-		url: "http://192.168.0.229:5500/webviewtest.html"
+		url: "http://192.168.0.231:5500"
 	})))
 }
 

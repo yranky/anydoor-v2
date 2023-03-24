@@ -9,7 +9,7 @@
 			cache: false
 		}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
 			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate" @onImagePress="onImagePress"
-			@onImageClick="onImageClick" @on-message="onMessage" @onNameMessage="onMessage">
+			@onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage">
 		</anydoor-webview>
 	</tm-app>
 </template>
@@ -40,6 +40,7 @@ import { linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
+import { WebviewBridge } from "@/common/WebviewBridge/WebviewBridge"
 const {
 	proxy
 } = getCurrentInstance()
@@ -71,6 +72,9 @@ const webviewConfig = ref<IWebviewItem>()
 
 //messgae
 const onMessage = (e: IMessageResult) => {
+	ToastModule.show({
+		text: JSON.stringify(e)
+	})
 	console.log(e)
 }
 
@@ -101,8 +105,22 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 }
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
+	webview.value.send(JSON.stringify({
+		code: '111',
+		msg: "9999"
+	})).then(res => {
+		console.log(res)
+	})
 
-	webview.value && webview.value.registerHandler("default")
+	// webview.value.callHandler({
+	// 	name: "123",
+	// 	data: JSON.stringify({
+	// 		code: '111',
+	// 		msg: "9999"
+	// 	})
+	// }, (res) => {
+	// 	console.log(res)
+	// })
 	// console.log(e)
 
 	// webview.value.getUrl().then(url => {
