@@ -1,6 +1,6 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage>
+		<anydoorPage  v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
 				<view class="bg" :style="{
 					backgroundImage: headerBg,
@@ -36,8 +36,8 @@
 			<template #content>
 				<!-- 轮播 -->
 				<view class="index-carousel-box round-5" style="margin: 35rpx;">
-					<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
-						:list="swiperList" align="left"></tm-carousel>
+					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
+						:height="350" :list="swiperList" align="left"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
 				<tm-alert class=" round-5" :shadow="2" text :content="[{
@@ -170,7 +170,8 @@
 import {
 	onReady,
 	onPageScroll,
-	onShow
+	onShow,
+	onLoad
 } from "@dcloudio/uni-app"
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmInput from "@/tmui/components/tm-input/tm-input.vue"
@@ -188,13 +189,6 @@ import {
 	useTmpiniaStore
 } from '@/tmui/tool/lib/tmpinia'
 import {
-	custom_props,
-	computedTheme,
-	computedClass,
-	computedStyle,
-	computedDark,
-} from "@/tmui/tool/lib/minxs"
-import {
 	computed,
 	onMounted,
 	ref
@@ -209,6 +203,9 @@ import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import {
 	getCurrentInstance
 } from "vue"
+import { listSwiper } from "@/common/service/swiper"
+import { SOURCE_TYPE } from "@/common/define/sourceType"
+import { merge } from "lodash"
 const {
 	proxy
 } = getCurrentInstance();
@@ -216,41 +213,6 @@ const {
 import {
 	throttle
 } from "lodash"
-
-import {
-	colortool
-} from "@/tmui/tool/theme/theme"
-
-// #ifdef APP-NVUE
-//bindingx
-// const BindingX = uni.requireNativePlugin('bindingx')
-// function getEl(el) {
-// 	if (typeof el === 'string' || typeof el === 'number') return el;
-// 	if (WXEnvironment) {
-// 		return el.ref;
-// 	} else {
-// 		return el instanceof HTMLElement ? el : el.$el;
-// 	}
-// }
-// onReady(() => {
-// const element = getEl(proxy.$refs.scrollItem)
-// domModule.getComponentRect(element, (ret) => {
-// 	console.log(ret);
-// 	//渲染完成后获取节点DOM信息，用于计算动画每次的移动距离
-// 	this.earyMove = ((ret.size.width - 30) / 2).toFixed(2)
-// })
-// console.log(element)
-// BindingX.bind({
-// 	eventType: "scroll",
-// 	anchor: element,
-// 	props: [{
-// 		element: getEl(proxy.$refs.navbar),
-// 		property: "background-color",
-// 		expression: 'rgba(255,255,255, 1-abs(y)/100)'
-// 	}]
-// })
-// })
-// #endif
 //临界值
 const num = 70
 const pageScrollY = ref(0);
@@ -281,12 +243,21 @@ const store = useTmpiniaStore()
 //navbarHeight
 const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 //轮播图
-const swiperList = ["https://picsum.photos/200/300?id=43335",
-	"https://picsum.photos/200/300?id=433",
-	"https://picsum.photos/200/300?id=433",
-	"https://picsum.photos/200/300?id=433"
-]
+const swiperList = ref([])
 
+//加载数据
+onLoad(() => {
+	refresh()
+})
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+
+// 页面刷新
+const refresh=async ()=>{
+	refreshComplete.value=false
+	await getSwiperList()
+	refreshComplete.value=true
+}
 
 const menuList = ref([{
 	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
@@ -415,6 +386,31 @@ const toSearch = function () {
 		url: "/pages/search/search",
 		animationType: "slide-in-right"
 	})
+}
+
+
+const getSwiperList = async () => {
+	try {
+		const data = await listSwiper({})
+		swiperList.value = (data.data || []).map((item: any) => {
+			const result = {
+				sid: item.sid,
+				img: item.source,
+				device: item.device,
+				version: item.version,
+				description: item.description,
+				title: item.title,
+				link: item.url
+			}
+			if (item.type === SOURCE_TYPE.VIDEO) {
+				merge(result, {
+					type: 'video',
+				})
+			}
+			return result
+		})
+		console.log(swiperList.value)
+	} catch { }
 }
 </script>
 

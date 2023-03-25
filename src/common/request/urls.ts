@@ -39,6 +39,12 @@ const urls: Array<url> = [
     url: BASE_URL + '/api/notice/detail',
     token: false
   },
+  //轮播图
+  {
+    name: 'swiper_list',
+    url: BASE_URL + '/api/swiper/list',
+    token: false
+  },
   {
     name: 'user_find',
     url: 'https://login.douyeblog.top/user/find',
