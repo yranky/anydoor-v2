@@ -1,6 +1,6 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage  v-model:refresh-complete="refreshComplete" @refresh="refresh">
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
 				<view class="bg" :style="{
 					backgroundImage: headerBg,
@@ -206,6 +206,7 @@ import {
 import { listSwiper } from "@/common/service/swiper"
 import { SOURCE_TYPE } from "@/common/define/sourceType"
 import { merge } from "lodash"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 const {
 	proxy
 } = getCurrentInstance();
@@ -243,20 +244,31 @@ const store = useTmpiniaStore()
 //navbarHeight
 const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 //轮播图
-const swiperList = ref([])
+const swiperList = ref<any>([])
 
 //加载数据
 onLoad(() => {
+	loadCache()
 	refresh()
 })
+
+const loadCache = () => {
+	//首先读取缓存
+	try {
+		//读物轮播图列表缓存
+		const swiper_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.SWIPER_LIST))
+		if(swiper_list_temp) swiperList.value = swiper_list_temp instanceof Array?swiper_list_temp:[]
+	} catch {}
+}
+
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
 
 // 页面刷新
-const refresh=async ()=>{
-	refreshComplete.value=false
+const refresh = async () => {
+	refreshComplete.value = false
 	await getSwiperList()
-	refreshComplete.value=true
+	refreshComplete.value = true
 }
 
 const menuList = ref([{
@@ -409,7 +421,8 @@ const getSwiperList = async () => {
 			}
 			return result
 		})
-		console.log(swiperList.value)
+		//保存数据到缓存
+		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, JSON.stringify(swiperList.value))
 	} catch { }
 }
 </script>
