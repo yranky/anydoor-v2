@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-24 20:02:02
+ * @LastEditTime: 2023-04-01 13:18:36
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -11,7 +11,7 @@
 import url from './model/url'
 import { isUndefined } from 'lodash'
 
-const BASE_URL = 'http://192.168.0.231:10001'
+const BASE_URL = 'http://192.168.0.229:10001'
 
 // 链接
 const urls: Array<url> = [
@@ -43,6 +43,12 @@ const urls: Array<url> = [
   {
     name: 'swiper_list',
     url: BASE_URL + '/api/swiper/list',
+    token: false
+  },
+  //菜单列表
+  {
+    name: 'menu_list',
+    url: BASE_URL + '/api/menu/list',
     token: false
   },
   {

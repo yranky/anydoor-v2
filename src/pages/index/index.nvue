@@ -207,6 +207,7 @@ import { listSwiper } from "@/common/service/swiper"
 import { SOURCE_TYPE } from "@/common/define/sourceType"
 import { merge } from "lodash"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import { listIndexMenu } from "@/common/service/menu"
 const {
 	proxy
 } = getCurrentInstance();
@@ -258,6 +259,9 @@ const loadCache = () => {
 		//读物轮播图列表缓存
 		const swiper_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.SWIPER_LIST))
 		if(swiper_list_temp) swiperList.value = swiper_list_temp instanceof Array?swiper_list_temp:[]
+		//读取菜单列表
+		const menu_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST))
+		if(menu_list_temp)  menuList.value = menu_list_temp
 	} catch {}
 }
 
@@ -268,79 +272,17 @@ const refreshComplete = ref<boolean>(true)
 const refresh = async () => {
 	refreshComplete.value = false
 	await getSwiperList()
+	await getIndexMenuList()
 	refreshComplete.value = true
 }
 
-const menuList = ref([{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
-	title: "天猫新品",
-	count: "热销"
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
-	title: "今日爆款",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
-	title: "天猫国际",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
-	title: "冬奥公益",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 99
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
-	title: "冬奥公益",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
-	title: "天猫新品",
-	count: 6
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
-	title: "今日爆款",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
-	title: "天猫国际",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
+//菜单列表
+const menuList = ref([
+// 	{
+// 	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
+// 	title: "天猫新品",
+// 	count: "热销"
+// }
 ])
 
 const newsTab = ref([{
@@ -400,7 +342,7 @@ const toSearch = function () {
 	})
 }
 
-
+//获取轮播列表
 const getSwiperList = async () => {
 	try {
 		const data = await listSwiper({})
@@ -424,6 +366,13 @@ const getSwiperList = async () => {
 		//保存数据到缓存
 		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, JSON.stringify(swiperList.value))
 	} catch { }
+}
+//获取首页菜单列表
+const getIndexMenuList= async ()=>{
+	try {
+		const data=await listIndexMenu({})
+		if(data.length>0) menuList.value=data
+	}catch { }
 }
 </script>
 
@@ -459,7 +408,9 @@ const getSwiperList = async () => {
 	}
 }
 
-.index-carousel-box {}
+// .index-carousel-box {
+	
+// }
 
 .bg {
 	background-image: linear-gradient(to bottom, rgba(64, 169, 255, .5), rgba(102, 255, 0, 0));
