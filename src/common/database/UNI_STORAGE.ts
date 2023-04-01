@@ -11,6 +11,8 @@
 export enum UNI_STORAGE {
     //轮播图列表缓存
     SWIPER_LIST = "swiper_list",
+    //提示列表
+    TIP_LIST = "tip_list",
     //菜单列表(首页菜单列表)
     MENU_INDEX_LIST = "menu_index_list",
     //菜单列表(我的部分)

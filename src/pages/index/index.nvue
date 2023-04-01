@@ -40,13 +40,7 @@
 						:height="350" :list="swiperList" align="left"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
-				<tm-alert class=" round-5" :shadow="2" text :content="[{
-					icon: 'tmicon-alert',
-					content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻'
-				}, {
-					icon: 'tmicon-alert',
-					content: '2222222222222222'
-				}]" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
+				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
 
 				<!-- 功能列表 -->
 				<tm-scrollx :width="750" :height="140" color="primary" transprent>
@@ -208,6 +202,7 @@ import { SOURCE_TYPE } from "@/common/define/sourceType"
 import { merge } from "lodash"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { listIndexMenu } from "@/common/service/menu"
+import { listTip } from "@/common/service/tip"
 const {
 	proxy
 } = getCurrentInstance();
@@ -256,9 +251,17 @@ onLoad(() => {
 const loadCache = () => {
 	//首先读取缓存
 	try {
-		//读物轮播图列表缓存
+		//读取轮播图列表缓存
 		const swiper_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.SWIPER_LIST))
 		if(swiper_list_temp) swiperList.value = swiper_list_temp instanceof Array?swiper_list_temp:[]
+	} catch {}
+	try {
+		//读取tip
+		const tip_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
+		console.log(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
+		if(tip_list_temp) tipList.value = tip_list_temp instanceof Array?tip_list_temp:[]
+	} catch {}
+	try {
 		//读取菜单列表
 		const menu_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST))
 		if(menu_list_temp)  menuList.value = menu_list_temp
@@ -272,12 +275,13 @@ const refreshComplete = ref<boolean>(true)
 const refresh = async () => {
 	refreshComplete.value = false
 	await getSwiperList()
+	await getTipList()
 	await getIndexMenuList()
 	refreshComplete.value = true
 }
 
 //菜单列表
-const menuList = ref([
+const menuList = ref<any>([
 // 	{
 // 	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
 // 	title: "天猫新品",
@@ -340,6 +344,14 @@ const toSearch = function () {
 		url: "/pages/search/search",
 		animationType: "slide-in-right"
 	})
+}
+
+//获取tip
+const tipList=ref<any>([])
+
+const getTipList=async () => {
+	const data = await listTip({})
+	tipList.value=data
 }
 
 //获取轮播列表

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-01 13:18:36
+ * @LastEditTime: 2023-04-01 16:50:01
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -49,6 +49,12 @@ const urls: Array<url> = [
   {
     name: 'menu_list',
     url: BASE_URL + '/api/menu/list',
+    token: false
+  },
+  //提示列表
+  {
+    name: 'tip_list',
+    url: BASE_URL + '/api/tip/list',
     token: false
   },
   {
