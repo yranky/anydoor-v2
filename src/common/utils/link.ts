@@ -1,5 +1,5 @@
-export function linkTo(path: string) {
+export function linkTo(path: string, data: any = {}) {
     uni.navigateTo({
-        url: path
+        url: `${path}?data=${encodeURIComponent(JSON.stringify(data))}`
     })
 }

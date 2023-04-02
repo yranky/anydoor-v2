@@ -2,9 +2,9 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-24 20:19:12
+ * @LastEditTime: 2023-04-02 15:46:15
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
- * @Description: 
+ * @Description: 用户
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
@@ -13,6 +13,7 @@ import databases, { DATA } from "../database"
 import ERROR_TARGET from "@/common/errorHandler/ERROR_TARGET"
 import { USER_TABLES_NAME } from "../tables/user"
 import ToastModule from "@/common/native/toast/ToastModule"
+import Encrypt from "@/common/encrypt/Encrypt"
 
 export default class User {
     //sqlite对象
@@ -38,7 +39,63 @@ export default class User {
             databases[DATA.USER].tables[USER_TABLES_NAME.ACCOUNT].init,
             databases[DATA.USER].tables[USER_TABLES_NAME.TOKEN].init,
             databases[DATA.USER].tables[USER_TABLES_NAME.CURRENT].init,
+            databases[DATA.USER].tables[USER_TABLES_NAME.JAIOWU].init,
         ], ERROR_TARGET.USER_CLASS)
+    }
+
+    async getJiaowuAccount() {
+        //最终的结果
+        const last_result = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.JAIOWU}`, ERROR_TARGET.USER_CLASS)
+        if (last_result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
+            return false
+        } else {
+            const decryptObj = new Encrypt()
+            if (last_result.data[0]) {
+                const username = last_result.data[0].username
+                const password = decryptObj.decrypt(last_result.data[0].password)
+                if (typeof password === "boolean") {
+                    ToastModule.show({ text: "教务账号解密失败!" })
+                    return false
+                } else {
+                    return {
+                        username,
+                        password
+                    }
+                }
+            } else {
+                ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
+                return false
+            }
+        }
+    }
+
+    //插入一个教务账号
+    async insertJiaowuAccount(username: string, password: string) {
+        //先将密码加密
+        const encryptObj = new Encrypt()
+        const encryptData = encryptObj.encrypt(password)
+        //加密失败
+        if (typeof encryptData === "boolean") {
+            ToastModule.show({ text: '加密失败!' })
+            return false
+        } else {
+            const current = await this.sql?.executeSql([
+                //清空当前的
+                `
+                 DELETE FROM ${USER_TABLES_NAME.JAIOWU}
+                `,
+                //插入一条新的
+                `
+                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext) values (0,${username},'${encryptData}','')
+             `], ERROR_TARGET.USER_CLASS)
+
+            if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+                ToastModule.show({ text: "教务登录出现问题!" })
+                return false
+            }
+            return true
+        }
     }
 
     //插入一个用户

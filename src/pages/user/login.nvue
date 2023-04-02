@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-19 10:11:13
+ * @LastEditTime: 2023-04-02 13:22:03
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -56,6 +56,7 @@ import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
 import User from "@/common/database/user/User"
 import { linkTo } from "@/common/utils/link"
 import getUrlByName from "@/common/request/urls"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-01 16:50:01
+ * @LastEditTime: 2023-04-02 14:20:29
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -55,6 +55,24 @@ const urls: Array<url> = [
   {
     name: 'tip_list',
     url: BASE_URL + '/api/tip/list',
+    token: false
+  },
+  //高校列表
+  {
+    name: 'company_list',
+    url: BASE_URL + '/api/company/list',
+    token: false
+  },
+  //教务配置项信息
+  {
+    name: 'jw_config',
+    url: BASE_URL + '/api/jw/config',
+    token: false
+  },
+  //教务登录
+  {
+    name: 'jw_login',
+    url: BASE_URL + '/api/jw/info',
     token: false
   },
   {

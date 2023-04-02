@@ -29,6 +29,7 @@ onLaunch(async function () {
 
 	const instance = await User.getInstance()
 	instance.insertUserAccount('1', '1')
+	
 })
 </script>
 <style>

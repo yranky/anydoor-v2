@@ -33,6 +33,7 @@
 				<navigator url="/pages/more/score"><text>成绩查询</text></navigator>
 				<navigator url="/pages/more/plan"><text>教学计划</text></navigator>
 				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
+				<navigator url="/pages/jw/companySelection"><text>学校选择</text></navigator>
 				<text @click="toWebviewTest">webview测试</text>
 				
 				<!-- 用户主信息 -->

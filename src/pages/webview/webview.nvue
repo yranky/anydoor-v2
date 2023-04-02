@@ -82,10 +82,9 @@ const onMessage = (e: IMessageResult) => {
 //加载时调用
 onLoad((e: any) => {
 	try {
-		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item)))
+		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item||e.data)))
 		src.value = webviewConfig.value.url
 		navTitle.value = webviewConfig.value.title
-		console.log(webviewConfig.value)
 	} catch { }
 })
 

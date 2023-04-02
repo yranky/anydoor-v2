@@ -16,5 +16,7 @@ export enum UNI_STORAGE {
     //菜单列表(首页菜单列表)
     MENU_INDEX_LIST = "menu_index_list",
     //菜单列表(我的部分)
-    MENU_MY_LIST = "menu_my_list"
+    MENU_MY_LIST = "menu_my_list",
+    //高校列表
+    COMPANY_LIST = "company_list"
 }
