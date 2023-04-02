@@ -26,17 +26,19 @@
             :allowDelete="false"
             @delete="deletedFile(item)"
             extra
-            delete
+            :delete="!_disabled"
             :src="item.url"
             :width="itemWidth - 10"
             extraPosition="in"
             :height="itemHeight - 10"
+            :model="props.imageModel"
           >
             <template
               v-slot:extra
               class="relative flex-1 flex flex-col flex-col-bottom-start"
             >
               <view
+                v-if="!_disabled"
                 :style="{
                   background: 'rgba(0, 0, 0, 0.5)',
                   width: itemWidth - 10 + 'rpx',
@@ -201,6 +203,10 @@ const props = defineProps({
     type: Number,
     default: 140,
   },
+  imageModel:{
+    type:String,
+    default:'scaleToFill'
+  },
   defaultValue: {
     type: Array as PropType<Array<file>>,
     default: () => [],
@@ -328,7 +334,7 @@ const _uploadObj = new uploadfile({
 });
 
 const _flist: Ref<Array<file>> = ref([]);
-
+const _disabled = computed(()=>props.disabled)
 const _disabledAdd = computed(() => {
   return props.disabled || _flist.value.length >= props.maxFile;
 });
@@ -467,6 +473,7 @@ _uploadObj.fail = function (item) {
   emits("change", toRaw(_uploadObj.filelist));
 };
 function chooseFile() {
+  if(_disabled.value) return;
   _uploadObj.chooesefile().then((fileList) => {
     _flist.value = [..._uploadObj.filelist];
     emits("update:modelValue", _uploadObj.filelist);
@@ -534,10 +541,10 @@ function clearFail() {
  */
 defineExpose({
   start: () => {
-    _uploadObj.start();
+    return _uploadObj.start();
   },
   stop: () => {
-    _uploadObj.stop();
+    return _uploadObj.stop();
   },
   clear,
   del,
