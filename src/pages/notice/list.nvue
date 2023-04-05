@@ -91,7 +91,8 @@ const toDetail = debounce((item: any): void => {
 	//普通方式打开
 	if (item.external === EXTERNAL_TYPE.DEFAULT) {
 		linkTo(ROUTE_PATH.NOTICE_DETAIL,{},{
-			id:item.id
+			id:item.id,
+			title: item.title
 		})
 	} else {
 		linkTo(ROUTE_PATH.WEBVIEW,{

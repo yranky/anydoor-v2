@@ -1,11 +1,8 @@
 import qs from "querystringify"
 export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false) {
-    for (let key in external) {
-        external[key] = encodeURIComponent(external[key])
-    }
     //配置项
     const options: any = {
-        data: encodeURIComponent(JSON.stringify(data)),
+        data: JSON.stringify(data),
         ...external
     }
     const result: any = await navigateTo(path, options, replace)
