@@ -32,6 +32,7 @@ import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmInput from "@/tmui/components/tm-input/tm-input.vue"
 import { computed } from "vue"
 import { linkTo } from "@/common/utils/link";
+import { ROUTE_PATH } from "@/router/ROUTE_PATH";
 
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
@@ -48,8 +49,8 @@ const keyword = ref<string>("")
 
 //前往教务登录
 const toJWLogin=(item:any)=>{
-	console.log(item)
-	linkTo('/pages/jw/login',item)
+	// console.log(item)
+	linkTo(ROUTE_PATH.JIAOWU_LOGIN,item)
 }
 
 

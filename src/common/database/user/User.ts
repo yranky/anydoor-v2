@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-02 15:46:15
+ * @LastEditTime: 2023-04-05 11:33:35
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -43,35 +43,40 @@ export default class User {
         ], ERROR_TARGET.USER_CLASS)
     }
 
-    async getJiaowuAccount() {
-        //最终的结果
+    async getJiaowuAccount(init: boolean = false) {
+        //最终的结果(初始化则不显示提示信息)
         const last_result = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.JAIOWU}`, ERROR_TARGET.USER_CLASS)
         if (last_result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
-            ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
+            !init && ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
             return false
         } else {
             const decryptObj = new Encrypt()
             if (last_result.data[0]) {
                 const username = last_result.data[0].username
                 const password = decryptObj.decrypt(last_result.data[0].password)
+                let ext = {}
+                try {
+                    ext = JSON.parse(decodeURIComponent(last_result.data[0].ext))
+                } catch { }
                 if (typeof password === "boolean") {
-                    ToastModule.show({ text: "教务账号解密失败!" })
+                    !init && ToastModule.show({ text: "教务账号解密失败!" })
                     return false
                 } else {
                     return {
                         username,
-                        password
+                        password,
+                        ...ext
                     }
                 }
             } else {
-                ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
+                !init && ToastModule.show({ text: "教务账号信息获取失败，请尝试重新登录" })
                 return false
             }
         }
     }
 
     //插入一个教务账号
-    async insertJiaowuAccount(username: string, password: string) {
+    async insertJiaowuAccount(username: string, password: string, ext: any = {}) {
         //先将密码加密
         const encryptObj = new Encrypt()
         const encryptData = encryptObj.encrypt(password)
@@ -87,7 +92,7 @@ export default class User {
                 `,
                 //插入一条新的
                 `
-                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext) values (0,${username},'${encryptData}','')
+                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext) values (0,${username},'${encryptData}','${encodeURIComponent(JSON.stringify(ext))}')
              `], ERROR_TARGET.USER_CLASS)
 
             if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {

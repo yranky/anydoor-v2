@@ -41,6 +41,7 @@ import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { WebviewBridge } from "@/common/WebviewBridge/WebviewBridge"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const {
 	proxy
 } = getCurrentInstance()
@@ -133,7 +134,7 @@ const pageError = (e: IPageErrorResult) => {
 }
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
-	linkTo(`/pages/webview/webview?item=${encodeURIComponent(JSON.stringify({ url: e.url }))}`)
+	linkTo(ROUTE_PATH.WEBVIEW,{ url: e.url })
 }
 //页面的链接
 const src = ref("")

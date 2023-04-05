@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-02 13:22:03
+ * @LastEditTime: 2023-04-05 14:30:12
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -57,22 +57,23 @@ import User from "@/common/database/user/User"
 import { linkTo } from "@/common/utils/link"
 import getUrlByName from "@/common/request/urls"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 //找回密码
 const findPassword = () => {
-	linkTo('/pages/webview/webview?item=' + encodeURIComponent(JSON.stringify({
+	linkTo(ROUTE_PATH.WEBVIEW,{
 		url: getUrlByName("user_find").url
-	})))
+	})
 }
 
 //注册
 const register = () => {
-	linkTo('/pages/webview/webview?item=' + encodeURIComponent(JSON.stringify({
+	linkTo(ROUTE_PATH.WEBVIEW,{
 		url: getUrlByName("user_register").url
-	})))
+	})
 }
 
 //初始化

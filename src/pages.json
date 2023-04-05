@@ -156,28 +156,24 @@
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/jw/companySelection",
+			"style": {
+				"navigationBarTitleText": "学校选择",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/jw/login",
+			"style": {
+				"navigationBarTitleText": "教务登录",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
 		}
-	    ,{
-            "path" : "pages/jw/companySelection",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "学校选择",
-                "enablePullDownRefresh": false,
-				"navigationStyle": "custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/jw/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "教务登录",
-                "enablePullDownRefresh": false,
-				"navigationStyle": "custom"
-            }
-            
-        }
-    ],
+	],
 	"subPackages": [],
 	"preloadRule": [],
 	"globalStyle": {
