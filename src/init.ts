@@ -8,7 +8,7 @@ import useJiaowuStore from "@/store/jiaowu"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 15:37:37
+ * @LastEditTime: 2023-04-05 16:22:03
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 

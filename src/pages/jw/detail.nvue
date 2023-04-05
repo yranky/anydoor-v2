@@ -7,7 +7,7 @@
 			</template>
 			<template #content>
 				<view style="margin: 10rpx 20rpx;">
-					<anydoor-text :text="'更新于' + store.updateTime" color="grey"
+					<anydoor-text :text="'更新于 ' + store.updateTime" color="grey"
 						margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 					<tm-cell v-for="(value, key) in store.userInfo" :key="key" :margin="[0, 0]" :rightText="value"
 						:titleFontSize="32" :title="key" rightIcon=""> </tm-cell>
@@ -72,13 +72,12 @@ const getJiaowuInfo = async () => {
 	})
 	if (data.stuInfo) {
 		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
-			...jw_config_data,
+			...jw_config_data.data,
 			cid: store.jiaowuConfig.cid
 		}, data)
 		if (isSuccess === false) {
 			ToastModule.show({ text: "刷新失败!" })
 		} else {
-			ToastModule.show({ text: "刷新成功!" })
 			//刷新user
 			initUser()
 		}
