@@ -238,7 +238,7 @@ const jiaowuStore=useJiaowuStore()
 const toJiaowuLogin=()=>{
 	//已登录
 	if(jiaowuStore.isLogin){
-
+		linkTo(ROUTE_PATH.JIAOWU_MY)
 	}
 	//未登录
 	else{

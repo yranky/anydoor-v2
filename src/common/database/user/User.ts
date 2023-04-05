@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 11:33:35
+ * @LastEditTime: 2023-04-05 15:28:07
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -14,6 +14,7 @@ import ERROR_TARGET from "@/common/errorHandler/ERROR_TARGET"
 import { USER_TABLES_NAME } from "../tables/user"
 import ToastModule from "@/common/native/toast/ToastModule"
 import Encrypt from "@/common/encrypt/Encrypt"
+import * as dayjs from "@/tmui/tool/dayjs/esm/index"
 
 export default class User {
     //sqlite对象
@@ -43,6 +44,7 @@ export default class User {
         ], ERROR_TARGET.USER_CLASS)
     }
 
+    //获取教务登录
     async getJiaowuAccount(init: boolean = false) {
         //最终的结果(初始化则不显示提示信息)
         const last_result = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.JAIOWU}`, ERROR_TARGET.USER_CLASS)
@@ -54,9 +56,12 @@ export default class User {
             if (last_result.data[0]) {
                 const username = last_result.data[0].username
                 const password = decryptObj.decrypt(last_result.data[0].password)
+                //教务的缓存数据
+                let jw_data = {}
                 let ext = {}
                 try {
                     ext = JSON.parse(decodeURIComponent(last_result.data[0].ext))
+                    jw_data = JSON.parse(decodeURIComponent(last_result.data[0].data))
                 } catch { }
                 if (typeof password === "boolean") {
                     !init && ToastModule.show({ text: "教务账号解密失败!" })
@@ -65,7 +70,8 @@ export default class User {
                     return {
                         username,
                         password,
-                        ...ext
+                        ...ext,
+                        jw_data
                     }
                 }
             } else {
@@ -76,7 +82,7 @@ export default class User {
     }
 
     //插入一个教务账号
-    async insertJiaowuAccount(username: string, password: string, ext: any = {}) {
+    async insertJiaowuAccount(username: string, password: string, ext: any = {}, jw_data: any = {}) {
         //先将密码加密
         const encryptObj = new Encrypt()
         const encryptData = encryptObj.encrypt(password)
@@ -92,7 +98,10 @@ export default class User {
                 `,
                 //插入一条新的
                 `
-                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext) values (0,${username},'${encryptData}','${encodeURIComponent(JSON.stringify(ext))}')
+                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext,data) values (0,${username},'${encryptData}','${encodeURIComponent(JSON.stringify({
+                    ...ext,
+                    update_time: dayjs.default().format("YYYY/MM/DD HH:mm:ss")
+                }))}','${encodeURIComponent(JSON.stringify(jw_data))}')
              `], ERROR_TARGET.USER_CLASS)
 
             if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
@@ -100,6 +109,21 @@ export default class User {
                 return false
             }
             return true
+        }
+    }
+    //退出登录
+    async logoutJiaowuAccount() {
+        const current = await this.sql?.executeSql([
+            //清空当前的
+            `
+             DELETE FROM ${USER_TABLES_NAME.JAIOWU}
+            `]
+            , ERROR_TARGET.USER_CLASS)
+        //不成功
+        if (current?.code === SQLITE_STATUS_CODE.SUCCESS) {
+            return true
+        } else {
+            return false
         }
     }
 

@@ -127,6 +127,12 @@ const routes: IRoutes<ROUTE_PATH> = {
         NAME: "教务登录",
         AUTH: [AuthMode.NOT_JIAOWU_LOGIN],
         SEARCH: false
+    },
+    [ROUTE_PATH.JIAOWU_MY]: {
+        PATH: ROUTE_PATH.JIAOWU_MY,
+        NAME: "我的教务",
+        AUTH: [],
+        SEARCH: false
     }
 }
 

@@ -40,6 +40,7 @@ import tmResult from "@/tmui/components/tm-result/tm-result.vue"
 import CODE from "@/common/define/code"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { initUser } from "@/init"
 
 //登录的表单
 const form = ref<any>({
@@ -134,11 +135,17 @@ const login = async () => {
 		cid
 	})
 	if (data.stuInfo !== undefined) {
-		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password,jwConfigObj.value)
+		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password,{
+			...jwConfigObj.value,
+			cid
+		},data)
 		if (isSuccess === false) {
 			ToastModule.show({ text: "登录失败!" })
 		} else {
 			ToastModule.show({ text: "登录成功!" })
+			//刷新user
+			initUser()
+			
 			linkTo(ROUTE_PATH.MY, {},{}, true);
 		}
 	}

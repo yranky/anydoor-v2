@@ -40,5 +40,7 @@ export enum ROUTE_PATH {
     // 学校选择
     COMPANY_SELECT = "/pages/jw/companySelection",
     // 教务登录
-    JIAOWU_LOGIN = "/pages/jw/login"
+    JIAOWU_LOGIN = "/pages/jw/login",
+    //教务信息
+    JIAOWU_MY = "/pages/jw/detail"
 }

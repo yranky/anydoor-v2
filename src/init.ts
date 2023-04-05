@@ -8,7 +8,7 @@ import useJiaowuStore from "@/store/jiaowu"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 11:41:03
+ * @LastEditTime: 2023-04-05 15:37:37
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -45,9 +45,18 @@ export async function initUser() {
             state.jiaowuAccount.username = jiaowuAccount.username
             state.jiaowuAccount.password = jiaowuAccount.password
             state.isLogin = true
+            //个人信息
+            state.userInfo = (jiaowuAccount.jw_data as any).stuInfo || {}
+            //更新时间
+            state.updateTime = (jiaowuAccount as any).update_time || ""
         })
         //教务配置
         store.setJiaowuConfig(jiaowuAccount)
+        //设置周次
+        store.setWeek({
+            nowWeek: (jiaowuAccount.jw_data as any)['nowWeek'],
+            allWeek: (jiaowuAccount.jw_data as any)['allWeek']
+        })
     } else {
         store.reset()
     }

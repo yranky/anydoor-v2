@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-12 16:33:09
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-02 15:00:25
+ * @LastEditTime: 2023-04-05 15:15:13
  * @FilePath: \anydoor-v2\src\common\database\tables\user.ts
  * @Description: 用户表
  * 
@@ -71,6 +71,7 @@ const USER_TABLES: ITables<USER_TABLES_NAME> = {
     'uid' INTEGER  NOT NULL , 
     'username' text  NULL,
     'password' text  NULL,
+    'data' text,
     'ext' text
   )
   `,

@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash"
+import { cloneDeep, values } from "lodash"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
@@ -9,7 +9,8 @@ const jiaowu_config = {
     public_key: '',
     user_description: '教务在线',
     user_login_description: '已登录',
-    user_not_login_description: '未登录'
+    user_not_login_description: '未登录',
+    cid: ''
 }
 
 export const useJiaowuStore = defineStore("jiaowu_store", () => {
@@ -27,6 +28,12 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
         jiaowuAccount.value.password = ""
         isLogin.value = false
         jiaowuConfig.value = cloneDeep(jiaowu_config)
+        userInfo.value = {}
+        week.value = {
+            nowWeek: 0,
+            allWeek: 0
+        }
+        updateTime.value = ""
     }
     //教务的配置信息
     const jiaowuConfig = ref(cloneDeep(jiaowu_config))
@@ -39,14 +46,45 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
         jiaowuConfig.value.user_description = data.user_description || "教务在线"
         jiaowuConfig.value.user_login_description = data.user_login_description || "已登录"
         jiaowuConfig.value.user_not_login_description = data.user_not_login_description || "未登录"
+        jiaowuConfig.value.cid = data.cid || ""
     }
+
+    //教务个人信息
+    const userInfo = ref({})
+    //设置教务个人信息
+    const setUserInfo = (data: any) => {
+        userInfo.value = data
+    }
+
+    //周次
+    const week = ref({
+        nowWeek: 0,
+        allWeek: 0
+    })
+    //设置周次
+    const setWeek = (data: {
+        nowWeek: number,
+        allWeek: number
+    }) => {
+        const now = Number(data.nowWeek)
+        const all = Number(data.allWeek)
+        week.value.nowWeek = isNaN(now) ? 0 : now
+        week.value.allWeek = isNaN(all) ? 0 : all
+    }
+
+    const updateTime = ref("")
 
     return {
         jiaowuAccount,
         isLogin,
         reset,
         jiaowuConfig,
-        setJiaowuConfig
+        setJiaowuConfig,
+        userInfo,
+        setUserInfo,
+        week,
+        setWeek,
+        updateTime
     }
 })
 
