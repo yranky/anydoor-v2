@@ -8,7 +8,7 @@ import useJiaowuStore from "@/store/jiaowu"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 16:22:03
+ * @LastEditTime: 2023-04-05 18:55:50
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -34,6 +34,7 @@ export default async function init() {
 
 //初始化用户信息等
 export async function initUser() {
+    //#region 教务用户
     //初始化用户
     const jiaowuAccount = await (await User.getInstance()).getJiaowuAccount(true)
     // 加载store
@@ -60,5 +61,9 @@ export async function initUser() {
     } else {
         store.reset()
     }
+    //#endregion
+    //#region 用户
+
+    //#endregion
 
 }

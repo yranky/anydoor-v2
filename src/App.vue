@@ -14,6 +14,7 @@ import {
 } from "@dcloudio/uni-app"
 import init,{initUser} from "./init"
 
+
 onLaunch(async function () {
 	
 	//修改userAgent

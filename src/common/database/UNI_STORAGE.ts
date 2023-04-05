@@ -18,5 +18,13 @@ export enum UNI_STORAGE {
     //菜单列表(我的部分)
     MENU_MY_LIST = "menu_my_list",
     //高校列表
-    COMPANY_LIST = "company_list"
+    COMPANY_LIST = "company_list",
+    //教学计划
+    JW_PLAN = "jw_plan",
+    //教学计划当前选择的学期
+    JW_PLAN_SEMESTER = "jw_plan_semester",
+    //成绩
+    JW_SCORE = "jw_score",
+    //成绩当前选择的学期
+    JW_SCORE_SEMESTER = "jw_score_semester"
 }

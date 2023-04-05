@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 10:06:10
+ * @LastEditTime: 2023-04-05 17:05:43
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 
  * 
@@ -73,6 +73,18 @@ const urls: Array<url> = [
   {
     name: 'jw_login',
     url: BASE_URL + '/api/jw/info',
+    token: false
+  },
+  //教务教学计划
+  {
+    name: 'jw_plan',
+    url: BASE_URL + '/api/jw/plan',
+    token: false
+  },
+  //教务成绩
+  {
+    name: 'jw_score',
+    url: BASE_URL + '/api/jw/score',
     token: false
   },
   {

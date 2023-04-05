@@ -25,17 +25,17 @@
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
-import useJiaowuStore from "@/store/jiaowu";
+import useJiaowuStore from "@/store/jiaowu"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import { ref } from "vue"
-import User from "@/common/database/user/User";
-import Encrypt from "@/common/encrypt/Encrypt";
-import { jwConfig, jwLogin } from "@/common/service/jw";
-import CODE from "@/common/define/code";
-import ToastModule from "@/common/native/toast/ToastModule";
-import { initUser } from "@/init";
+import User from "@/common/database/user/User"
+import Encrypt from "@/common/encrypt/Encrypt"
+import { jwConfig, jwLogin } from "@/common/service/jw"
+import CODE from "@/common/define/code"
+import ToastModule from "@/common/native/toast/ToastModule"
+import { initUser } from "@/init"
 import tmButton from "@/tmui/components/tm-button/tm-button.vue"
-import { linkBack } from "@/common/utils/link";
+import { linkBack } from "@/common/utils/link"
 const store = useJiaowuStore()
 
 //下拉刷新是否完成
