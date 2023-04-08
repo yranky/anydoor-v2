@@ -15,6 +15,7 @@ import {
 import init,{initUser} from "./init"
 
 
+
 onLaunch(async function () {
 	
 	//修改userAgent

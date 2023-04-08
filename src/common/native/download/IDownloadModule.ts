@@ -2,8 +2,8 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-01 15:01:59
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-03 10:50:22
- * @FilePath: \测试2\common\native\download\IDownloadModule.ts
+ * @LastEditTime: 2023-04-08 17:15:06
+ * @FilePath: \anydoor-v2\src\common\native\download\IDownloadModule.ts
  * @Description: 原生的接口定义
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
@@ -108,4 +108,20 @@ export enum TASK_STATE {
     PRE_RUNNING = 5,
     PRE_RUNNED = 6,
     DELETE = 7
+}
+
+export const TASK_STATE_NAME:IName<TASK_STATE> = {
+    [TASK_STATE.UNKNOWN]: "未知",
+    [TASK_STATE.FAIL]: "任务失败",
+    [TASK_STATE.SUCCESS]: "已完成",
+    [TASK_STATE.STOP]: "已停止",
+    [TASK_STATE.WAITING]: "等待中",
+    [TASK_STATE.RUNNING]: "下载中",
+    [TASK_STATE.PRE_RUNNING]: "即将开始",
+    [TASK_STATE.PRE_RUNNED]: "等待开始",
+    [TASK_STATE.DELETE]: "已删除"
+}
+
+export type IName<T extends string | number | symbol> = {
+    [key in T]: string
 }

@@ -1,4 +1,4 @@
-import IDownloadModuleNative, { DOWNLOAD_PATH_MODE, IDownloadInfo } from "./IDownloadModule"
+import IDownloadModuleNative, { DOWNLOAD_PATH_MODE, IDownloadCancelOption, IDownloadInfo } from "./IDownloadModule"
 import ToastModule from "../toast/ToastModule"
 import IResult from "../IResult"
 import { debugTool } from "../nativeInit"
@@ -31,7 +31,6 @@ export default class DownloadModule {
                     res.data?.forEach((item) => {
                         DownloadModule.tasks.push(item)
                     })
-                    console.log(DownloadModule.tasks)
                 }))
                 //创建监听器
                 uni.$anydoor_native.Download_Module.listen(debugTool((res) => {
@@ -41,6 +40,46 @@ export default class DownloadModule {
             }))
         }
         return uni.$anydoor.DownloadModule
+    }
+
+    //取消
+    cancel(data: IDownloadCancelOption, callbackfn?: (result: IResult<undefined>) => void): void{
+        uni.$anydoor_native.Download_Module.cancel(data,(result: IResult<undefined>)=>{
+            this.getTaskList((res)=>{
+                console.log(res)
+                callbackfn&&callbackfn(result)
+            })
+        })
+    }
+    //删除记录
+    removeRecord(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void{
+        uni.$anydoor_native.Download_Module.removeRecord(taskId,(result: IResult<undefined>)=>{
+            this.getTaskList((res)=>{
+                callbackfn&&callbackfn(result)
+            })
+        })
+    }
+
+    //重新刷新任务
+    resetState(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void{
+        uni.$anydoor_native.Download_Module.resetState(taskId,(result: IResult<undefined>)=>{
+            this.getTaskList((res)=>{
+                callbackfn&&callbackfn(result)
+            })
+        })
+    }
+
+    //获取任务列表
+    getTaskList(callbackfn?: (result: Array<IDownloadTask>) => void){
+        uni.$anydoor_native.Download_Module.getTaskList(debugTool((res) => {
+            DownloadModule.tasks.splice(0,DownloadModule.tasks.length)
+            res.data?.forEach((item) => {
+                DownloadModule.tasks.push(item)
+            })
+            callbackfn && callbackfn(DownloadModule.tasks)
+            //回调
+            DownloadModule.doCallback()
+        }))
     }
 
     create(url: string): void {
@@ -55,9 +94,11 @@ export default class DownloadModule {
                     text: "任务创建成功!"
                 })
                 //将新任务加入
-                res.data?.taskId && uni.$anydoor_native.Download_Module.getDetail(res.data?.taskId, (result: IResult<IDownloadInfo>) => {
-                    result.data && DownloadModule.tasks.push(result.data)
-                })
+                // res.data?.taskId && uni.$anydoor_native.Download_Module.getDetail(res.data?.taskId, (result: IResult<IDownloadInfo>) => {
+                //     result.data && DownloadModule.tasks.push(result.data)
+                // })
+                //直接刷新整个队列
+                this.getTaskList()
             }
         }))
     }
@@ -68,6 +109,7 @@ export default class DownloadModule {
     //取消监听
     unListen(fn: Function): void {
         const index: number | undefined = DownloadModule.suscriber.findIndex((c) => c === fn)
+        if(index!==undefined) DownloadModule.suscriber.splice(index,1)
     }
     //deboucne
     private static debounce(fn: Function, delay: number) {
@@ -80,6 +122,15 @@ export default class DownloadModule {
                 fn.call(this);
             }, delay)
         }
+    }
+
+    //执行回调
+    private static doCallback(){
+        DownloadModule.suscriber.forEach((item) => {
+            //需要深复制
+            const tasks = JSON.parse(JSON.stringify(DownloadModule.tasks))
+            typeof item === 'function' && item.call(this, tasks)
+        })
     }
 
     private static listenCallBack(res: IResult<{ uuid?: String, current: IDownloadInfo, data?: Array<IDownloadInfo>, currentUrlTasks?: Array<IDownloadInfo> }>) {
@@ -108,11 +159,7 @@ export default class DownloadModule {
                 }
             }()
             //触发一些回调
-            DownloadModule.suscriber.forEach((item) => {
-                //需要深复制
-                const tasks = JSON.parse(JSON.stringify(DownloadModule.tasks))
-                typeof item === 'function' && item.call(this, tasks)
-            })
+            this.doCallback()
         }
     }
 }

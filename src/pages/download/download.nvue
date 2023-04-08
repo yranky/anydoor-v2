@@ -1,15 +1,107 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="我的下载"></tm-navbar>
-
+		<tm-navbar :leftWidth="120" :rightWidth="125">
+			<template #default>
+				<tm-segtab :width="500" :list="tabList" :defaultValue="2" v-model:model-value="tabId"></tm-segtab>
+			</template>
+		</tm-navbar>
+		<button @click="downloadItem">下载</button>
+		<anydoorDownloadItem v-for="item in dataList" :item-info="item" :key="item.id" />
 	</tm-app>
 </template>
 
 <script lang="ts" setup>
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmSegtab from "@/tmui/components/tm-segtab/tm-segtab.vue"
+import anydoorDownloadItem from "@/components/anydoor-download-item/anydoor-download-item.vue"
+import { ref } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
+import DownloadModule, { IDownloadTask } from "@/common/native/download/DownloadModule"
+import { onUnmounted } from "vue"
+import { IDownloadInfo } from "@/common/native/download/IDownloadModule"
+import { computed } from "vue"
+import fileSize from "@/common/utils/fileSize"
+
+// tab的list
+const tabList = ref([
+	{ text: '下载中', id: 1 },
+	{ text: '已下载', id: 2 }
+])
+//当前的tabId
+const tabId = ref<number>(2)
+
+
+
+
+const listen = (tasks: IDownloadTask[]) => {
+	list.value = tasks || []
+}
+
+const list = ref<IDownloadTask[]>([])
+
+//下载中
+const downloading = computed(() => {
+	const data: IDownloadInfo[] = list.value.filter((item: IDownloadInfo) => {
+		return item.isComplete === false
+	})
+	return data.map((item: IDownloadInfo) => {
+		return downloadItemFilter(item)
+	})
+})
+//当前的dataList
+const dataList = computed(() => {
+	if (tabId.value === 1) return downloading.value
+	if (tabId.value === 2) return downloaded.value
+	return []
+})
+
+//已下载
+const downloaded = computed(() => {
+	const data: IDownloadInfo[] = list.value.filter((item: IDownloadInfo) => {
+		return item.isComplete === true
+	})
+	return data.map((item: IDownloadInfo) => {
+		return downloadItemFilter(item)
+	})
+})
+
+//获取下载列表
+const getTaskList = () => {
+	DownloadModule.getInstance().getTaskList((result: IDownloadInfo[]) => {
+		list.value = result || []
+	})
+
+}
+
+//filter
+function downloadItemFilter(item: IDownloadInfo) {
+	return {
+		id: item.taskId,
+		total: item.convertFileSize !== undefined ? item.convertFileSize : '未知',
+		rate: fileSize(item.speed) + "/s",
+		current: fileSize(item.currentProgress),
+		status: item.state,
+		filename: item.fileName,
+		detail: item
+	}
+}
+
+//onMounted
+onLoad(() => {
+	// DownloadModule.getInstance().create("https://0a797c5bfa6d19ed73cbbe637f4e9440.rdt.tfogc.com:49156/dd.myapp.com/sjy.00007/sjy.00001/16891/apk/B938B0E0AF53AC9125FDEA6336F05C8E.apk?mkey=6431380e61c98182fb21b7fc0c8d9c2b&arrive_key=322412500699&fsname=com.tencent.tmgp.sgame_802010901.apk&cip=218.4.55.18&proto=https")
+	getTaskList()
+	DownloadModule.getInstance().listen(listen)
+})
+
+onUnmounted(() => {
+	DownloadModule.getInstance().unListen(listen)
+})
+
+const downloadItem = () => {
+	DownloadModule.getInstance().create("https://down11.zol.com.cn/liaotian/wangzherongyao3.81.1.8_3.apk")
+}
+
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

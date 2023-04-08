@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 18:15:13
+ * @LastEditTime: 2023-04-08 12:35:29
  * @FilePath: \anydoor-v2\src\pages\more\plan.nvue
  * @Description: 教学计划
  * 
@@ -172,6 +172,10 @@ const getPlan = async () => {
 		password: password_encrypt,
 		cid: store.jiaowuConfig.cid
 	})
+	if (data.code === CODE.SUCCESS) {
+		tags.value = data.data.tag
+		datas.value = data.data.data
+	}
 	//加载中去掉
 	status.value.loading = false
 	uni.setStorageSync(UNI_STORAGE.JW_PLAN, JSON.stringify({

@@ -2,16 +2,16 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 17:05:43
+ * @LastEditTime: 2023-04-08 12:23:46
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
- * @Description: 
+ * @Description: 链接
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 import url from './model/url'
 import { isUndefined } from 'lodash'
 
-const BASE_URL = 'http://192.168.45.97:10001'
+const BASE_URL = 'http://192.168.196.3:10001'
 
 // 链接
 const urls: Array<url> = [

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 18:53:50
+ * @LastEditTime: 2023-04-08 12:32:31
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -35,12 +35,13 @@
 				<tm-icon name="tmicon-shuaxin" :spin="true" v-if="status.loading"></tm-icon>
 				<tm-modal v-for="item in dataFilter" :key="item[0]" :height="800" okText="确认">
 					<template v-slot:trigger>
-						<tm-card  status="" :title="item[lessonNameIndex]"></tm-card>
+						<tm-card status="" :title="item[lessonNameIndex]"></tm-card>
 					</template>
-					<tm-cell v-for="(value,index) in tags" :key="value" :margin="[0, 0]" :rightText="item[index]"
+					<tm-cell v-for="(value, index) in tags" :key="value" :margin="[0, 0]" :rightText="item[index]"
 						:titleFontSize="32" :title="value" rightIcon=""> </tm-cell>
 				</tm-modal>
-				<tm-result v-if="dataFilter.length===0 && !status.loading" :showBtn="false" subTitle="上方可切换学期" title="暂无数据"></tm-result>
+				<tm-result v-if="dataFilter.length === 0 && !status.loading" :showBtn="false" subTitle="上方可切换学期"
+					title="暂无数据"></tm-result>
 			</template>
 		</anydoorPage>
 	</tm-app>
@@ -142,8 +143,8 @@ const loadCache = () => {
 		if (score_semester) {
 			semesterSelect.value = score_semester
 		}
-		if(score&&score_semester){
-			status.value.loading=false
+		if (score && score_semester) {
+			status.value.loading = false
 		}
 	} catch { }
 }
@@ -172,6 +173,10 @@ const getScore = async () => {
 		password: password_encrypt,
 		cid: store.jiaowuConfig.cid
 	})
+	if (data.code === CODE.SUCCESS) {
+		tags.value = data.data.tag
+		datas.value = data.data.data
+	}
 	//加载
 	status.value.loading = false
 	uni.setStorageSync(UNI_STORAGE.JW_SCORE, JSON.stringify({
