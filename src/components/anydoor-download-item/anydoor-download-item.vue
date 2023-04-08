@@ -40,8 +40,10 @@ enum ACTION_TYPE {
     REMOVE = "remove",
     //彻底单数
     DELETE = "delete",
-    //重新下载
-    RE_DOWNLOAD = "re_download"
+    //暂停
+    STOP = "stop",
+    //继续
+    RESUME = "resume"
 }
 
 
@@ -87,8 +89,11 @@ const menuItemClick = (listitem: any, index: number) => {
         case ACTION_TYPE.OPEN:
             openFile()
             break
-        case ACTION_TYPE.RE_DOWNLOAD:
-            reDownload()
+        case ACTION_TYPE.RESUME:
+            resume()
+            break
+        case ACTION_TYPE.STOP:
+            stop()
             break
     }
 }
@@ -103,17 +108,6 @@ function openFile() {
     });
 }
 
-//重新下载
-async function reDownload() {
-    const res: any = await removeTask(true, false)
-    if (res.success === true) {
-        //重新创建任务
-        DownloadModule.getInstance().create(props.itemInfo.detail.url || "")
-    } else {
-        ToastModule.show({ text: "失败!" })
-    }
-}
-
 //移除任务
 function removeTask(removeFile: boolean = false, toast: boolean = true) {
     return new Promise(resolve => {
@@ -122,29 +116,9 @@ function removeTask(removeFile: boolean = false, toast: boolean = true) {
             DownloadModule.getInstance().removeRecord(props.itemInfo.detail.taskId)
         } else {
             //删除文件
-            uni.removeSavedFile({
-                filePath: props.itemInfo.detail.filePath,
-                success: () => {
-                        DownloadModule.getInstance().removeRecord(props.itemInfo.detail.taskId)
-                        // toast && ToastModule.show({ text: "成功!" })
-                        resolve({ success: true })
-                },
-                fail: (fail) => {
-                    //只是路径问题
-                    if (fail.code === 14) {
-                        DownloadModule.getInstance().cancel({
-                            taskId: props.itemInfo.detail.taskId,
-                            removeFile: true
-                        }, () => {
-                            DownloadModule.getInstance().removeRecord(props.itemInfo.detail.taskId)
-                            // toast && ToastModule.show({ text: "成功!" })
-                            resolve({ success: true })
-                        })
-                    } else {
-                        toast && ToastModule.show({ text: fail.errMsg })
-                        resolve({ success: false })
-                    }
-                }
+            DownloadModule.getInstance().cancel({
+                taskId: props.itemInfo.detail.taskId,
+                removeFile: true
             })
         }
     })
@@ -162,18 +136,33 @@ const actionList = computed(() => {
         ]
     } else {
         return [{
-            text: '重新下载', id: ACTION_TYPE.RE_DOWNLOAD
-        }, {
             text: '取消任务', id: ACTION_TYPE.CANCEL
+        }, {
+            text: props.itemInfo.status === TASK_STATE.RUNNING ? '暂停' : '继续', id: props.itemInfo.status === TASK_STATE.RUNNING ? ACTION_TYPE.STOP : ACTION_TYPE.RESUME
         }]
     }
 })
+
+const stop = () => {
+    DownloadModule.getInstance().stop(props.itemInfo.detail.taskId)
+}
+
+const resume = () => {
+    DownloadModule.getInstance().resume(props.itemInfo.detail.taskId)
+}
 
 const itemClick = () => {
 
     try {
         //如果下载完成了
         if (props.itemInfo.detail.isComplete) openFile()
+        else {
+            if (props.itemInfo.status === TASK_STATE.STOP || props.itemInfo.status === TASK_STATE.FAIL) {
+                resume()
+            } else if (props.itemInfo.status === TASK_STATE.RUNNING) {
+                stop()
+            }
+        }
     } catch {
 
     }

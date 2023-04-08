@@ -43,36 +43,116 @@ export default class DownloadModule {
     }
 
     //取消
-    cancel(data: IDownloadCancelOption, callbackfn?: (result: IResult<undefined>) => void): void{
-        uni.$anydoor_native.Download_Module.cancel(data,(result: IResult<undefined>)=>{
-            this.getTaskList((res)=>{
-                console.log(res)
-                callbackfn&&callbackfn(result)
-            })
+    cancel(data: IDownloadCancelOption, callbackfn?: (result: IResult<undefined>) => void): void {
+        //TODO 
+        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
+            if (e.deniedAlways.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
+                console.log('Always Denied!!! ' + e.deniedAlways.toString());
+            }
+            if (e.deniedPresent.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+
+                console.log('Present Denied!!! ' + e.deniedPresent.toString());
+            }
+            if (e.granted.length > 0) {
+                uni.$anydoor_native.Download_Module.cancel(data, (result: IResult<undefined>) => {
+                    setTimeout(() => {
+                        this.getTaskList((res) => {
+                            console.log(res)
+                            callbackfn && callbackfn(result)
+                        })
+                    }, 100)
+                })
+            }
+        }, function (e) {
+            ToastModule.show({ text: "授权失败!" })
         })
+
     }
     //删除记录
-    removeRecord(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void{
-        uni.$anydoor_native.Download_Module.removeRecord(taskId,(result: IResult<undefined>)=>{
-            this.getTaskList((res)=>{
-                callbackfn&&callbackfn(result)
+    removeRecord(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
+        uni.$anydoor_native.Download_Module.removeRecord(taskId, (result: IResult<undefined>) => {
+            this.getTaskList((res) => {
+                callbackfn && callbackfn(result)
             })
         })
     }
 
     //重新刷新任务
-    resetState(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void{
-        uni.$anydoor_native.Download_Module.resetState(taskId,(result: IResult<undefined>)=>{
-            this.getTaskList((res)=>{
-                callbackfn&&callbackfn(result)
+    resetState(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
+        uni.$anydoor_native.Download_Module.resetState(taskId, (result: IResult<undefined>) => {
+            this.getTaskList((res) => {
+                callbackfn && callbackfn(result)
             })
         })
     }
 
+    //重新刷新任务
+    stop(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
+        //TODO 
+        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
+            if (e.deniedAlways.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
+                console.log('Always Denied!!! ' + e.deniedAlways.toString());
+            }
+            if (e.deniedPresent.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+
+                console.log('Present Denied!!! ' + e.deniedPresent.toString());
+            }
+            if (e.granted.length > 0) {
+                uni.$anydoor_native.Download_Module.stop(taskId, (result: IResult<undefined>) => {
+                    
+                    setTimeout(() => {
+                        this.getTaskList((res) => {
+                            console.log(res)
+                            callbackfn && callbackfn(result)
+                        })
+                    }, 100)
+                })
+            }
+        }, function (e) {
+            ToastModule.show({ text: "授权失败!" })
+        })
+    }
+
+    //重新刷新任务
+    resume(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
+        //TODO 
+        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
+            if (e.deniedAlways.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
+                console.log('Always Denied!!! ' + e.deniedAlways.toString());
+            }
+            if (e.deniedPresent.length > 0) {
+                ToastModule.show({ text: "请开启SD卡读写权限" })
+
+                console.log('Present Denied!!! ' + e.deniedPresent.toString());
+            }
+            if (e.granted.length > 0) {
+                uni.$anydoor_native.Download_Module.resume(taskId, (result: IResult<undefined>) => {
+                    
+                    setTimeout(() => {
+                        this.getTaskList((res) => {
+                            console.log(res)
+                            callbackfn && callbackfn(result)
+                        })
+                    }, 100)
+                })
+            }
+        }, function (e) {
+            ToastModule.show({ text: "授权失败!" })
+        })
+    }
+
     //获取任务列表
-    getTaskList(callbackfn?: (result: Array<IDownloadTask>) => void){
+    getTaskList(callbackfn?: (result: Array<IDownloadTask>) => void) {
         uni.$anydoor_native.Download_Module.getTaskList(debugTool((res) => {
-            DownloadModule.tasks.splice(0,DownloadModule.tasks.length)
+            DownloadModule.tasks.splice(0, DownloadModule.tasks.length)
             res.data?.forEach((item) => {
                 DownloadModule.tasks.push(item)
             })
@@ -109,7 +189,7 @@ export default class DownloadModule {
     //取消监听
     unListen(fn: Function): void {
         const index: number | undefined = DownloadModule.suscriber.findIndex((c) => c === fn)
-        if(index!==undefined) DownloadModule.suscriber.splice(index,1)
+        if (index !== undefined) DownloadModule.suscriber.splice(index, 1)
     }
     //deboucne
     private static debounce(fn: Function, delay: number) {
@@ -125,7 +205,7 @@ export default class DownloadModule {
     }
 
     //执行回调
-    private static doCallback(){
+    private static doCallback() {
         DownloadModule.suscriber.forEach((item) => {
             //需要深复制
             const tasks = JSON.parse(JSON.stringify(DownloadModule.tasks))
