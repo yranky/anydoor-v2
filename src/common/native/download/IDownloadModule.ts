@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-01 15:01:59
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-08 17:15:06
+ * @LastEditTime: 2023-04-08 19:52:17
  * @FilePath: \anydoor-v2\src\common\native\download\IDownloadModule.ts
  * @Description: 原生的接口定义
  * 
@@ -44,6 +44,8 @@ export default interface IDownloadModuleNative {
     getTaskState(taskId: number, callbackfn?: (result: IResult<IDownloadTaskStateResult>) => void): void
     cancel(data: IDownloadCancelOption, callbackfn?: (result: IResult<undefined>) => void): void
     resetState(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void
+    stop(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void
+    resume(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void
     taskExists(taskId: number, callbackfn?: (result: IResult<IDownloadTaskExistseResult>) => void): void
     setMaxTaskNum(max: number, callbackfn?: (result: IResult<undefined>) => void): void
     removeRecord(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void
