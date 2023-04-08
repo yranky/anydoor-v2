@@ -1,0 +1,174 @@
+<template>
+	<tm-app ref="app">
+		<tm-message ref="msg"></tm-message>
+		<tm-navbar title="教务登录" transprent></tm-navbar>
+		<view @click="getJwConfig">
+			<tm-result v-if="status.error" :showBtn="false" subTitle="点击重试" :title="status.tip"></tm-result>
+		</view>
+		<!-- 加载中提示 -->
+		<tm-icon name="tmicon-shuaxin" :spin="true" v-if="!status.error&&status.loading"></tm-icon>
+		<view style="margin: 10rpx 40rpx;" v-if="!status.error && !status.loading">
+			<view style="margin: 60rpx 0;">
+				<tm-input v-model="form.username" placeholder="学号" transprent :margin="[0, 20]"></tm-input>
+				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
+				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="login"></tm-button>
+				<view class="flex flex-row flex-between" v-if="jwConfigObj.find_url || jwConfigObj.find_alert">
+					<anydoor-text text="忘记密码" color="grey" @click="toFind"></anydoor-text>
+				</view>
+			</view>
+		</view>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmInput from "@/tmui/components/tm-input/tm-input.vue"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import tmFormItem from "@/tmui/components/tm-form-item/tm-form-item.vue";
+import tmSwitch from "@/tmui/components/tm-switch/tm-switch.vue";
+import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue";
+import { jwConfig, jwLogin } from "@/common/service/jw"
+import { linkTo } from "@/common/utils/link"
+import ToastModule from "@/common/native/toast/ToastModule"
+import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
+import Encrypt from "@/common/encrypt/Encrypt"
+import User from "@/common/database/user/User"
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+import CODE from "@/common/define/code"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { initUser } from "@/init"
+
+//登录的表单
+const form = ref<any>({
+	username: "",
+	password: "",
+	save: false
+})
+// item
+const item = ref<any>({
+	cid: '',
+	name: ''
+})
+
+//教务配置
+const jwConfigObj = ref<any>({})
+//加载
+const msg = ref<InstanceType<typeof tmMessage> | null>(null)
+
+//加载
+onLoad((option: any) => {
+	try {
+		const data = JSON.parse(decodeURIComponent(option.data))
+		item.value.cid = data.cid
+		item.value.name = data.name
+	} catch { }
+	//教务配置
+	getJwConfig()
+})
+
+//status状态定义
+const status = ref({
+	tip: '',
+	loading: true,
+	error: false
+})
+
+//获取教务配置
+const getJwConfig = async () => {
+	status.value.loading = true
+	status.value.error = false
+	const data = await jwConfig({
+		cid: item.value.cid
+	})
+	if (data.code === CODE.SUCCESS) {
+		jwConfigObj.value = data.data
+	} else {
+		status.value.error = true
+		status.value.tip = data.msg
+	}
+	status.value.loading = false
+}
+
+//登录教务
+const login = async () => {
+	const username = form.value.username
+	const password = form.value.password
+	const save = form.value.save
+	const cid = item.value.cid
+	const public_key = jwConfigObj.value.public_key
+
+	if (cid === "") {
+		ToastModule.show({ text: '未获取到选择的高校' })
+		return
+	}
+	if (username === "") {
+		ToastModule.show({ text: '学号不能为空' })
+		return
+	}
+	if (password === "") {
+		ToastModule.show({ text: '密码不能为空' })
+		return
+	}
+	if (public_key === "") {
+		ToastModule.show({ text: '加密数据失败!请重试' })
+		return
+	}
+	const encrypt = new Encrypt()
+	encrypt.setPublicKey(public_key)
+
+	const password_encrypt = encrypt.encrypt(password)
+
+	if (typeof password_encrypt === "boolean") {
+		ToastModule.show({ text: '加密失败!' })
+		return
+	}
+
+	msg.value && msg.value.show({ model: 'load', text: "登录中，请稍等" })
+	const data = await jwLogin({
+		username,
+		password: password_encrypt,
+		save,
+		cid
+	})
+	if (data.stuInfo !== undefined) {
+		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password,{
+			...jwConfigObj.value,
+			cid
+		},data)
+		if (isSuccess === false) {
+			ToastModule.show({ text: "登录失败!" })
+		} else {
+			ToastModule.show({ text: "登录成功!" })
+			//刷新user
+			initUser()
+			
+			linkTo(ROUTE_PATH.MY, {},{}, true);
+		}
+	}
+	msg.value && msg.value.hide()
+}
+
+//去找
+const toFind = async () => {
+
+	if (jwConfigObj.value.find_url) {
+		linkTo(ROUTE_PATH.WEBVIEW, {
+			url: jwConfigObj.value.find_url,
+			title: "找回密码"
+		})
+	} else if (jwConfigObj.value.find_alert) {
+		ToastModule.show({ text: jwConfigObj.value.find.alert })
+	} else {
+		ToastModule.show({ text: "未开通此项服务" })
+	}
+
+}
+
+
+</script>
+
+<style lang="scss" scoped></style>

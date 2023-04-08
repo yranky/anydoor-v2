@@ -1,0 +1,105 @@
+
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
+			<template #navBar>
+				<tm-navbar title="我的信息"></tm-navbar>
+			</template>
+			<template #content>
+				<view style="margin: 10rpx 20rpx;">
+					<anydoor-text :text="'更新于 ' + store.updateTime" color="grey"
+						margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+					<tm-cell v-for="(value, key) in store.userInfo" :key="key" :margin="[0, 0]" :rightText="value"
+						:titleFontSize="32" :title="key" rightIcon=""> </tm-cell>
+				</view>
+				<!-- 退出登录 -->
+				<view style="margin: 10rpx 20rpx;">
+					<tm-button block label="退出教务登录" @click="logoutJiaowu"></tm-button>
+				</view>
+			</template>
+		</anydoorPage>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import useJiaowuStore from "@/store/jiaowu"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import { ref } from "vue"
+import User from "@/common/database/user/User"
+import Encrypt from "@/common/encrypt/Encrypt"
+import { jwConfig, jwLogin } from "@/common/service/jw"
+import CODE from "@/common/define/code"
+import ToastModule from "@/common/native/toast/ToastModule"
+import { initUser } from "@/init"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import { linkBack } from "@/common/utils/link"
+const store = useJiaowuStore()
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await getJiaowuInfo()
+	refreshComplete.value = true
+}
+
+//刷新教务信息
+const getJiaowuInfo = async () => {
+	const username = store.jiaowuAccount.username
+	const password = store.jiaowuAccount.password
+
+	const encrypt = new Encrypt()
+
+	//教务配置重新护球
+	const jw_config_data = await jwConfig({
+		cid: store.jiaowuConfig.cid
+	})
+	//未成功，终止流程
+	if (jw_config_data.code !== CODE.SUCCESS) {
+		return
+	}
+	encrypt.setPublicKey(jw_config_data.data.public_key)
+	const password_encrypt = encrypt.encrypt(password)
+	//刷新信息
+	const data = await jwLogin({
+		username,
+		password: password_encrypt,
+		cid: store.jiaowuConfig.cid
+	})
+	if (data.stuInfo) {
+		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
+			...jw_config_data.data,
+			cid: store.jiaowuConfig.cid
+		}, data)
+		if (isSuccess === false) {
+			ToastModule.show({ text: "刷新失败!" })
+		} else {
+			//刷新user
+			initUser()
+		}
+	} else {
+		ToastModule.show({ text: "刷新失败!" })
+	}
+}
+
+// 退出教务登录
+const logoutJiaowu = async () => {
+	const logoutResult = await (await User.getInstance()).logoutJiaowuAccount()
+	if(logoutResult===true){
+		store.reset()
+		ToastModule.show({
+			text:'退出登录成功!'
+		})
+		linkBack()
+	}
+	else{
+		ToastModule.show({
+			text:'退出登录失败！'
+		})
+	}
+}
+</script>

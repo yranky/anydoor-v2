@@ -1,0 +1,96 @@
+
+<template>
+	<tm-app ref="app">
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
+			<template #navBar>
+				<tm-navbar title="学校选择"></tm-navbar>
+				<tm-input v-model:model-value="keyword" prefix="tmicon-search" searchLabel="" transprent
+					class="round-5"></tm-input>
+			</template>
+			<template #content>
+				<view :title="key" :navTitle="key" v-for="(item, key) in companyListFilter" :key="key">
+					<tm-cell v-for="listItem in item" :key="listItem.cid" :margin="[0, 0]" :titleFontSize="30"
+						:title="listItem.name" @click="toJWLogin(listItem)"> </tm-cell>
+				</view>
+			</template>
+		</anydoorPage>
+	</tm-app>
+</template>
+
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+// import tmIndexesItem from "@/tmui/components/tm-indexes-item/tm-indexes-item.vue"
+// import tmIndexes from "@/tmui/components/tm-indexes/tm-indexes.vue"
+import { ref } from "vue";
+import { listCompany } from "@/common/service/company"
+import { onLoad } from "@dcloudio/uni-app"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmInput from "@/tmui/components/tm-input/tm-input.vue"
+import { computed } from "vue"
+import { linkTo } from "@/common/utils/link";
+import { ROUTE_PATH } from "@/router/ROUTE_PATH";
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await getCompanyList()
+	refreshComplete.value = true
+}
+
+//搜索关键词
+const keyword = ref<string>("")
+
+//前往教务登录
+const toJWLogin=(item:any)=>{
+	// console.log(item)
+	linkTo(ROUTE_PATH.JIAOWU_LOGIN,item)
+}
+
+
+//加载数据
+onLoad(() => {
+	loadCache()
+	refresh()
+})
+
+const loadCache = () => {
+	//首先读取缓存
+	try {
+		//读取轮播图列表缓存
+		const company_list_temp = JSON.parse(uni.getStorageSync(UNI_STORAGE.COMPANY_LIST))
+		if (company_list_temp) companyList.value = company_list_temp instanceof Array ? company_list_temp : []
+	} catch { }
+}
+
+const companyList = ref<any>([])
+
+//获取机构列表
+const getCompanyList = async () => {
+	companyList.value = await listCompany({})
+	// console.log(companyList.value)
+}
+
+//后面的
+const companyListFilter = computed(() => {
+	return companyList.value.reduce((acc: any, cur: any) => {
+		// 如果不存在这个键，则设置它赋值 [] 空数组
+		if (!acc[cur.index]) {
+			acc[cur.index] = [];
+		}
+		//如果包含关键词
+		if (cur.name.indexOf(keyword.value) > -1) {
+			acc[cur.index].push(cur)
+		}
+		return acc
+	}, {})
+})
+</script>
+
+<style lang="scss" scoped></style>

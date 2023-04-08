@@ -8,7 +8,7 @@ export async function listNotice(formData: any): Promise<restful<any>> {
     if (data.code !== CODE.SUCCESS) {
         ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
     }
-    return data || {}
+    return data || []
 }
 
 //获取通知详情操作

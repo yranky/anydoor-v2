@@ -2,33 +2,46 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-09 21:00:11
+ * @LastEditTime: 2023-04-08 12:32:31
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
- * @Description: 成绩列表
+ * @Description: 我的成绩
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage>
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
-				<tm-navbar title="成绩查询"></tm-navbar>
-				<tm-filterMenu :fixed="false">
-					<tm-filterMenu-item title="价格排序">
-						<tm-text :font-size="24" _class="font-weight-b" label="数据由用户处理"></tm-text>
-					</tm-filterMenu-item>
-				</tm-filterMenu>
+				<tm-navbar title="我的成绩"></tm-navbar>
+				<tm-filter-menu :fixed="false" ref="filter">
+					<tm-filter-menu-item :title="semesterSelect">
+						<tm-radio-group direction='customCol' v-model="semesterSelect" :default-value="0">
+							<tm-radio :value="item" v-for="(item, index) in semester" :key="index" :custom="false">
+								<template v-slot:default="{ checked }">
+									<view :userInteractionEnabled="false" hover-class="opactiy-7"
+										class="flex-1 flex-row flex flex-row-center-between" style="height: 76rpx;">
+										<tm-text :color="checked.checked ? 'primary' : ''" :label="item"></tm-text>
+										<tm-icon :font-size="24" color="primary" v-if="checked.checked"
+											name="tmicon-check"></tm-icon>
+									</view>
+								</template>
+							</tm-radio>
+						</tm-radio-group>
+					</tm-filter-menu-item>
+				</tm-filter-menu>
 			</template>
 			<template #content>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="概率论与数理统计" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
-				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
+				<!-- 加载中提示 -->
+				<tm-icon name="tmicon-shuaxin" :spin="true" v-if="status.loading"></tm-icon>
+				<tm-modal v-for="item in dataFilter" :key="item[0]" :height="800" okText="确认">
+					<template v-slot:trigger>
+						<tm-card status="" :title="item[lessonNameIndex]"></tm-card>
+					</template>
+					<tm-cell v-for="(value, index) in tags" :key="value" :margin="[0, 0]" :rightText="item[index]"
+						:titleFontSize="32" :title="value" rightIcon=""> </tm-cell>
+				</tm-modal>
+				<tm-result v-if="dataFilter.length === 0 && !status.loading" :showBtn="false" subTitle="上方可切换学期"
+					title="暂无数据"></tm-result>
 			</template>
 		</anydoorPage>
 	</tm-app>
@@ -42,6 +55,136 @@ import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import tmText from "@/tmui/components/tm-text/tm-text.vue"
 import tmFilterMenu from "@/tmui/components/tm-filterMenu/tm-filterMenu.vue"
 import tmFilterMenuItem from "@/tmui/components/tm-filterMenu-item/tm-filterMenu-item.vue"
+import { ref } from "vue"
+import useJiaowuStore from "@/store/jiaowu"
+import Encrypt from "@/common/encrypt/Encrypt"
+import { jwConfig, jwPlan, jwScore } from "@/common/service/jw"
+import CODE from "@/common/define/code"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import * as dayjs from "@/tmui/tool/dayjs/esm/index"
+import { onLoad } from "@dcloudio/uni-app"
+import { computed } from "vue"
+import tmRadioGroup from "@/tmui/components/tm-radio-group/tm-radio-group.vue"
+import tmRadio from "@/tmui/components/tm-radio/tm-radio.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import { watch } from "vue"
+import tmModal from "@/tmui/components/tm-modal/tm-modal.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+const store = useJiaowuStore()
+
+const filter = ref(null)
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await getScore()
+	refreshComplete.value = true
+}
+
+//加载中
+const status = ref({
+	loading: true
+})
+
+const tags = ref([])
+const datas = ref([])
+
+const semesterSelect = ref("学期选择")
+
+watch(semesterSelect, () => {
+	//关闭选择框
+	filter.value && (filter.value as any).close()
+	//保存到storage
+	uni.setStorageSync(UNI_STORAGE.JW_SCORE_SEMESTER, semesterSelect.value)
+})
+
+// 数据
+const dataFilter = computed(() => {
+	const tagIndex = tags.value.findIndex((item: string) => item.indexOf("学期") > -1) || 0
+	const data = datas.value.filter(item => {
+		return item[tagIndex] === semesterSelect.value
+	})
+	return data
+})
+
+// 学期的分类
+const semester = computed(() => {
+	const tagIndex = tags.value.findIndex((item: string) => item.indexOf("学期") > -1) || 0
+	//分类
+	const type = datas.value.map((item: any) => {
+		return item[tagIndex]
+	})
+	return [...new Set(type)]
+})
+
+//课程名称的索引
+const lessonNameIndex = computed(() => {
+	return tags.value.findIndex((item: any) => item.indexOf("名称") > -1) || 0
+})
+
+onLoad(() => {
+	loadCache()
+	getScore()
+})
+
+const loadCache = () => {
+	//首先读取缓存
+	try {
+		//读取轮播图列表缓存
+		const score = JSON.parse(uni.getStorageSync(UNI_STORAGE.JW_SCORE))
+		const score_semester = uni.getStorageSync(UNI_STORAGE.JW_SCORE_SEMESTER)
+		if (score) {
+			tags.value = score.tag || []
+			datas.value = score.data || []
+		}
+		if (score_semester) {
+			semesterSelect.value = score_semester
+		}
+		if (score && score_semester) {
+			status.value.loading = false
+		}
+	} catch { }
+}
+
+//获取成绩
+const getScore = async () => {
+	const username = store.jiaowuAccount.username
+	const password = store.jiaowuAccount.password
+
+	const encrypt = new Encrypt()
+
+	//教务配置重新护球
+	const jw_config_data = await jwConfig({
+		cid: store.jiaowuConfig.cid
+	})
+	//未成功，终止流程
+	if (jw_config_data.code !== CODE.SUCCESS) {
+		status.value.loading = false
+		return
+	}
+	encrypt.setPublicKey(jw_config_data.data.public_key)
+	const password_encrypt = encrypt.encrypt(password)
+
+	const data = await jwScore({
+		username,
+		password: password_encrypt,
+		cid: store.jiaowuConfig.cid
+	})
+	if (data.code === CODE.SUCCESS) {
+		tags.value = data.data.tag
+		datas.value = data.data.data
+	}
+	//加载
+	status.value.loading = false
+	uni.setStorageSync(UNI_STORAGE.JW_SCORE, JSON.stringify({
+		"update_time": dayjs.default().format("YYYY/MM/DD HH:mm:ss"),
+		"tag": data.data.tag || [],
+		"data": data.data.data || []
+	}))
+}
 
 </script>
 

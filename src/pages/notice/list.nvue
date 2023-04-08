@@ -6,7 +6,7 @@
 			</template>
 			<template #content>
 				<list>
-					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete">
+					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete&&noticeList.length===0">
 						<view style="margin: 0 20rpx;">
 							<tm-skeleton-line :height="100"></tm-skeleton-line>
 						</view>
@@ -44,6 +44,7 @@ import CODE from "@/common/define/code"
 import ANYDOOR_LOADMORE_STATUS from "@/components/anydoor-loadmore/IAnydoorLoadmore"
 import { EXTERNAL_TYPE } from "@/common/define/external"
 import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const {
 	proxy
 } = getCurrentInstance()
@@ -89,13 +90,15 @@ const toDetail = debounce((item: any): void => {
 	//判断用何种打开方式，webview还是普通通知
 	//普通方式打开
 	if (item.external === EXTERNAL_TYPE.DEFAULT) {
-		linkTo('/pages/notice/detail?id=' + item.id)
+		linkTo(ROUTE_PATH.NOTICE_DETAIL,{},{
+			id:item.id,
+			title: item.title
+		})
 	} else {
-		//webview方式打开
-		linkTo(`/pages/webview/webview?item=${encodeURIComponent(JSON.stringify({
+		linkTo(ROUTE_PATH.WEBVIEW,{
 			url: item.url,
 			title: item.title
-		}))}`)
+		})
 	}
 }, 300)
 

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-12 16:33:09
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-12 19:12:22
+ * @LastEditTime: 2023-04-05 15:15:13
  * @FilePath: \anydoor-v2\src\common\database\tables\user.ts
  * @Description: 用户表
  * 
@@ -16,7 +16,9 @@ export enum USER_TABLES_NAME {
   //用户名等数据
   ACCOUNT = "user_account",
   //当前用户
-  CURRENT = "user_current"
+  CURRENT = "user_current",
+  //教务用户
+  JAIOWU = "user_jiaowu"
 }
 
 const USER_TABLES: ITables<USER_TABLES_NAME> = {
@@ -61,6 +63,20 @@ const USER_TABLES: ITables<USER_TABLES_NAME> = {
   `,
     drop: `
     drop table ${USER_TABLES_NAME.CURRENT}
+    `
+  },
+  [USER_TABLES_NAME.JAIOWU]: {
+    init: `
+    CREATE TABLE if not exists '${USER_TABLES_NAME.JAIOWU}'(
+    'uid' INTEGER  NOT NULL , 
+    'username' text  NULL,
+    'password' text  NULL,
+    'data' text,
+    'ext' text
+  )
+  `,
+    drop: `
+    drop table ${USER_TABLES_NAME.JAIOWU}
     `
   }
 }

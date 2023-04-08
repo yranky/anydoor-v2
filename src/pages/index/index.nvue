@@ -1,6 +1,6 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage>
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
 				<view class="bg" :style="{
 					backgroundImage: headerBg,
@@ -36,17 +36,11 @@
 			<template #content>
 				<!-- 轮播 -->
 				<view class="index-carousel-box round-5" style="margin: 35rpx;">
-					<tm-carousel autoplay dotPosition="bottom" model="dot" :round="5" :width="680" :height="350"
-						:list="swiperList" align="left"></tm-carousel>
+					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
+						:height="350" :list="swiperList" align="left"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
-				<tm-alert class=" round-5" :shadow="2" text :content="[{
-					icon: 'tmicon-alert',
-					content: '这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻这是一条新闻22这是一条新闻这是一条新闻这是一条新闻'
-				}, {
-					icon: 'tmicon-alert',
-					content: '2222222222222222'
-				}]" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
+				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
 
 				<!-- 功能列表 -->
 				<tm-scrollx :width="750" :height="140" color="primary" transprent>
@@ -170,7 +164,8 @@
 import {
 	onReady,
 	onPageScroll,
-	onShow
+	onShow,
+	onLoad
 } from "@dcloudio/uni-app"
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmInput from "@/tmui/components/tm-input/tm-input.vue"
@@ -188,13 +183,6 @@ import {
 	useTmpiniaStore
 } from '@/tmui/tool/lib/tmpinia'
 import {
-	custom_props,
-	computedTheme,
-	computedClass,
-	computedStyle,
-	computedDark,
-} from "@/tmui/tool/lib/minxs"
-import {
 	computed,
 	onMounted,
 	ref
@@ -209,6 +197,12 @@ import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import {
 	getCurrentInstance
 } from "vue"
+import { listSwiper } from "@/common/service/swiper"
+import { SOURCE_TYPE } from "@/common/define/sourceType"
+import { merge } from "lodash"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import { listIndexMenu } from "@/common/service/menu"
+import { listTip } from "@/common/service/tip"
 const {
 	proxy
 } = getCurrentInstance();
@@ -216,41 +210,6 @@ const {
 import {
 	throttle
 } from "lodash"
-
-import {
-	colortool
-} from "@/tmui/tool/theme/theme"
-
-// #ifdef APP-NVUE
-//bindingx
-// const BindingX = uni.requireNativePlugin('bindingx')
-// function getEl(el) {
-// 	if (typeof el === 'string' || typeof el === 'number') return el;
-// 	if (WXEnvironment) {
-// 		return el.ref;
-// 	} else {
-// 		return el instanceof HTMLElement ? el : el.$el;
-// 	}
-// }
-// onReady(() => {
-// const element = getEl(proxy.$refs.scrollItem)
-// domModule.getComponentRect(element, (ret) => {
-// 	console.log(ret);
-// 	//渲染完成后获取节点DOM信息，用于计算动画每次的移动距离
-// 	this.earyMove = ((ret.size.width - 30) / 2).toFixed(2)
-// })
-// console.log(element)
-// BindingX.bind({
-// 	eventType: "scroll",
-// 	anchor: element,
-// 	props: [{
-// 		element: getEl(proxy.$refs.navbar),
-// 		property: "background-color",
-// 		expression: 'rgba(255,255,255, 1-abs(y)/100)'
-// 	}]
-// })
-// })
-// #endif
 //临界值
 const num = 70
 const pageScrollY = ref(0);
@@ -281,83 +240,53 @@ const store = useTmpiniaStore()
 //navbarHeight
 const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 //轮播图
-const swiperList = ["https://picsum.photos/200/300?id=43335",
-	"https://picsum.photos/200/300?id=433",
-	"https://picsum.photos/200/300?id=433",
-	"https://picsum.photos/200/300?id=433"
-]
+const swiperList = ref<any>([])
 
+//加载数据
+onLoad(() => {
+	loadCache()
+	refresh()
+})
 
-const menuList = ref([{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
-	title: "天猫新品",
-	count: "热销"
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
-	title: "今日爆款",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
-	title: "天猫国际",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
-	title: "冬奥公益",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 99
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01VuRfwH1muSbsJFxoM_!!6000000005014-2-tps-183-144.png_q90.jpg_.webp",
-	title: "冬奥公益",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
-	title: "天猫新品",
-	count: 6
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i3/O1CN01FgQFp81spmBXqQMtA_!!6000000005816-2-tps-183-144.png_q90.jpg",
-	title: "今日爆款",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01tsk5OY1q0MUo5PJga_!!6000000005433-2-tps-183-144.png_q90.jpg",
-	title: "天猫国际",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i2/O1CN01yK3Cxn1sTnAx1fOjq_!!6000000005768-2-tps-183-144.png_q90.jpg",
-	title: "飞猪旅行",
-	count: 0
-},
-{
-	path: "https://gw.alicdn.com/imgextra/i1/O1CN01iZIGkz1URSOUdRHqS_!!6000000002514-2-tps-183-144.png_q90.jpg",
-	title: "天猫超市",
-	count: 0
-},
+const loadCache = () => {
+	//首先读取缓存
+	try {
+		//读取轮播图列表缓存
+		const swiper_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.SWIPER_LIST))
+		if(swiper_list_temp) swiperList.value = swiper_list_temp instanceof Array?swiper_list_temp:[]
+	} catch {}
+	try {
+		//读取tip
+		const tip_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
+		console.log(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
+		if(tip_list_temp) tipList.value = tip_list_temp instanceof Array?tip_list_temp:[]
+	} catch {}
+	try {
+		//读取菜单列表
+		const menu_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST))
+		if(menu_list_temp)  menuList.value = menu_list_temp
+	} catch {}
+}
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await getSwiperList()
+	await getTipList()
+	await getIndexMenuList()
+	refreshComplete.value = true
+}
+
+//菜单列表
+const menuList = ref<any>([
+// 	{
+// 	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
+// 	title: "天猫新品",
+// 	count: "热销"
+// }
 ])
 
 const newsTab = ref([{
@@ -416,6 +345,47 @@ const toSearch = function () {
 		animationType: "slide-in-right"
 	})
 }
+
+//获取tip
+const tipList=ref<any>([])
+
+const getTipList=async () => {
+	const data = await listTip({})
+	tipList.value=data
+}
+
+//获取轮播列表
+const getSwiperList = async () => {
+	try {
+		const data = await listSwiper({})
+		swiperList.value = (data.data || []).map((item: any) => {
+			const result = {
+				sid: item.sid,
+				img: item.source,
+				device: item.device,
+				version: item.version,
+				description: item.description,
+				title: item.title,
+				link: item.url
+			}
+			if (item.type === SOURCE_TYPE.VIDEO) {
+				merge(result, {
+					type: 'video',
+				})
+			}
+			return result
+		})
+		//保存数据到缓存
+		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, JSON.stringify(swiperList.value))
+	} catch { }
+}
+//获取首页菜单列表
+const getIndexMenuList= async ()=>{
+	try {
+		const data=await listIndexMenu({})
+		if(data.length>0) menuList.value=data
+	}catch { }
+}
 </script>
 
 <style scoped lang="scss">
@@ -450,7 +420,9 @@ const toSearch = function () {
 	}
 }
 
-.index-carousel-box {}
+// .index-carousel-box {
+	
+// }
 
 .bg {
 	background-image: linear-gradient(to bottom, rgba(64, 169, 255, .5), rgba(102, 255, 0, 0));

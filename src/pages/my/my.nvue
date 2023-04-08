@@ -1,6 +1,6 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<anydoorPage>
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
 				<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
 
@@ -33,7 +33,9 @@
 				<navigator url="/pages/more/score"><text>成绩查询</text></navigator>
 				<navigator url="/pages/more/plan"><text>教学计划</text></navigator>
 				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
+				<navigator url="/pages/jw/companySelection"><text>学校选择</text></navigator>
 				<text @click="toWebviewTest">webview测试</text>
+				
 				<!-- 用户主信息 -->
 				<navigator url="/pages/my/detail">
 					<view class="user-info flex flex-row">
@@ -82,19 +84,19 @@
 				<view class="user-account-login">
 					<view class="user-account-login-item flex flex-row round-5" :style="{
 						backgroundColor: vipBg
-					}" v-for="item in 2" :key="item">
+					}" @click="toJiaowuLogin">
 						<view class="flex flex-row flex-col flex-1 mr-n10">
 							<view class="flex flex-1 flex-row">
 								<tm-icon :font-size="32" name="tmicon-gem" _class="pr-10" color="vip"></tm-icon>
-								<anydoor-text class="flex-1" text="南瓜公民证" bold :fontSize="32" :lines="1" lineHeight="60"
+								<anydoor-text class="flex-1" :text="jiaowuStore.jiaowuConfig.user_description" bold :fontSize="32" :lines="1" lineHeight="60"
 									color="vip"></anydoor-text>
 							</view>
-							<anydoor-text text="请登录教务系统请登录教务系统请登录教务系统请登录教务系统请登录教务系统请登录教务系统" :fontSize="25" :lines="1"
+							<anydoor-text :text="jiaowuStore.jiaowuAccount.username" :fontSize="25" :lines="1"
 								lineHeight="40" color="white">
 							</anydoor-text>
 						</view>
 						<view class="user-account-item-action round-3" :style="{ backgroundColor: vipTextColor }">
-							<anydoor-text text="已登录" :fontSize="25" :lines="1" lineHeight="50" color="black" bold>
+							<anydoor-text :text="jiaowuStore.isLogin?jiaowuStore.jiaowuConfig.user_login_description:jiaowuStore.jiaowuConfig.user_not_login_description" :fontSize="25" :lines="1" lineHeight="50" color="black" bold>
 							</anydoor-text>
 						</view>
 					</view>
@@ -104,9 +106,9 @@
 				<tm-divider :border="5"></tm-divider>
 				<view>
 					<!-- <tm-cell :margin="[20, 0]" :titleFontSize="32" title="应用中心" transprent> </tm-cell> -->
-					<tm-cell @click="linkTo('/pages/setting/setting')" :margin="[20, 0]" :titleFontSize="32" title="设置"
+					<tm-cell @click="linkTo(ROUTE_PATH.SETTING)" :margin="[20, 0]" :titleFontSize="32" title="设置"
 						transprent> </tm-cell>
-					<tm-cell @click="linkTo('/pages/download/download')" :margin="[20, 0]" :titleFontSize="32" title="我的下载"
+					<tm-cell @click="linkTo(ROUTE_PATH.DOWNLOAD)" :margin="[20, 0]" :titleFontSize="32" title="我的下载"
 						transprent> </tm-cell>
 				</view>
 				<tm-divider :border="5"></tm-divider>
@@ -119,31 +121,16 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="120" dot>
-							<tm-icon name="tmicon-user-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
+						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid">
+							<tm-icon :name="item.path" :font-size="58"></tm-icon>
+							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
 						</tm-grid-item>
-						<tm-grid-item color="orange" :height="120" count="积分">
-							<tm-icon name="tmicon-cog-fill" :font-size="42"></tm-icon>
+						<!-- <tm-grid-item color="orange" :height="120" count="积分" dot>
+							<tm-icon name="tmicon-cog-fill" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
 							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="green" :height="120" :count="55">
-							<tm-icon name="tmicon-heart-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="pink" :height="120" icon="tmicon-gem">
-							<tm-icon name="tmicon-layergroup-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item :height="120">
-							<tm-icon color="blue" name="tmicon-lightbulb-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
+						</tm-grid-item> -->
 					</tm-grid>
 				</view>
 				<view>
@@ -154,31 +141,16 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="120" dot>
-							<tm-icon name="tmicon-user-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
+						<tm-grid-item :height="150" v-for="item in life_menu_list" :key="item.mid">
+							<tm-icon :name="item.path" :font-size="58"></tm-icon>
+							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
 						</tm-grid-item>
-						<tm-grid-item color="orange" :height="120" count="积分">
-							<tm-icon name="tmicon-cog-fill" :font-size="42"></tm-icon>
+						<!-- <tm-grid-item color="pink" :height="120" icon="tmicon-gem">
+							<tm-icon name="tmicon-layergroup-fill" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
 							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="green" :height="120" :count="55">
-							<tm-icon name="tmicon-heart-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="pink" :height="120" icon="tmicon-gem">
-							<tm-icon name="tmicon-layergroup-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item :height="120">
-							<tm-icon color="blue" name="tmicon-lightbulb-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
+						</tm-grid-item> -->
 					</tm-grid>
 				</view>
 				<view>
@@ -189,29 +161,9 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="120" dot>
-							<tm-icon name="tmicon-user-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="orange" :height="120" count="积分">
-							<tm-icon name="tmicon-cog-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="green" :height="120" :count="55">
-							<tm-icon name="tmicon-heart-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="pink" :height="120" icon="tmicon-gem">
-							<tm-icon name="tmicon-layergroup-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item :height="120">
-							<tm-icon color="blue" name="tmicon-lightbulb-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
+						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid">
+							<tm-icon :name="item.path" :font-size="58"></tm-icon>
+							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
 						</tm-grid-item>
 					</tm-grid>
@@ -224,29 +176,9 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="120" dot>
-							<tm-icon name="tmicon-user-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="orange" :height="120" count="积分">
-							<tm-icon name="tmicon-cog-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="green" :height="120" :count="55">
-							<tm-icon name="tmicon-heart-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item color="pink" :height="120" icon="tmicon-gem">
-							<tm-icon name="tmicon-layergroup-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
-							</anydoor-text>
-						</tm-grid-item>
-						<tm-grid-item :height="120">
-							<tm-icon color="blue" name="tmicon-lightbulb-fill" :font-size="42"></tm-icon>
-							<anydoor-text _class="pt-10" text="宫格文本" :fontSize="22" :lines="1">
+						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid">
+							<tm-icon :name="item.path" :font-size="58"></tm-icon>
+							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
 						</tm-grid-item>
 					</tm-grid>
@@ -283,6 +215,7 @@ import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import {
+	onLoad,
 	onPageScroll
 } from "@dcloudio/uni-app"
 import {
@@ -290,8 +223,29 @@ import {
 } from "lodash"
 
 import { linkTo } from "@/common/utils/link"
+import { listMyMenu } from "@/common/service/menu";
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
+import { MENU_TYPES } from "@/common/define/menuType";
+import useJiaowuStore from "@/store/jiaowu";
+import { ROUTE_PATH } from "@/router/ROUTE_PATH";
 
 const store = useTmpiniaStore();
+
+//教务的store
+const jiaowuStore=useJiaowuStore()
+
+//跳转教务Login
+const toJiaowuLogin=()=>{
+	//已登录
+	if(jiaowuStore.isLogin){
+		linkTo(ROUTE_PATH.JIAOWU_MY)
+	}
+	//未登录
+	else{
+		linkTo(ROUTE_PATH.COMPANY_SELECT)
+	}
+}
+
 const {
 	proxy
 } = getCurrentInstance();
@@ -299,9 +253,34 @@ const {
 import theme from "@/tmui/tool/theme/theme"
 
 const toWebviewTest = () => {
-	linkTo(`/pages/webview/webview?item=` + encodeURIComponent(JSON.stringify({
-		url: "http://192.168.0.229:5500/webviewtest.html"
-	})))
+	linkTo(ROUTE_PATH.WEBVIEW,{url: "http://192.168.0.231:5500"})
+}
+
+//菜单项
+const jw_menu_list = ref<any>([])
+const life_menu_list = ref<any>([])
+const my_menu_list = ref<any>([])
+const recommend_menu_list = ref<any>([])
+
+
+//加载数据
+onLoad(() => {
+	loadCache()
+	getMyMenu()
+})
+//加载缓存
+const loadCache = () => {
+	//首先读取缓存
+	try {
+		//读取菜单列表
+		const menu_list_temp = JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST))
+		if (menu_list_temp) {
+			jw_menu_list.value = menu_list_temp[MENU_TYPES.JW]
+			life_menu_list.value = menu_list_temp[MENU_TYPES.LIFE]
+			my_menu_list.value = menu_list_temp[MENU_TYPES.MY]
+			recommend_menu_list.value = menu_list_temp[MENU_TYPES.RECOMMEND]
+		}
+	} catch { }
 }
 
 //账户背景
@@ -330,6 +309,26 @@ const vipTextColor = computed(() => {
 // })
 // //navbarHeight
 const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await getMyMenu()
+	refreshComplete.value = true
+}
+
+
+//我的部分的菜单
+const getMyMenu = async () => {
+	const data = await listMyMenu({})
+	//菜单类型
+	jw_menu_list.value = data[MENU_TYPES.JW]
+	life_menu_list.value = data[MENU_TYPES.LIFE]
+	my_menu_list.value = data[MENU_TYPES.MY]
+	recommend_menu_list.value = data[MENU_TYPES.RECOMMEND]
+}
 </script>
 
 <style scoped lang="scss">

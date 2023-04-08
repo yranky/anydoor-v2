@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-18 17:01:06
+ * @LastEditTime: 2023-04-02 11:05:38
  * @FilePath: \anydoor-v2\src\components\anydoor-page\anydoor-page.vue
  * @Description: page
  * 
@@ -54,7 +54,8 @@ const refreshing = ref<boolean>(false)
 //加载显示的文字
 const refreshText = ref<string>()
 
-const emits = defineEmits(["update:refreshComplete", 'refresh', 'loadmore'])
+//onLineHeight表示高度更新了
+const emits = defineEmits(["update:refreshComplete", 'refresh', 'loadmore','onLineHeight'])
 
 //监听刷新完成
 watch(() => props.refreshComplete, (newValue) => {
@@ -119,6 +120,8 @@ const setListHeight = (): void => {
 			navBarHeight.value = data.height
 			// console.log(uni.getSystemInfoSync(),windowHeight, data.height)
 			listHeight.value = (windowHeight - data.height) + 'px'
+
+			emits("onLineHeight",(windowHeight - data.height))
 		}).exec()
 	} catch (e) {
 

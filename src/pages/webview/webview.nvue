@@ -9,7 +9,7 @@
 			cache: false
 		}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
 			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate" @onImagePress="onImagePress"
-			@onImageClick="onImageClick" @on-message="onMessage" @onNameMessage="onMessage">
+			@onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage">
 		</anydoor-webview>
 	</tm-app>
 </template>
@@ -40,6 +40,8 @@ import { linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
+import { WebviewBridge } from "@/common/WebviewBridge/WebviewBridge"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const {
 	proxy
 } = getCurrentInstance()
@@ -71,6 +73,9 @@ const webviewConfig = ref<IWebviewItem>()
 
 //messgae
 const onMessage = (e: IMessageResult) => {
+	ToastModule.show({
+		text: JSON.stringify(e)
+	})
 	console.log(e)
 }
 
@@ -78,10 +83,9 @@ const onMessage = (e: IMessageResult) => {
 //加载时调用
 onLoad((e: any) => {
 	try {
-		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item)))
+		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item||e.data)))
 		src.value = webviewConfig.value.url
 		navTitle.value = webviewConfig.value.title
-		console.log(webviewConfig.value)
 	} catch { }
 })
 
@@ -101,8 +105,22 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 }
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
+	webview.value.send(JSON.stringify({
+		code: '111',
+		msg: "9999"
+	})).then(res => {
+		console.log(res)
+	})
 
-	webview.value && webview.value.registerHandler("default")
+	// webview.value.callHandler({
+	// 	name: "123",
+	// 	data: JSON.stringify({
+	// 		code: '111',
+	// 		msg: "9999"
+	// 	})
+	// }, (res) => {
+	// 	console.log(res)
+	// })
 	// console.log(e)
 
 	// webview.value.getUrl().then(url => {
@@ -116,7 +134,7 @@ const pageError = (e: IPageErrorResult) => {
 }
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
-	linkTo(`/pages/webview/webview?item=${encodeURIComponent(JSON.stringify({ url: e.url }))}`)
+	linkTo(ROUTE_PATH.WEBVIEW,{ url: e.url })
 }
 //页面的链接
 const src = ref("")

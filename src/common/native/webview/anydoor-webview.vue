@@ -18,21 +18,25 @@
 				@onLinkPress="onLinkPress" @onImagePress="onImagePress" @onLinkClick="onLinkClick"
 				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme" />
 		</view>
+		<anydoor-webview-bridge :messageData="messageData" v-model:callbackMessage="callbackMessage" />
 	</view>
 </template>
 
 <script lang="ts" setup>
 import tmResult from "@/tmui/components/tm-result/tm-result.vue"
 import anydoorNativeWebview from "./anydoor-native-webview.vue"
-import tmProgress from "@/tmui/components/tm-progress/tm-progress.vue"
+import anydoorWebviewBridge from "./anydoor-webview-bridge/anydoor-webview-bridge.vue"
 import {
 	ref,
 	reactive,
-	computed
+	computed,
+watch
 } from "vue"
 import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
 import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
+import { ICallback } from "./anydoor-webview-bridge/types"
+
 
 
 const info = reactive({
@@ -70,6 +74,14 @@ const props = defineProps({
 import {
 	ACTION as NETErrorAction
 } from "@/common/network/NETError"
+
+//回调的值
+const messageData=ref<IMessageResult>()
+//要向网页回传的数据
+const callbackMessage=ref<any>()
+watch(()=>callbackMessage.value,(newVal:ICallback<any>)=>{
+	mWebview.value.send(JSON.stringify(newVal))
+})
 
 //点击result按钮事件
 const doResult = function (action: NETErrorAction) {
@@ -145,6 +157,7 @@ const onNameMessage = (e: INameMessageResult) => {
 }
 //jsbridge回调 接收传递过来的信息 默认
 const onMessage = (e: IMessageResult) => {
+	messageData.value=e
 	emits("onMessage", e)
 }
 //标题更改回调
