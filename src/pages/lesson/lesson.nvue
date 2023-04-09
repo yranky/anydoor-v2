@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 16:43:02
+ * @LastEditTime: 2023-04-09 16:50:44
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -15,7 +15,7 @@
 			<view class="lesson-bg" :style="{ backgroundColor: 'rgba(0,0,0,.3)' }" v-if="store.tmStore.dark"></view>
 		</view>
 		<view style="position:fixed;">
-			<anydoorPage>
+			<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 				<template #navBar>
 					<!-- 课程表 -->
 					<tm-navbar :title="'第' + currentShowWeeks + '周'" transprent></tm-navbar>
@@ -66,6 +66,22 @@ const store = useTmpiniaStore()
 
 const lessonStore = useLessonStore()
 const jiaowuStore = useJiaowuStore()
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+
+// 页面刷新(刷新课程信息)
+const refresh = async () => {
+	refreshComplete.value = false
+	try {
+		const LessonInstance = await Lesson.getInstance()
+		//刷新操作(当前的学期，从store里面取)
+		await LessonInstance.freshTimeTable(lessonStore.semester)
+		const data: any = await LessonInstance.getLessonList()
+		lessonStore.lessonList = data || []
+	} catch { }
+	refreshComplete.value = true
+}
 
 
 /**ATART 子页面的配置 */

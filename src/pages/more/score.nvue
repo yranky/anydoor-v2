@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 12:35:11
+ * @LastEditTime: 2023-04-09 17:31:29
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -127,8 +127,21 @@ const lessonNameIndex = computed(() => {
 
 onLoad(() => {
 	loadCache()
-	getScore()
+	checkNeedUpdate() ? getScore() : ''
 })
+
+
+
+const updateTime = ref(0)
+
+//判断是否需要更新
+const checkNeedUpdate = (): boolean => {
+	const updateTimeDayjs = dayjs(updateTime.value)
+	if (dayjs().diff(updateTimeDayjs, "day") > store.jiaowuConfig.plan_temp || !updateTimeDayjs.isValid()) {
+		return true
+	}
+	return false
+}
 
 const loadCache = () => {
 	//首先读取缓存
@@ -139,14 +152,16 @@ const loadCache = () => {
 		if (score) {
 			tags.value = score.tag || []
 			datas.value = score.data || []
+			updateTime.value = score.update_time || 0
 		}
 		if (score_semester) {
 			semesterSelect.value = score_semester
 		}
-		if (score && score_semester) {
+		if (score) {
 			status.value.loading = false
 		}
-	} catch { }
+	} catch{
+	 }
 }
 
 //获取成绩

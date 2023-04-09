@@ -94,6 +94,8 @@ const datas = ref([])
 
 const semesterSelect = ref("学期选择")
 
+const updateTime = ref(0)
+
 watch(semesterSelect, () => {
 	//关闭选择框
 	filter.value && (filter.value as any).close()
@@ -127,8 +129,17 @@ const lessonNameIndex = computed(() => {
 
 onLoad(() => {
 	loadCache()
-	getPlan()
+	checkNeedUpdate() ? getPlan() : ''
 })
+
+//判断是否需要更新
+const checkNeedUpdate = (): boolean => {
+	const updateTimeDayjs = dayjs(updateTime.value)
+	if (dayjs().diff(updateTimeDayjs, "day") > store.jiaowuConfig.plan_temp || !updateTimeDayjs.isValid()) {
+		return true
+	}
+	return false
+}
 
 const loadCache = () => {
 	//首先读取缓存
@@ -139,11 +150,12 @@ const loadCache = () => {
 		if (plan) {
 			tags.value = plan.tag || []
 			datas.value = plan.data || []
+			updateTime.value = plan.update_time || 0
 		}
 		if (plan_semester) {
 			semesterSelect.value = plan_semester
 		}
-		if (plan && plan_semester) {
+		if (plan) {
 			status.value.loading = false
 		}
 	} catch { }

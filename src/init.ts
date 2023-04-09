@@ -5,12 +5,14 @@ import nativeInit from "@/common/native/nativeInit"
 import Theme from "@/common/theme/Theme"
 import useJiaowuStore from "@/store/jiaowu"
 import { useLessonStore } from "@/store/lesson"
+import { SQLITE_STATUS_CODE } from "./common/sql/SQLite"
+import dayjs from "dayjs"
 
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 15:51:24
+ * @LastEditTime: 2023-04-09 17:22:05
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -74,12 +76,34 @@ export async function initUser() {
 export async function initLesson() {
     const lessonStore = useLessonStore()
     const LessonInstance = await Lesson.getInstance()
+    const jiaowuStore = useJiaowuStore()
     //设置当前的周次
     LessonInstance.setCurrentWeek()
     const data: any = await LessonInstance.getLessonList()
     lessonStore.lessonList = data || []
 
+    //推算需不需要更新数据
+    const cid = jiaowuStore.jiaowuConfig.cid
+    if (cid) {
+        //先打印出记录
+        const res = await LessonInstance.getLatestRecord(cid)
+        if (res?.code === SQLITE_STATUS_CODE.SUCCESS) {
+            //当前的学期信息
+            lessonStore.semester = res.data[0] ? (res.data[0].semester || "") : ''
+            const create_time=res.data[0] ? (res.data[0].create_time || 0) : 0
+            const create_time_dayjs=dayjs(Number(create_time))
+            //根据创建时间(如果超过设定的时间,则进行更新操作)
+            if(dayjs().diff(create_time_dayjs,"day")>jiaowuStore.jiaowuConfig.timetable_temp||!create_time_dayjs.isValid()){
+
+                await LessonInstance.freshTimeTable(lessonStore.semester)
+
+                const data: any = await LessonInstance.getLessonList()
+                
+                lessonStore.lessonList = data || []
+            }
+        }
+    }
 
     //初始化完成
-    lessonStore.initing=false
+    lessonStore.initing = false
 }

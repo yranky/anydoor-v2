@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 15:56:45
+ * @LastEditTime: 2023-04-09 17:21:15
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -155,13 +155,22 @@ export default class Lesson {
     }
 
     //更新记录
-    async updateRecord(cid:string,semester:string,rawData:any){
+    async updateRecord(cid: string, semester: string, rawData: any) {
         const create_time = new Date().getTime()
         return await this.sql?.executeSql([
             `
-            insert into ${LESSON_TABLES_NAME.RECORDS} (company_id,create_time,result,semester) values ('${cid}','${create_time}','${encodeURIComponent(rawData)}','${semester}')
+            insert into ${LESSON_TABLES_NAME.RECORDS} (company_id,create_time,result,semester) values ('${cid}','${create_time}','${encodeURIComponent(JSON.stringify(rawData))}','${semester}')
             `
         ], ERROR_TARGET.LESSON_CLASS)
+    }
+
+    //获取最新的记录
+    async getLatestRecord(cid: string) {
+        return await this.sql?.selectSql(
+            `
+            select * from ${LESSON_TABLES_NAME.RECORDS} where company_id='${cid}' order by create_time desc limit 0,1
+            `
+        , ERROR_TARGET.LESSON_CLASS)
     }
 
 
@@ -211,7 +220,7 @@ export default class Lesson {
     }
 
     //获取更新教务信息
-    async freshTimeTable(term: string):Promise<boolean> {
+    async freshTimeTable(term: string): Promise<boolean> {
         const store = useJiaowuStore()
         const username = store.jiaowuAccount.username
         const password = store.jiaowuAccount.password
@@ -252,8 +261,8 @@ export default class Lesson {
             const semester_current_origin = data.data.semesterNow
 
             let semester_current = term
-            if (term===""){
-                semester_current=(semester_current_origin || {}).value || ""
+            if (term === "") {
+                semester_current = (semester_current_origin || {}).value || ""
             }
 
             //#endregion
@@ -272,33 +281,33 @@ export default class Lesson {
             //#endregion
 
             //#region 更新record
-            await this.updateRecord(store.jiaowuConfig.cid,semester_current,data.data||{})
+            await this.updateRecord(store.jiaowuConfig.cid, semester_current, data.data || {})
             //#endregion
             return true
-        }else{
-            ToastModule.show({text:'数据更新失败'})
+        } else {
+            ToastModule.show({ text: '数据更新失败' })
             return false
         }
     }
 
     //计算并设置当前的周次
-    async setCurrentWeek(){
+    async setCurrentWeek() {
         dayjs.extend(weekday)
         //从教务store获取数据
         const store = useJiaowuStore()
-        const lessonStore=useLessonStore()
-        const week=store.week.nowWeek
+        const lessonStore = useLessonStore()
+        const week = store.week.nowWeek
         //每周的第一天
-        const weekFirstDay=lessonStore.weekFirstDay
+        const weekFirstDay = lessonStore.weekFirstDay
         //更新时间
-        const updateTime= dayjs(store.updateTime).isValid()?dayjs(store.updateTime).weekday(weekFirstDay):dayjs().weekday(weekFirstDay)
-        if(week !== 0){
+        const updateTime = dayjs(store.updateTime).isValid() ? dayjs(store.updateTime).weekday(weekFirstDay) : dayjs().weekday(weekFirstDay)
+        if (week !== 0) {
             //计算相差了多少天
-            const currentTime=dayjs().weekday(weekFirstDay)
+            const currentTime = dayjs().weekday(weekFirstDay)
             //相差了多少周
-            const diff=currentTime.diff(updateTime,"week")
+            const diff = currentTime.diff(updateTime, "week")
             //计算出了周次
-            lessonStore.currentWeek =week+diff
+            lessonStore.currentWeek = week + diff
         }
     }
 
