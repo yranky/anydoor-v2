@@ -49,6 +49,8 @@ const downloading = computed(() => {
 		return downloadItemFilter(item)
 	})
 })
+
+
 //当前的dataList
 const dataList = computed(() => {
 	if (tabId.value === 1) return downloading.value
