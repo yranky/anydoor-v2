@@ -2,6 +2,8 @@ import IDownloadModuleNative, { DOWNLOAD_PATH_MODE, IDownloadCancelOption, IDown
 import ToastModule from "../toast/ToastModule"
 import IResult from "../IResult"
 import { debugTool } from "../nativeInit"
+import Permission from "@/common/permission/Permission"
+import { PERMISSION_TYPE } from "@/common/permission/IPermission"
 
 export interface IDownloadTask extends IDownloadInfo {
 
@@ -45,31 +47,16 @@ export default class DownloadModule {
     //取消
     cancel(data: IDownloadCancelOption, callbackfn?: (result: IResult<undefined>) => void): void {
         //TODO 
-        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
-            if (e.deniedAlways.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
-                console.log('Always Denied!!! ' + e.deniedAlways.toString());
-            }
-            if (e.deniedPresent.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-
-                console.log('Present Denied!!! ' + e.deniedPresent.toString());
-            }
-            if (e.granted.length > 0) {
-                uni.$anydoor_native.Download_Module.cancel(data, (result: IResult<undefined>) => {
-                    setTimeout(() => {
-                        this.getTaskList((res) => {
-                            console.log(res)
-                            callbackfn && callbackfn(result)
-                        })
-                    }, 100)
-                })
-            }
-        }, function (e) {
-            ToastModule.show({ text: "授权失败!" })
+        Permission.request(PERMISSION_TYPE.WRITE_EXTERNAL_STORAGE).then(()=>{
+            uni.$anydoor_native.Download_Module.cancel(data, (result: IResult<undefined>) => {
+                setTimeout(() => {
+                    this.getTaskList((res) => {
+                        console.log(res)
+                        callbackfn && callbackfn(result)
+                    })
+                }, 100)
+            })
         })
-
     }
     //删除记录
     removeRecord(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
@@ -92,60 +79,31 @@ export default class DownloadModule {
     //重新刷新任务
     stop(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
         //TODO 
-        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
-            if (e.deniedAlways.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
-                console.log('Always Denied!!! ' + e.deniedAlways.toString());
-            }
-            if (e.deniedPresent.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-
-                console.log('Present Denied!!! ' + e.deniedPresent.toString());
-            }
-            if (e.granted.length > 0) {
-                uni.$anydoor_native.Download_Module.stop(taskId, (result: IResult<undefined>) => {
+        Permission.request(PERMISSION_TYPE.WRITE_EXTERNAL_STORAGE).then(()=>{
+            uni.$anydoor_native.Download_Module.stop(taskId, (result: IResult<undefined>) => {
                     
-                    setTimeout(() => {
-                        this.getTaskList((res) => {
-                            console.log(res)
-                            callbackfn && callbackfn(result)
-                        })
-                    }, 100)
-                })
-            }
-        }, function (e) {
-            ToastModule.show({ text: "授权失败!" })
+                setTimeout(() => {
+                    this.getTaskList((res) => {
+                        console.log(res)
+                        callbackfn && callbackfn(result)
+                    })
+                }, 100)
+            })
         })
     }
 
     //重新刷新任务
     resume(taskId: number, callbackfn?: (result: IResult<undefined>) => void): void {
         //TODO 
-        plus.android.requestPermissions(["android.permission.WRITE_EXTERNAL_STORAGE"], (e) => {
-            if (e.deniedAlways.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-                // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启
-                console.log('Always Denied!!! ' + e.deniedAlways.toString());
-            }
-            if (e.deniedPresent.length > 0) {
-                ToastModule.show({ text: "请开启SD卡读写权限" })
-
-                console.log('Present Denied!!! ' + e.deniedPresent.toString());
-            }
-            if (e.granted.length > 0) {
-                uni.$anydoor_native.Download_Module.resume(taskId, (result: IResult<undefined>) => {
-                    
-                    setTimeout(() => {
-                        this.getTaskList((res) => {
-                            console.log(res)
-                            callbackfn && callbackfn(result)
-                        })
-                    }, 100)
-                })
-            }
-        }, function (e) {
-            ToastModule.show({ text: "授权失败!" })
+        Permission.request(PERMISSION_TYPE.WRITE_EXTERNAL_STORAGE).then(()=>{
+            uni.$anydoor_native.Download_Module.resume(taskId, (result: IResult<undefined>) => {
+                setTimeout(() => {
+                    this.getTaskList((res) => {
+                        console.log(res)
+                        callbackfn && callbackfn(result)
+                    })
+                }, 100)
+            })
         })
     }
 
