@@ -1,14 +1,16 @@
-import Device from "./common/database/device/Device"
-import User from "./common/database/user/User"
-import nativeInit from "./common/native/nativeInit"
-import Theme from "./common/theme/Theme"
+import Lesson from "@/common/database/Lesson/Lesson"
+import Device from "@/common/database/device/Device"
+import User from "@/common/database/user/User"
+import nativeInit from "@/common/native/nativeInit"
+import Theme from "@/common/theme/Theme"
 import useJiaowuStore from "@/store/jiaowu"
+import { useLessonStore } from "@/store/lesson"
 
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 18:55:50
+ * @LastEditTime: 2023-04-09 15:51:24
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -66,4 +68,18 @@ export async function initUser() {
 
     //#endregion
 
+}
+
+//课程信息
+export async function initLesson() {
+    const lessonStore = useLessonStore()
+    const LessonInstance = await Lesson.getInstance()
+    //设置当前的周次
+    LessonInstance.setCurrentWeek()
+    const data: any = await LessonInstance.getLessonList()
+    lessonStore.lessonList = data || []
+
+
+    //初始化完成
+    lessonStore.initing=false
 }

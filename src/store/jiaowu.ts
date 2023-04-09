@@ -72,7 +72,7 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
         week.value.allWeek = isNaN(all) ? 0 : all
     }
 
-    const updateTime = ref("")
+    const updateTime = ref<string>("")
 
     return {
         jiaowuAccount,

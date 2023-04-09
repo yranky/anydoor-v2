@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 22:42:58
+ * @LastEditTime: 2023-04-09 16:43:02
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -29,12 +29,12 @@
 						<swiper-item v-for="page in [0, 1, 2]" :key="page">
 							<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
 								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="swiperData[page]" />
-							<!-- <swiper-page class="swiper-page" :pid="page.pageid" :parentId="pageId" ref="page"></swiper-page> -->
 						</swiper-item>
 					</swiper>
 				</template>
 			</anydoorPage>
 		</view>
+		<tm-message ref="msg"></tm-message>
 	</tm-app>
 </template>
 
@@ -44,9 +44,7 @@ import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import anydoorLessonView from "@/components/anydoor-lesson-view/anydoor-lesson-view.vue"
 import anydoorLessonDate from "@/components/anydoor-lesson-view/anydoor-lesson-date.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-import {
-	ISwiperList
-} from "@/common/timetable/define/interface"
+import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
 import {
 	ref,
 	computed,
@@ -58,10 +56,16 @@ import {
 	ILessonTempItemResult
 } from "@/common/database/Lesson/ILesson"
 import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
-import { onShow } from "@dcloudio/uni-app"
+import { onLoad, onReady, onShow } from "@dcloudio/uni-app"
+import { useLessonStore } from "@/store/lesson"
+import { watch } from "vue"
+import useJiaowuStore from "@/store/jiaowu"
+const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 const store = useTmpiniaStore()
 
+const lessonStore = useLessonStore()
+const jiaowuStore = useJiaowuStore()
 
 
 /**ATART 子页面的配置 */
@@ -100,7 +104,9 @@ const swiperData = ref<IAnydoorLesson[][]>([
 //当前显示的周次
 const currentShowWeeks = ref<number>(1)
 //当前的周次
-const currentWeeks = ref<number>(1)
+const currentWeeks = computed(() => {
+	return lessonStore.currentWeek
+})
 //最大的周次
 const maxWeeks = ref<number>(36)
 
@@ -122,12 +128,19 @@ const updateLesson = (data: ILessonTempItemResult[]) => {
 			color: item.color
 		}
 	})
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
+}
+//去当前周次
+const toCurrentWeek = () => {
+	currentShowWeeks.value = lessonStore.currentWeek
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
 }
 
+//更新swiper(current指的是当前所在的swiper)
 const updateSwiper = (e: {
 	detail: {
 		current: number,
-		source: string
+		source?: string
 	}
 }) => {
 	//当前所在的swiper
@@ -161,6 +174,7 @@ const updateSwiper = (e: {
 
 	//更新当前
 	swiperData.value[current] = getCurrentWeekList(currentShowWeeks.value)
+
 }
 
 //获取当前周次的课程
@@ -169,195 +183,42 @@ const getCurrentWeekList = (week: number) => {
 	return lessons.value.filter((item) => item.weeks.includes(week))
 }
 
-onShow(async () => {
+//获取最新数据
+const updateData = async () => {
 	const LessonInstance = await Lesson.getInstance()
-	LessonInstance.updateLessonList([{
-		"weekday": "1",
-		"name": "Java程序设计实验",
-		"teacher": "黄欣阳副教授",
-		"weeks": "16-17",
-		"classnums": "01,02",
-		"room": "【红湘校区】计算机专业机房606B"
-	},
-	{
-		"weekday": "2",
-		"name": "大学物理B",
-		"teacher": "黄跃宇",
-		"weeks": "1-16",
-		"classnums": "01",
-		"room": "【红湘校区】南华楼214"
-	},
-	{
-		"weekday": "3",
-		"name": "Java程序设计",
-		"teacher": "黄欣阳副教授",
-		"weeks": "1-16",
-		"classnums": "01,02",
-		"room": "【红湘校区】核学楼305"
-	},
-	{
-		"weekday": "4",
-		"name": "大学物理B",
-		"teacher": "黄跃宇",
-		"weeks": "1-12",
-		"classnums": "01,02",
-		"room": "【红湘校区】南华楼214"
-	},
-	{
-		"weekday": "5",
-		"name": "高等数学A2",
-		"teacher": "肖其珍副教授",
-		"weeks": "1-12",
-		"classnums": "01,02",
-		"room": "【红湘校区】南华楼312"
-	},
-	{
-		"weekday": "1",
-		"name": "线性代数A",
-		"teacher": "刘邵容",
-		"weeks": "2-16",
-		"classnums": "03,04",
-		"room": "【红湘校区】南华楼111"
-	},
-	{
-		"weekday": "2",
-		"name": "数字逻辑",
-		"teacher": "屈爱平副教授",
-		"weeks": "2-17",
-		"classnums": "03,04",
-		"room": "【红湘校区】核学楼203"
-	},
-	{
-		"weekday": "3",
-		"name": "大学体育2(乒乓球)",
-		"teacher": "卿小琴",
-		"weeks": "1-16",
-		"classnums": "03,04"
-	},
-	{
-		"weekday": "4",
-		"name": "数字逻辑",
-		"teacher": "屈爱平副教授",
-		"weeks": "2-4",
-		"classnums": "03,04",
-		"room": "【红湘校区】环安楼311"
-	},
-	{
-		"weekday": "1",
-		"name": "大学英语B2(本19计类[7-12]班A)",
-		"teacher": "何鸿雁副教授",
-		"weeks": "2-16",
-		"classnums": "05,06",
-		"room": "【红湘校区】南华楼503"
-	},
-	{
-		"weekday": "2",
-		"name": "毛泽东思想和中国特色社会主义理论体系概论",
-		"teacher": "齐辉副教授",
-		"weeks": "1-16",
-		"classnums": "05,06",
-		"room": "【红湘校区】南华楼109"
-	},
-	{
-		"weekday": "3",
-		"name": "高等数学A2",
-		"teacher": "肖其珍副教授",
-		"weeks": "1-16",
-		"classnums": "05,06",
-		"room": "【红湘校区】南华楼512"
-	},
-	{
-		"weekday": "4",
-		"name": "毛泽东思想和中国特色社会主义理论体系概论",
-		"teacher": "齐辉副教授",
-		"weeks": "1-16",
-		"classnums": "05,06",
-		"room": "【红湘校区】南华楼107"
-	},
-	{
-		"weekday": "5",
-		"name": "Java程序设计",
-		"teacher": "黄欣阳副教授",
-		"weeks": "2,4,6,8,10,12,14,16",
-		"classnums": "05,06",
-		"room": "【红湘校区】环安楼409"
-	},
-	{
-		"weekday": "1",
-		"name": "高等数学A2",
-		"teacher": "肖其珍副教授",
-		"weeks": "2-16",
-		"classnums": "07,08",
-		"room": "【红湘校区】南华楼512"
-	},
-	{
-		"weekday": "2",
-		"name": "线性代数A",
-		"teacher": "刘邵容",
-		"weeks": "1-4",
-		"classnums": "07,08",
-		"room": "【红湘校区】南华楼111"
-	},
-	{
-		"weekday": "2",
-		"name": "数字逻辑",
-		"teacher": "屈爱平副教授",
-		"weeks": "12-16",
-		"classnums": "07,08",
-		"room": "【红湘校区】计算机专业机房601"
-	},
-	{
-		"weekday": "3",
-		"name": "大学英语B2(本19计类[7-12]班A)",
-		"teacher": "何鸿雁副教授",
-		"weeks": "1-16",
-		"classnums": "07,08",
-		"room": "【红湘校区】南华楼503"
-	},
-	{
-		"weekday": "5",
-		"name": "形势与政策2",
-		"teacher": "高征难副教授,张俊波,付晶助理政工师",
-		"weeks": "6,8,10",
-		"classnums": "07,08",
-		"room": "【红湘校区】南华楼104"
-	},
-	{
-		"weekday": "3",
-		"name": "计算机类专业导论",
-		"teacher": "陈灵娜教授",
-		"weeks": "1-8",
-		"classnums": "09,10",
-		"room": "【红湘校区】环安楼310"
-	},
-	{
-		"weekday": "4",
-		"name": "Java程序设计实验",
-		"teacher": "黄欣阳副教授",
-		"weeks": "3-5,7-17",
-		"classnums": "09,10,12,13",
-		"room": "【红湘校区】计算机专业机房606B"
-	},
-	{
-		"teacher": "",
-		"name": "模拟法测静电场（物理实验B 红湘）",
-		"weeks": "17",
-		"room": "化工楼215",
-		"weekday": "5",
-		"classnums": "05,06,07,08"
-	}
-	], "2020-2021-1").then((res) => {
-		console.log(res)
-		LessonInstance.getLessonTempStorage().then(res => {
-			console.log(res)
-			updateLesson(res)
-			//更新数据
-			updateSwiper({ detail: { current: defaultSwiperIndex.value } })
-		})
-	}).catch(e => {
-		console.log(e)
-	})
+	const data: any = await LessonInstance.getLessonList()
+	lessonStore.lessonList = data || []
+}
+
+
+onReady(() => {
+	//监听加载情况
+	watch(() => lessonStore.initing, (val) => {
+		if (val === true) {
+			msg.value && msg.value.show({ model: 'load' })
+		} else {
+			msg.value && msg.value.hide()
+		}
+	}, { immediate: true })
 })
+
+onShow(async () => {
+	updateData()
+
+})
+
+
+watch(() => lessonStore.lessonList, async (val: any[]) => {
+	const LessonInstance = await Lesson.getInstance()
+	//更新currentWeek
+	await LessonInstance.setCurrentWeek()
+	updateLesson(val)
+})
+
+//监听当前周次的变化
+watch(currentWeeks, () => {
+	toCurrentWeek()
+}, { immediate: true })
 
 </script>
 

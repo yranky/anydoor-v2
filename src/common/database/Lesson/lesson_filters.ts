@@ -25,7 +25,8 @@ export function Filter_ISemester(data: any): ISemesterItem | ISemesterItem[] {
                 id: item.id,
                 name: item.name,
                 tag: item.tag,
-                ext
+                ext,
+                company_id:item.company_id
             }
         }) || []
     } else {
@@ -40,7 +41,8 @@ export function Filter_ISemester(data: any): ISemesterItem | ISemesterItem[] {
             id: data.id,
             name: data.name,
             tag: data.tag,
-            ext
+            ext,
+            company_id:data.company_id
         }
     }
 }
@@ -63,7 +65,8 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
                 name: item.name,
                 color,
                 semester: item.semester,
-                ext
+                ext,
+                company_id:item.company_id
             }
         }) || []
     } else {
@@ -80,7 +83,8 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
             name: data.name,
             color,
             semester: data.semester,
-            ext
+            ext,
+            company_id:data.company_id
         }
     }
 }
@@ -124,7 +128,8 @@ export function Filter_ILessonTempResult(data: any): ILessonTempItemResult[] {
                 ext: {
                     temp: temp_ext,
                     name: name_ext
-                }
+                },
+                company_id:item.company_id
             }
         })
     }

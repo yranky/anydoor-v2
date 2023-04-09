@@ -2,17 +2,19 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-18 14:04:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-18 14:23:26
+ * @LastEditTime: 2023-04-09 15:47:26
  * @FilePath: \anydoor-v2\src\common\utils\date.ts
  * @Description: 日期工具
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+
+import dayjs from "dayjs"
+
 // 计算两个日期之间的天数
-import * as dayjs from "@/tmui/tool/dayjs/esm/index"
 export function diffTwoDays(from: string, to?: string) {
-    const dayjs_to: dayjs.Dayjs = dayjs.default(to === undefined ? new Date() : to)
-    const dayjs_from: dayjs.Dayjs = dayjs.default(from)
+    const dayjs_to: dayjs.Dayjs = dayjs(to === undefined ? new Date() : to)
+    const dayjs_from: dayjs.Dayjs = dayjs(from)
     //计算隔了几分钟
     const minute_diff = dayjs_to.diff(dayjs_from, "minute")
     //十分钟以内返回刚刚

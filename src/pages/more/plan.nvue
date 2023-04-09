@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-08 12:35:29
+ * @LastEditTime: 2023-04-09 15:47:47
  * @FilePath: \anydoor-v2\src\pages\more\plan.nvue
  * @Description: 教学计划
  * 
@@ -40,7 +40,8 @@
 					<tm-cell v-for="(value, index) in tags" :key="value" :margin="[0, 0]" :rightText="item[index]"
 						:titleFontSize="32" :title="value" rightIcon=""> </tm-cell>
 				</tm-modal>
-				<tm-result v-if="dataFilter.length === 0 && !status.loading" :showBtn="false" subTitle="暂无数据" title="暂无数据"></tm-result>
+				<tm-result v-if="dataFilter.length === 0 && !status.loading" :showBtn="false" subTitle="暂无数据"
+					title="暂无数据"></tm-result>
 			</template>
 		</anydoorPage>
 	</tm-app>
@@ -60,7 +61,6 @@ import Encrypt from "@/common/encrypt/Encrypt"
 import { jwConfig, jwPlan } from "@/common/service/jw"
 import CODE from "@/common/define/code"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
-import * as dayjs from "@/tmui/tool/dayjs/esm/index"
 import { onLoad } from "@dcloudio/uni-app"
 import { computed } from "vue"
 import tmRadioGroup from "@/tmui/components/tm-radio-group/tm-radio-group.vue"
@@ -70,6 +70,7 @@ import { watch } from "vue"
 import tmModal from "@/tmui/components/tm-modal/tm-modal.vue"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+import dayjs from "dayjs"
 const store = useJiaowuStore()
 
 const filter = ref(null)
@@ -175,14 +176,14 @@ const getPlan = async () => {
 	if (data.code === CODE.SUCCESS) {
 		tags.value = data.data.tag
 		datas.value = data.data.data
+		uni.setStorageSync(UNI_STORAGE.JW_PLAN, JSON.stringify({
+			"update_time": dayjs().format("YYYY/MM/DD HH:mm:ss"),
+			"tag": data.data.tag || [],
+			"data": data.data.data || []
+		}))
 	}
 	//加载中去掉
 	status.value.loading = false
-	uni.setStorageSync(UNI_STORAGE.JW_PLAN, JSON.stringify({
-		"update_time": dayjs.default().format("YYYY/MM/DD HH:mm:ss"),
-		"tag": data.data.tag || [],
-		"data": data.data.data || []
-	}))
 }
 
 </script>
