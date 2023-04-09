@@ -29,7 +29,9 @@ export default function nativeInit() {
     //初始化native
     uni.$anydoor_native = {
         //数据库模块
-        SQLite_Module: uni.requireNativePlugin("anydoor_sqlite"),
+        // SQLite_Module: uni.requireNativePlugin("anydoor_sqlite"),
+        //加密的
+        SQLite_Module: uni.requireNativePlugin("anydoor_sqlite_encrypt"),
         MP: uni.requireNativePlugin('uniMP'),
         BTongji_Module: uni.requireNativePlugin("anydoor_baidu_tongji"),
         Bugly_Module: uni.requireNativePlugin("anydoor_bugly"),

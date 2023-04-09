@@ -52,6 +52,11 @@
 					"type": "module",
 					"name": "anydoor_sqlite",
 					"class": "com.top_anydoor.sqlite.Index"
+				},
+				{
+					"type": "module",
+					"name": "anydoor_sqlite_encrypt",
+					"class": "com.top_anydoor.sqlcipher.Index"
 				}
 			],
 			"integrateType": "aar",
