@@ -7,6 +7,7 @@ export interface ISemesterItem {
         start_time?: number
         end_time?: number
     }
+    company_id:string
 }
 //课程名称
 export interface ILessonNameItem {
@@ -18,6 +19,7 @@ export interface ILessonNameItem {
     ext: {
 
     }
+    company_id:string
 }
 
 

@@ -87,6 +87,12 @@ const urls: Array<url> = [
     url: BASE_URL + '/api/jw/score',
     token: false
   },
+  //教务课程表
+  {
+    name: 'jw_timetable',
+    url: BASE_URL + '/api/jw/timetable',
+    token: false
+  },
   {
     name: 'user_find',
     url: 'https://login.douyeblog.top/user/find',

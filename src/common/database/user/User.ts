@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 15:28:07
+ * @LastEditTime: 2023-04-09 15:46:57
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -14,7 +14,7 @@ import ERROR_TARGET from "@/common/errorHandler/ERROR_TARGET"
 import { USER_TABLES_NAME } from "../tables/user"
 import ToastModule from "@/common/native/toast/ToastModule"
 import Encrypt from "@/common/encrypt/Encrypt"
-import * as dayjs from "@/tmui/tool/dayjs/esm/index"
+import dayjs from "dayjs"
 
 export default class User {
     //sqlite对象
@@ -100,7 +100,7 @@ export default class User {
                 `
                 insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext,data) values (0,${username},'${encryptData}','${encodeURIComponent(JSON.stringify({
                     ...ext,
-                    update_time: dayjs.default().format("YYYY/MM/DD HH:mm:ss")
+                    update_time: dayjs().format("YYYY/MM/DD HH:mm:ss")
                 }))}','${encodeURIComponent(JSON.stringify(jw_data))}')
              `], ERROR_TARGET.USER_CLASS)
 

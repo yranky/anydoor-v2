@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-04-02 13:31:21
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 18:19:18
+ * @LastEditTime: 2023-04-09 13:08:39
  * @FilePath: \anydoor-v2\src\common\service\jw.ts
  * @Description: 教务
  * 
@@ -46,6 +46,15 @@ export async function jwPlan(params: any): Promise<any> {
 // 获取成绩
 export async function jwScore(params: any): Promise<any> {
     const data: any = await post('jw_score', params)
+    if (data.code !== CODE.SUCCESS) {
+        ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+    }
+    return data
+}
+
+//获取课程表
+export async function jwTimetable(params: any): Promise<any> {
+    const data: any = await post('jw_timetable', params)
     if (data.code !== CODE.SUCCESS) {
         ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
     }
