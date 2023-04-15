@@ -7,8 +7,7 @@
 	"_dp_nativeplugin": {
 		"android": {
 			"hooksClass": "com.top_anydoor.Hook",
-			"plugins": [
-				{
+			"plugins": [{
 					"type": "module",
 					"name": "anydoor_toast",
 					"class": "com.top_anydoor.toast.Index"
@@ -57,6 +56,10 @@
 					"type": "module",
 					"name": "anydoor_sqlite_encrypt",
 					"class": "com.top_anydoor.sqlcipher.Index"
+				}, {
+					"type": "module",
+					"name": "anydoor_dialog",
+					"class": "com.top_anydoor.dialog.Index"
 				}
 			],
 			"integrateType": "aar",
@@ -70,7 +73,10 @@
 					"key": "Bugly_appid",
 					"des": "bugly的appid"
 				}
-			}
+			},
+			"dependencies": [
+			    "com.kongzue.dialogx:DialogX:0.0.47"
+			]
 		}
 	}
 }
