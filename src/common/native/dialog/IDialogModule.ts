@@ -1,10 +1,15 @@
 import IResult from "../IResult"
 
 export default interface IDialogModuleNative {
+    init(option:IDialogInitOption):void;
     //显示普通对话框(alert)
     showMessageDialog(option:IShowMessageDialogOption, callbackfn?: (result: IResult<undefined>) => void): void
     //显示输入对话框
     showInputDialog(option:IShowInputDialogOption, callbackfn?: (result: IResult<IShowInputDialogCallback>) => void,error?: (result: IResult<undefined>) => void): void
+}
+
+interface IDialogInitOption{
+    okButtonTextColor?:string
 }
 
 interface IShowMessageDialogOption{

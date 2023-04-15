@@ -253,7 +253,7 @@ const {
 import theme from "@/tmui/tool/theme/theme"
 
 const toWebviewTest = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{url: "http://192.168.0.231:5500"})
+	linkTo(ROUTE_PATH.WEBVIEW,{url: "http://192.168.137.1:5500"})
 }
 
 //菜单项
