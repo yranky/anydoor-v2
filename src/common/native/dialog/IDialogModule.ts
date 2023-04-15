@@ -9,7 +9,11 @@ export default interface IDialogModuleNative {
 }
 
 interface IDialogInitOption{
-    okButtonTextColor?:string
+    //确认按钮的颜色
+    okButtonTextColor?:string,
+    //其它按钮的颜色
+    buttonTextColor?:string
+
 }
 
 interface IShowMessageDialogOption{
