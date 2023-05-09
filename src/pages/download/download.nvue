@@ -6,6 +6,7 @@
 			</template>
 		</tm-navbar>
 		<button @click="downloadItem">下载</button>
+		<video src="https://pull-l3-cny.douyincdn.com/live/6341faaba6a912c83d597c2a7688d2b2.m3u8"></video>
 		<anydoorDownloadItem v-for="item in dataList" :item-info="item" :key="item.id" />
 	</tm-app>
 </template>

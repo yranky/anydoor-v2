@@ -33,7 +33,8 @@
             "VideoPlayer" : {},
             "UniMP" : {
                 "description" : "小程序模块"
-            }
+            },
+            "OAuth" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -68,7 +69,8 @@
             },
             /* SDK配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "oauth" : {}
             },
             "icons" : {
                 "android" : {

@@ -2,9 +2,9 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-10-06 16:04:14
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 17:02:14
+ * @LastEditTime: 2023-04-28 20:02:42
  * @FilePath: \anydoor-v2\src\pages\mprogram\mprogram.nvue
- * @Description: 
+ * @Description: 微应用列表
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
 -->
@@ -12,6 +12,8 @@
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar title="微应用"></tm-navbar>
 		<button @click="openMp()">打开</button>
+		<anydoorMprogramItem v-for="item in mprogramList" :key="item.mpid" :name="item.name" :icon="item.icon"
+			:item="item" />
 	</tm-app>
 </template>
 
@@ -22,6 +24,10 @@ import MProgram, {
 	IMProgramStatusResult,
 	MPROGRAM_STATUS_CODE
 } from "@/common/database/mprogram/MProgram"
+import anydoorMprogramItem from "@/components/anydoor-mprogram-item/anydoor-mprogram-item.vue";
+import { listMprogram } from "@/common/service/mprogram";
+import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue";
 
 
 async function openMp() {
@@ -30,6 +36,26 @@ async function openMp() {
 		if (res.code !== MPROGRAM_STATUS_CODE.SUCCSS) {
 
 		}
+	})
+}
+
+onLoad(() => {
+	getList();
+})
+
+
+const mprogramList = ref<any>([]);
+//获取微应用列表
+const getList = (): void => {
+	listMprogram({}).then(data => {
+		mprogramList.value = (data.data || []).map((item: any) => {
+			return {
+				mpid: item.mpid,
+				icon: item.icon,
+				unid: item.unid,
+				name: item.name
+			}
+		})
 	})
 }
 </script>

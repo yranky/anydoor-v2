@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 17:03:08
+ * @LastEditTime: 2023-04-28 20:17:49
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -35,11 +35,18 @@ export default class MProgram {
         }
         return uni.$anydoor.MProgram
     }
+    
     //构造函数
     private constructor() {
         //如果没有就重新加载
         if (!uni.$anydoor_native.MP) this.reloadMP()
     }
+
+    //打开微应用
+    open(mpid: string) {
+        
+    }
+    
     //启动应用
     start(appid: string, path?: string, password?: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
@@ -69,6 +76,7 @@ export default class MProgram {
             })
         })
     }
+    
     //安装应用
     install(appid: string, path: string, password?: string): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
@@ -97,9 +105,11 @@ export default class MProgram {
                 position: TOAST_POSITION.CENTER
             })
             if (this.times <= MProgram.MAX_TIMES) this.reloadMP()
+            else this.times=0;
         }
         uni.$anydoor_native.MP = uni.requireNativePlugin('uniMP')
     }
+
     //初始化小程序表
     async initDataTable() {
         return await this.sql!.executeSql([databases[DATA.MPROGRAM].tables[MPROGRAM_TABLES_NAME.PROGRAM].init])

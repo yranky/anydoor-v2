@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 15:16:23
+ * @LastEditTime: 2023-05-03 08:44:17
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -12,12 +12,12 @@
 import {
 	onLaunch
 } from "@dcloudio/uni-app"
-import init,{initUser,initLesson} from "./init"
+import init, { initUser, initLesson } from "./init"
 
 
 
 onLaunch(async function () {
-	
+
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
 	if (userAgent && userAgent.indexOf("anydoor") <= -1) {
@@ -26,7 +26,7 @@ onLaunch(async function () {
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
 	// plus.navigator.setLogs(true)
-	
+
 	//初始化
 	await init()
 
@@ -38,7 +38,7 @@ onLaunch(async function () {
 
 	//初始化课程
 	await initLesson()
-	
+
 })
 </script>
 <style>
