@@ -4,10 +4,10 @@
 			<template #navBar>
 				<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
 
-				}">
-					<view class="index-navbar flex flex-row flex-nowrap" :style="{
-						paddingTop: statusBarHeight
 					}">
+					<view class="index-navbar flex flex-row flex-nowrap" :style="{
+							paddingTop: statusBarHeight
+						}">
 						<view class="flex-1 pl-32 pr-16">
 							<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
 						</view>
@@ -35,7 +35,8 @@
 				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
 				<navigator url="/pages/jw/companySelection"><text>学校选择</text></navigator>
 				<text @click="toWebviewTest">webview测试</text>
-				
+				<text @click="toWebviewTest2">webview测试</text>
+
 				<!-- 用户主信息 -->
 				<navigator url="/pages/my/detail">
 					<view class="user-info flex flex-row">
@@ -83,20 +84,22 @@
 				<!-- 账户登录信息 -->
 				<view class="user-account-login">
 					<view class="user-account-login-item flex flex-row round-5" :style="{
-						backgroundColor: vipBg
-					}" @click="toJiaowuLogin">
+							backgroundColor: vipBg
+						}" @click="toJiaowuLogin">
 						<view class="flex flex-row flex-col flex-1 mr-n10">
 							<view class="flex flex-1 flex-row">
 								<tm-icon :font-size="32" name="tmicon-gem" _class="pr-10" color="vip"></tm-icon>
-								<anydoor-text class="flex-1" :text="jiaowuStore.jiaowuConfig.user_description" bold :fontSize="32" :lines="1" lineHeight="60"
-									color="vip"></anydoor-text>
+								<anydoor-text class="flex-1" :text="jiaowuStore.jiaowuConfig.user_description" bold
+									:fontSize="32" :lines="1" lineHeight="60" color="vip"></anydoor-text>
 							</view>
 							<anydoor-text :text="jiaowuStore.jiaowuAccount.username" :fontSize="25" :lines="1"
 								lineHeight="40" color="white">
 							</anydoor-text>
 						</view>
 						<view class="user-account-item-action round-3" :style="{ backgroundColor: vipTextColor }">
-							<anydoor-text :text="jiaowuStore.isLogin?jiaowuStore.jiaowuConfig.user_login_description:jiaowuStore.jiaowuConfig.user_not_login_description" :fontSize="25" :lines="1" lineHeight="50" color="black" bold>
+							<anydoor-text
+								:text="jiaowuStore.isLogin ? jiaowuStore.jiaowuConfig.user_login_description : jiaowuStore.jiaowuConfig.user_not_login_description"
+								:fontSize="25" :lines="1" lineHeight="50" color="black" bold>
 							</anydoor-text>
 						</view>
 					</view>
@@ -121,7 +124,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -161,7 +164,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -176,7 +179,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -219,29 +222,29 @@ import {
 	onPageScroll
 } from "@dcloudio/uni-app"
 import {
+	result,
 	throttle
 } from "lodash"
 
-import { linkTo } from "@/common/utils/link"
+import { linkTo,menuLink  } from "@/common/utils/link"
 import { listMyMenu } from "@/common/service/menu";
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
 import { MENU_TYPES } from "@/common/define/menuType";
 import useJiaowuStore from "@/store/jiaowu";
-import { ROUTE_PATH } from "@/router/ROUTE_PATH";
-
+import { ROUTE_PATH} from "@/router/ROUTE_PATH";
 const store = useTmpiniaStore();
 
 //教务的store
-const jiaowuStore=useJiaowuStore()
+const jiaowuStore = useJiaowuStore()
 
 //跳转教务Login
-const toJiaowuLogin=()=>{
+const toJiaowuLogin = () => {
 	//已登录
-	if(jiaowuStore.isLogin){
+	if (jiaowuStore.isLogin) {
 		linkTo(ROUTE_PATH.JIAOWU_MY)
 	}
 	//未登录
-	else{
+	else {
 		linkTo(ROUTE_PATH.COMPANY_SELECT)
 	}
 }
@@ -253,7 +256,17 @@ const {
 import theme from "@/tmui/tool/theme/theme"
 
 const toWebviewTest = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{url: "http://192.168.137.1:5500"})
+	// linkTo(ROUTE_PATH.WEBVIEW, { url: "http://192.168.137.1:5500" })
+	linkTo(ROUTE_PATH.WEBVIEW, { url: "http://bx.houqinbao.com/wechat/studentManage?universityId=gh_851e31ff9ca7" })
+}
+const toWebviewTest2 = () => {
+	uni.$anydoor_native.Dialog_Module.showInputDialog({
+		title: '请输入网址',
+		okText: '确定',
+		cancelText: '取消'
+	}, (result) => {
+		linkTo(ROUTE_PATH.WEBVIEW, { url: result.data?.value })
+	})
 }
 
 //菜单项

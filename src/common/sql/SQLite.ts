@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 17:27:47
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 16:40:04
+ * @LastEditTime: 2023-05-07 09:41:05
  * @FilePath: \anydoor-v2\src\common\sql\SQLite.ts
  * @Description: sql
  * 
@@ -56,7 +56,7 @@ export default class SQLite {
             SQLite.getModule().executeSql({
                 path: this.path,
                 sql
-            }, (res) => {
+            }, (res: { success: boolean; error: any }) => {
                 // console.log(res)
                 if (res.success === true) {
                     resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: {} })
@@ -83,7 +83,7 @@ export default class SQLite {
             SQLite.getModule().selectSql({
                 path: this.path,
                 sql
-            }, (res) => {
+            }, (res: { success: boolean; data: any; error: string }) => {
                 // console.log(res)
                 if (res.success === true) {
                     resolve({ code: SQLITE_STATUS_CODE.SUCCESS, msg: 'ok', data: res.data })

@@ -45,7 +45,7 @@
 				<!-- 功能列表 -->
 				<tm-scrollx :width="750" :height="140" color="primary" transprent>
 					<tm-grid :col="menuList.length" :width="150 * menuList.length" transprent>
-						<tm-grid-item v-for="(item, index) in menuList" :key="index" :height="140" :count="item.count">
+						<tm-grid-item v-for="(item, index) in menuList" :key="index" :height="140" :count="item.count" @click="menuLink(item)">
 							<tm-image :width="110" :height="79" :src="item.path"></tm-image>
 							<tm-text :font-size="24" :label="item.title"></tm-text>
 						</tm-grid-item>
@@ -203,6 +203,7 @@ import { merge } from "lodash"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { listIndexMenu } from "@/common/service/menu"
 import { listTip } from "@/common/service/tip"
+import { menuLink  } from "@/common/utils/link"
 const {
 	proxy
 } = getCurrentInstance();

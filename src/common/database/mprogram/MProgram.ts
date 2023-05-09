@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 17:03:08
+ * @LastEditTime: 2023-05-09 22:30:16
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -14,6 +14,9 @@ import SQLite from "../../sql/SQLite"
 import databases, { DATA } from "../database"
 import { MPROGRAM_TABLES_NAME } from "../tables/mprogram"
 import { TOAST_POSITION } from "@/common/native/toast/IToastModule"
+import { UNI_STORAGE } from "../UNI_STORAGE"
+import { itemMprogram } from "@/common/service/mprogram"
+import dayjs from "dayjs"
 
 
 export default class MProgram {
@@ -35,25 +38,170 @@ export default class MProgram {
         }
         return uni.$anydoor.MProgram
     }
+
     //构造函数
     private constructor() {
         //如果没有就重新加载
         if (!uni.$anydoor_native.MP) this.reloadMP()
     }
+
+    //打开微应用
+    async open(mpid: string | number) {
+        uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+        try {
+            //先判断有没有安装
+            const item: any = this.getInstalledItem(mpid)
+            //如果有id，先打开
+            if (item.unid) {
+                await this.start(item.unid, {
+                    ...item
+                })
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            }
+            //请求获取应用接口
+            const requestData = await itemMprogram({
+                id: mpid
+            })
+            //请求的数据,先判断是否版本相同
+            if (item.mp_vid === requestData.data.mp_vid) {
+                //那就不需要更新,更新数据后直接结束流程
+                this.updateInfo({
+                    ...item,
+                    enableBackground: requestData.data.enable_background == 1 ? true : false,
+                    update_time: dayjs().format("YYYY-MM-DD HH:mm:ss")
+                })
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                return
+            }
+            //需要更新,后台自动下载更新
+            const downloadData: any = await this.downloadMProgram(requestData.data.download_link)
+            if (downloadData.statusCode !== 200) {
+                ToastModule.show({
+                    text: '下载/更新微应用时发生错误!'
+                })
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                return
+            }
+            const installApp = await this.install(requestData.data.unid, plus.io.convertLocalFileSystemURL(plus.io.convertAbsoluteFileSystem(downloadData.tempFilePath)))
+            //打开
+            if (installApp.code === MPROGRAM_STATUS_CODE.FAIL) {
+                ToastModule.show({
+                    text: installApp.msg
+                })
+            }
+            const startData = await this.start(requestData.data.unid, {
+                //后台运行
+                enableBackground: requestData.data.enable_background == 1 ? true : false
+            })
+            if (startData.code === MPROGRAM_STATUS_CODE.FAIL) {
+                ToastModule.show({
+                    text: startData.msg
+                })
+            }
+            //保存到storage
+            this.updateInfo({
+                mpid: requestData.data.mpid,
+                unid: requestData.data.unid,
+                name: requestData.data.name,
+                icon: requestData.data.icon,
+                wgt: requestData.data.download_link,
+                create_time: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+                update_time: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+                enableBackground: requestData.data.enable_background == 1 ? true : false,
+                mp_vid: requestData.data.mp_vid,
+                ext: {}
+            })
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+        } catch {
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+        }
+    }
+
+    /**
+     * 
+     * @param item 更新信息
+     */
+    updateInfo(item: IMProgramItem) {
+        let installed: IMProgramItem[] = []
+        try {
+            installed = JSON.parse(uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED))
+        } catch {
+            installed = []
+        }
+        for (let i = 0; i < installed.length; i++) {
+            if (installed[i].mpid === item.mpid) {
+                installed.splice(i, 1)
+                break
+            }
+        }
+        installed.push(item)
+        uni.setStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED, JSON.stringify(installed))
+    }
+
+    //下载微应用
+    async downloadMProgram(url: string) {
+        return new Promise((resolve: any, reject: any) => {
+            const downloadTask = uni.downloadFile({
+                url: url,
+                success: (res) => {
+                    if (res.statusCode === 200) {
+                        resolve(res)
+                    } else {
+                        ToastModule.show({ text: '微应用加载失败!' })
+                    }
+                },
+                fail: (e) => {
+                    ToastModule.show({ text: '微应用下载失败!' })
+                    reject()
+                }
+            });
+
+            // downloadTask.onProgressUpdate((res) => {
+            //     console.log('下载进度' + res.progress);
+            //     console.log('已经下载的数据长度' + res.totalBytesWritten);
+            //     console.log('预期需要下载的数据总长度' + res.totalBytesExpectedToWrite);
+            // });
+            // downloadTask.abort(); 
+        })
+
+    }
+
+    /**
+     * 获取已安装的
+     */
+    getInstalledItem(mpid: string | number) {
+        let installed: IMProgramItem[] = []
+        try {
+            installed = JSON.parse(uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED))
+        } catch {
+            installed = []
+        }
+        try {
+            for (let i = 0; i < installed.length; i++) {
+                if (installed[i].mpid == mpid) {
+                    return installed[i]
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+
+        return {}
+    }
+
     //启动应用
-    start(appid: string, path?: string, password?: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
+    start(appid: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
             uni.$anydoor_native.MP.openUniMP({
                 appid,
                 ...option
-            }, async (e: any) => {
+            }, (e: any) => {
                 //如果是未安装的问题
                 if (e.code === -1001) {
-                    if (appid && path) {
-                        const result = await this.install(appid, path, password)
-                        if (result.code === MPROGRAM_STATUS_CODE.SUCCSS) this.start(appid, path, password, option)
-                        else resolve(result)
-                    }
+                    resolve({
+                        code: MPROGRAM_STATUS_CODE.FAIL,
+                        msg: '请重试!'
+                    })
                 }
                 //另外一条
                 if (e.code !== 0) {
@@ -62,13 +210,15 @@ export default class MProgram {
                         msg: e.msg,
                         error: e
                     })
+                } else {
+                    resolve({
+                        code: MPROGRAM_STATUS_CODE.SUCCESS
+                    })
                 }
-            })
-            resolve({
-                code: MPROGRAM_STATUS_CODE.SUCCSS
             })
         })
     }
+
     //安装应用
     install(appid: string, path: string, password?: string): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
@@ -76,14 +226,17 @@ export default class MProgram {
                 appid: appid,
                 wgtFile: path,
                 password
-            }, (msg: any) => {
-                resolve({
-                    code: MPROGRAM_STATUS_CODE.FAIL,
-                    msg: msg
-                })
-            })
-            resolve({
-                code: MPROGRAM_STATUS_CODE.SUCCSS
+            }, (res: any) => {
+                if (res.code === 0) {
+                    resolve({
+                        code: MPROGRAM_STATUS_CODE.SUCCESS
+                    })
+                } else {
+                    resolve({
+                        code: MPROGRAM_STATUS_CODE.FAIL,
+                        msg: res
+                    })
+                }
             })
         })
     }
@@ -97,9 +250,11 @@ export default class MProgram {
                 position: TOAST_POSITION.CENTER
             })
             if (this.times <= MProgram.MAX_TIMES) this.reloadMP()
+            else this.times = 0;
         }
         uni.$anydoor_native.MP = uni.requireNativePlugin('uniMP')
     }
+
     //初始化小程序表
     async initDataTable() {
         return await this.sql!.executeSql([databases[DATA.MPROGRAM].tables[MPROGRAM_TABLES_NAME.PROGRAM].init])
@@ -113,7 +268,7 @@ export default class MProgram {
 
 
 export enum MPROGRAM_STATUS_CODE {
-    SUCCSS = 200,
+    SUCCESS = 200,
     FAIL = 1
 }
 

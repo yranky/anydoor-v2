@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-14 20:32:54
+ * @LastEditTime: 2023-05-09 16:52:23
  * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
  * @Description: 
  * 
@@ -18,6 +18,7 @@
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+import MProgram from "../database/mprogram/MProgram";
 import IResult from "./IResult";
 import BTongjiModule from "./baidu_tongji/BTongjiModule";
 import BuglyModule from "./bugly/BuglyModule";
@@ -52,6 +53,8 @@ export default function nativeInit() {
     DownloadModule.getInstance()
     //初始化dialog模块
     DialogModule.getInstance()
+    //初始化Mprogram
+    MProgram.getInstance()
 }
 
 //此函数用于调试用，使用此函数包裹，如果处于debug会打印出日志

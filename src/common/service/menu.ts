@@ -16,6 +16,7 @@ export async function listIndexMenu(formData: any): Promise<any> {
     } else {
         listData = data.data.map((item: any) => {
             return {
+                ...item,
                 sort: item.sort,
                 mid: item.mid,
                 version: item.version,
@@ -50,6 +51,7 @@ export async function listMyMenu(formData: any): Promise<any> {
         data.data.forEach((item: any) => {
             //菜单的item
             const menu_item = {
+                ...item,
                 sort: item.sort,
                 mid: item.mid,
                 version: item.version,

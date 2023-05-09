@@ -2,34 +2,53 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-10-06 16:04:14
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 17:02:14
+ * @LastEditTime: 2023-05-09 20:55:18
  * @FilePath: \anydoor-v2\src\pages\mprogram\mprogram.nvue
- * @Description: 
+ * @Description: 微应用列表
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar title="微应用"></tm-navbar>
-		<button @click="openMp()">打开</button>
+		<anydoorMprogramItem v-for="item in mprogramList" :key="item.mpid" :name="item.name" :icon="item.icon"
+			:item="item" @itemClick="itemClick" />
 	</tm-app>
 </template>
 
 <script lang="ts" setup>
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-import MProgram, {
-	IMProgramStatusResult,
-	MPROGRAM_STATUS_CODE
-} from "@/common/database/mprogram/MProgram"
+import anydoorMprogramItem from "@/components/anydoor-mprogram-item/anydoor-mprogram-item.vue"
+import { listMprogram } from "@/common/service/mprogram"
+import { onLoad } from "@dcloudio/uni-app"
+import { ref } from "vue"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+
+onLoad(() => {
+	mprogramList.value = uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_LIST)||[]
+	getList()
+})
+
+//点击微应用
+async function itemClick(item: any) {
+	uni.$anydoor.MProgram?.open(item.mpid)
+}
 
 
-async function openMp() {
-	const MProgramInstance = await MProgram.getInstance()
-	MProgramInstance.start("__UNI__43CDF4D", "/static/__UNI__43CDF4D.wgt").then((res: IMProgramStatusResult) => {
-		if (res.code !== MPROGRAM_STATUS_CODE.SUCCSS) {
-
-		}
+const mprogramList = ref<any>([]);
+//获取微应用列表
+const getList = (): void => {
+	listMprogram({}).then(data => {
+		mprogramList.value = (data.data || []).map((item: any) => {
+			return {
+				mpid: item.mpid,
+				icon: item.icon,
+				unid: item.unid,
+				name: item.name
+			}
+		})
+		uni.setStorageSync(UNI_STORAGE.UNI_MPROGRAM_LIST,mprogramList.value)
 	})
 }
 </script>

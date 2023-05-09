@@ -12,7 +12,7 @@ import dayjs from "dayjs"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-17 15:18:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 17:22:05
+ * @LastEditTime: 2023-05-03 08:48:33
  * @FilePath: \anydoor-v2\src\init.ts
  * @Description: 初始化
  * 
@@ -81,6 +81,8 @@ export async function initLesson() {
     LessonInstance.setCurrentWeek()
     const data: any = await LessonInstance.getLessonList()
     lessonStore.lessonList = data || []
+    //初始化完成
+    lessonStore.initing = false
 
     //推算需不需要更新数据
     const cid = jiaowuStore.jiaowuConfig.cid
@@ -103,7 +105,4 @@ export async function initLesson() {
             }
         }
     }
-
-    //初始化完成
-    lessonStore.initing = false
 }

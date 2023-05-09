@@ -5,7 +5,14 @@ export default interface IDialogModuleNative {
     //显示普通对话框(alert)
     showMessageDialog(option:IShowMessageDialogOption, callbackfn?: (result: IResult<undefined>) => void): void
     //显示输入对话框
-    showInputDialog(option:IShowInputDialogOption, callbackfn?: (result: IResult<IShowInputDialogCallback>) => void,error?: (result: IResult<undefined>) => void): void
+    showInputDialog(option: IShowInputDialogOption, callbackfn?: (result: IResult<IShowInputDialogCallback>) => void): void
+    //显示加载框
+    showWaitingDialog(option: IShowWaitingDialogOption): void
+    //隐藏加载框
+    hideWaitingDialog(option: IHideWaitingDialogDialogOption): void
+    //注册加载框返回监听事件
+    registerWaitingDialogListener(option:IRegisterWaitingDialogListenerOption):void
+    removeWaitingDialogListener(option:IRemoveWaitingDialogListenerOption):void
 }
 
 interface IDialogInitOption{
@@ -13,7 +20,6 @@ interface IDialogInitOption{
     okButtonTextColor?:string,
     //其它按钮的颜色
     buttonTextColor?:string
-
 }
 
 interface IShowMessageDialogOption{
@@ -37,4 +43,23 @@ interface IShowInputDialogOption extends IShowMessageDialogOption{
 interface IShowInputDialogCallback{
     type:'cancel'|'ok',
     value:string
+}
+
+//加载框
+interface IShowWaitingDialogOption{
+    //标题
+    title?: string,
+    //进度
+    percent?:number
+}
+
+interface IHideWaitingDialogDialogOption{
+
+}
+
+interface IRegisterWaitingDialogListenerOption{
+    uuid:string
+}
+interface IRemoveWaitingDialogListenerOption{
+    uuid:string
 }

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-08 12:23:46
+ * @LastEditTime: 2023-05-09 16:43:37
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -11,7 +11,7 @@
 import url from './model/url'
 import { isUndefined } from 'lodash'
 
-const BASE_URL = 'http://192.168.196.3:10001'
+const BASE_URL = 'http://192.168.124.9:10001'
 
 // 链接
 const urls: Array<url> = [
@@ -101,6 +101,16 @@ const urls: Array<url> = [
   {
     name: 'user_register',
     url: 'https://login.douyeblog.top/user/register',
+    token: false
+  },
+  {
+    name: 'mprogram_list',
+    url: BASE_URL + '/api/mprogram/list',
+    token: false
+  },
+  {
+    name: 'mprogram_item',
+    url: BASE_URL + '/api/mprogram/item',
     token: false
   }
 ]
