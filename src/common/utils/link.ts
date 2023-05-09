@@ -1,9 +1,39 @@
 import qs from "querystringify"
+import { NAVIGATE_TYPE } from "@/common/define/navigateType"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+
+//链接
+//菜单跳转
+export function menuLink(item: any) {
+    menuLinkTo(item.url, item.params || [], item.link_type || '')
+}
+//菜单链接具体
+export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYPE) {
+    //解析参数
+    const option: any = {}
+    //解析参数
+    for (let i = 0; i < params.length; i++) {
+        option[params[i].key] = params[i].param
+    }
+    //打开微应用
+    if (type === NAVIGATE_TYPE.MPROGRAM) {
+        uni.$anydoor.MProgram?.open(path)
+    } else if (type === NAVIGATE_TYPE.PAGE) {
+        linkTo(path, option, option)
+    } else {
+        linkTo(ROUTE_PATH.WEBVIEW, {
+            ...option,
+            url: path
+        })
+    }
+}
+
+
 export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false) {
     //配置项
     const options: any = {
-        data: JSON.stringify(data),
-        ...external
+        ...external,
+        data: JSON.stringify(data)
     }
     const result: any = await navigateTo(path, options, replace)
     if (result.success === false) {

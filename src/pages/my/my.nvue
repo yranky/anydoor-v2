@@ -124,7 +124,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -164,7 +164,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -179,7 +179,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -226,12 +226,12 @@ import {
 	throttle
 } from "lodash"
 
-import { linkTo } from "@/common/utils/link"
+import { linkTo,menuLink  } from "@/common/utils/link"
 import { listMyMenu } from "@/common/service/menu";
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
 import { MENU_TYPES } from "@/common/define/menuType";
 import useJiaowuStore from "@/store/jiaowu";
-import { ROUTE_PATH } from "@/router/ROUTE_PATH";
+import { ROUTE_PATH} from "@/router/ROUTE_PATH";
 const store = useTmpiniaStore();
 
 //教务的store

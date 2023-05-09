@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-03 09:22:48
+ * @LastEditTime: 2023-05-09 16:43:37
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -106,6 +106,11 @@ const urls: Array<url> = [
   {
     name: 'mprogram_list',
     url: BASE_URL + '/api/mprogram/list',
+    token: false
+  },
+  {
+    name: 'mprogram_item',
+    url: BASE_URL + '/api/mprogram/item',
     token: false
   }
 ]

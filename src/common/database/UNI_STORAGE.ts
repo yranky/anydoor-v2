@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-25 18:17:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-01 15:18:49
+ * @LastEditTime: 2023-05-09 16:09:38
  * @FilePath: \anydoor-v2\src\common\database\UNI_STORAGE.ts
  * @Description: 缓存标识
  * 
@@ -26,5 +26,9 @@ export enum UNI_STORAGE {
     //成绩
     JW_SCORE = "jw_score",
     //成绩当前选择的学期
-    JW_SCORE_SEMESTER = "jw_score_semester"
+    JW_SCORE_SEMESTER = "jw_score_semester",
+    //uni小程序安装列表
+    UNI_MPROGRAM_INSTALLED = "uni_mprogram_installed",
+    //uni小程序列表
+    UNI_MPROGRAM_LIST="uni_mprogram_list"
 }
