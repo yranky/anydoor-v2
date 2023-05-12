@@ -1,19 +1,68 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="我的信息"></tm-navbar>
-		<view style="margin: 10rpx 20rpx;">
-			<tm-cell showAvatar avatar="https://picsum.photos/200" :margin="[0, 0]" :titleFontSize="35" title="头像 Avatar">
-			</tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="昵称"> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="出生日期"> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="学校"> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="个性签名"> </tm-cell>
-		</view>
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
+			<template #navBar>
+				<tm-navbar title="我的信息"></tm-navbar>
+			</template>
+			<template #content>
+				<view style="margin: 10rpx 20rpx;">
+					<tm-cell showAvatar :avatar="userStore.avatar" :margin="[0, 0]" :titleFontSize="35" title="头像">
+					</tm-cell>
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="用户名"
+						:rightText="userStore.username" rightIcon=""> </tm-cell>
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="昵称"
+						:rightText="userStore.nickname" @click="updateNickname"> </tm-cell>
+					<picker mode="date" :value="birthDate" :end="dayjs().format('YYYY-MM-DD')" @change="updateBirth">
+						<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="生日"
+							:rightText="userStore.birth">
+						</tm-cell>
+					</picker>
+				</view>
+			</template>
+		</anydoorPage>
 	</tm-app>
 </template>
 
 <script lang="ts" setup>
-	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-	import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import { useUserStore } from "@/store/user"
+import User from "@/common/database/user/User"
+import { ref } from "vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import dayjs from "dayjs"
+const userStore = useUserStore()
+
+
+const birthDate = ref<string>(dayjs(userStore.birth+" 00:00:00").isValid()?dayjs(userStore.birth+" 00:00:00").format("YYYY-MM-DD"):dayjs().format('YYYY-MM-DD'))
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+// 页面刷新
+const refresh = () => {
+	refreshComplete.value = false
+	//刷新用户信息
+	User.getInstance().then((res) => res.refreshUserInfo()).finally(() => {
+		refreshComplete.value = true
+	})
+}
+
+//更新昵称
+const updateNickname = () => {
+	uni.$anydoor_native.Dialog_Module.showInputDialog({
+		title: '更新昵称信息',
+		okText: '确认',
+		cancelText: '取消',
+		cancelable: true,
+		defaultStr: userStore.nickname
+	}, (res) => {
+		console.log(res)
+	})
+}
+
+//更新生日
+const updateBirth = (e:any) => {
+	console.log(e.detail.value)
+}
 </script>

@@ -1,39 +1,38 @@
-<template>
-    <view>
-
-    </view>
-</template>
+<template></template>
 <script setup lang="ts">
 import { toRefs } from 'vue';
 import { IMessageResult, IAnydoorWebviewRef } from '../IAnydoorWebview';
 import { watch } from 'vue';
 import { ICallback, ISend } from './types';
-import { CODE, CODE_MSG } from './code';
+import WebviewAction from './WebviewAction';
 
-const props = defineProps(['messageData','mWebview'])
+const props = defineProps(['messageData', 'mWebview','emits'])
 
-const emits=defineEmits(['update:callbackMessage'])
+const emits = defineEmits(['update:callbackMessage'])
 
-const {messageData,callbackMessage}= toRefs<{messageData:IMessageResult,callbackMessage:ICallback<any>}>(props)
+const { messageData, callbackMessage, mWebview } = toRefs<{ messageData: IMessageResult, callbackMessage: ICallback<any>, mWebview: IAnydoorWebviewRef }>(props)
 
+const webviewAction = new WebviewAction()
 //在这里监听
-watch(()=>messageData.value,(newVal:IMessageResult)=>{
+watch(() => messageData.value, async (newVal: IMessageResult) => {
     // console.log(newVal,'in bridge')
-    const data:ISend = JSON.parse(newVal.data)
+    try {
+        const data: ISend = JSON.parse(newVal.data)
+        //传入解析数据
+        emits("update:callbackMessage",await webviewAction.parse(data,mWebview.value,props.emits))
+    } catch { }
     // console.log(data,'in bridge')
-    const sendData:ICallback<any>={
-        data: {},
-        code: CODE.SUCCESS,
-        call_id: data.call_id,
-        msg: CODE_MSG[CODE.SUCCESS]
-    }
+    // const sendData:ICallback<any>={
+    //     data: {},
+    //     code: CODE.SUCCESS,
+    //     call_id: data.call_id,
+    //     msg: CODE_MSG[CODE.SUCCESS]
+    // }
     // console.log(sendData)
-    emits("update:callbackMessage",sendData)
+    // emits("update:callbackMessage",sendData)
     // sendMessage.value(JSON.stringify(sendData))
 })
 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

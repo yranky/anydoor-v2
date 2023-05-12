@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-09 22:30:16
+ * @LastEditTime: 2023-05-10 07:52:55
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -73,8 +73,16 @@ export default class MProgram {
                 uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
                 return
             }
+            if (!requestData.data.download_link) {
+                ToastModule.show({
+                    text:'无法加载此微应用:not found'
+                })
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                return
+            }
             //需要更新,后台自动下载更新
             const downloadData: any = await this.downloadMProgram(requestData.data.download_link)
+            
             if (downloadData.statusCode !== 200) {
                 ToastModule.show({
                     text: '下载/更新微应用时发生错误!'
@@ -112,7 +120,7 @@ export default class MProgram {
                 ext: {}
             })
             uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
-        } catch {
+        } catch (e) {
             uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
         }
     }
@@ -150,11 +158,11 @@ export default class MProgram {
                         ToastModule.show({ text: '微应用加载失败!' })
                     }
                 },
-                fail: (e) => {
+                fail: () => {
                     ToastModule.show({ text: '微应用下载失败!' })
                     reject()
                 }
-            });
+            })
 
             // downloadTask.onProgressUpdate((res) => {
             //     console.log('下载进度' + res.progress);

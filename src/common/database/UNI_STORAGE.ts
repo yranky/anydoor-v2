@@ -30,5 +30,8 @@ export enum UNI_STORAGE {
     //uni小程序安装列表
     UNI_MPROGRAM_INSTALLED = "uni_mprogram_installed",
     //uni小程序列表
-    UNI_MPROGRAM_LIST="uni_mprogram_list"
+    UNI_MPROGRAM_LIST = "uni_mprogram_list",
+    //用户账号信息
+    USER_ANYDOOR_TOKEN = "uni_user_anydoor_token",
+    USER_ANYDOOR_INFO = "uni_user_anydoor_info"
 }

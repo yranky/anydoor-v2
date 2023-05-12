@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 11:03:49
+ * @LastEditTime: 2023-05-12 10:18:00
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -36,7 +36,7 @@
 				</template>
 			</tm-cell>
 			<anydoor-text text="其它" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="清理缓存"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="清理缓存" @click="clearCache" :rightText="cacheSize" rightIcon=""> </tm-cell>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="关于我们"> </tm-cell>
 		</view>
 	</tm-app>
@@ -52,6 +52,8 @@ import Theme from "@/common/theme/Theme"
 import { IThemeDatabaseKeys } from "@/common/theme/IThemeDatabase"
 import { onBeforeMount, watch } from "vue"
 import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
+import { ref } from "vue"
+import ToastModule from "@/common/native/toast/ToastModule"
 
 const store = useTmpiniaStore()
 
@@ -68,6 +70,8 @@ const initItems = async () => {
 //在挂载之前获取
 onBeforeMount(() => {
 	initItems()
+	//获取size
+	getCacheSize()
 })
 
 //修改深色模式
@@ -82,4 +86,28 @@ const changeTheme = () => {
 	uni.$anydoor.Theme?.changeTheme(!store.tmStore.dark)
 }
 
+//缓存相关
+const cacheSize = ref<string>()
+const getCacheSize = () => {
+	(plus as any).cache.calculate((e: number) => {
+		cacheSize.value = Math.floor(e / 1024 / 1024 * 100) / 100 + 'M';
+	})
+}
+const clearCache = () => {
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		title:'提示',
+		okText: '确定',
+		cancelable: true,
+		cancelText: '取消',
+		content:`确认清除缓存吗(${cacheSize.value})`
+	}, (res) => {
+		console.log(res.data?.type )
+		if (res.data?.type === "ok") {
+			(plus as any).cache.clear(() => {
+				ToastModule.show({ text: '清除成功!' })
+				getCacheSize()
+			})
+		}
+	})
+}
 </script>

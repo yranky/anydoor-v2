@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 19:08:31
+ * @LastEditTime: 2023-05-10 17:21:35
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -54,10 +54,11 @@ import md5 from "md5"
 import useDeviceStore from "@/store/device"
 import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
 import User from "@/common/database/user/User"
-import { linkTo } from "@/common/utils/link"
+import { linkBack, linkTo } from "@/common/utils/link"
 import getUrlByName from "@/common/request/urls"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import CODE from "@/common/define/code"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
@@ -119,7 +120,10 @@ const doLogin = (): void => {
 	//收起键盘
 	uni.hideKeyboard()
 
-	msg.value && msg.value.show({ model: 'load', text: "登录中，请稍等" })
+	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+		title:'登录中...'
+	})
+
 	const postData: any = {
 		type: LOGIN_TYPE.USERNAME,
 		username: form.value.user,
@@ -128,7 +132,7 @@ const doLogin = (): void => {
 	//先判空
 	if (form.value.user.trim() === '') {
 		ToastModule.show({ text: '请输入用户名/邮箱/手机号' })
-		msg.value && msg.value.hide()
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 		return;
 	}
 	//验证是不是用户名/邮箱
@@ -139,7 +143,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.mail.reg as string);
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.mail.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			//说明是邮箱登录
@@ -150,7 +154,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.username.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.username.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			//说明是用户名登录
@@ -164,7 +168,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.phone.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.phone.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -172,7 +176,7 @@ const doLogin = (): void => {
 		} else {
 			if (form.value.user.trim() === '') {
 				ToastModule.show({ text: '请输入手机号' })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -185,29 +189,27 @@ const doLogin = (): void => {
 		const reg = new RegExp(formRule.value.password.reg as string)
 		if (!reg.test(form.value.password.trim())) {
 			ToastModule.show({ text: formRule.value.password.msg as string })
-			msg.value && msg.value.hide()
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
 	} else {
 		if (form.value.password.trim() === '') {
 			ToastModule.show({ text: '请输入密码' })
-			msg.value && msg.value.hide()
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
 	}
-
 	//进行登录操作
-	login(postData).then(async res => {
-
-		console.log(res);
-		//插入表中
-		(await User.getInstance()).insertUserAccount('1', '1')
+	login(postData).then((res) => {
+		if (res.code === CODE.SUCCESS) {
+			//返回上一层
+			linkBack()
+		}
 	}).finally(() => {
-		msg.value && msg.value.hide()
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 	})
-
 }
 
 //加载表单验证规则

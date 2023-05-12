@@ -2,12 +2,7 @@
 	<view class="relative">
 		<tm-result v-if="info.error.show" class="error-show" :showBtn="info.error.showBtn" :color="info.error.color"
 			:status="info.error.status" :btnText="info.error.btnText" :title="info.error.title"
-			:subTitle="info.error.subTitle" @click="doResult(info.error.btnText)"></tm-result>
-		<view class="fixed webview-progress" v-if="progress.show" :style="{
-			backgroundColor: progressBg, width: progress.value + 'rpx', height: '5rpx',
-			top: (props.config.progressTop ? props.config.progressTop : 0) + 'rpx'
-		}">
-		</view>
+			:subTitle="info.error.subTitle" @click="doResult(info.error.btnText as any)"></tm-result>
 		<view :style="{ height: info.error.show ? 0 : '' }">
 			<anydoorNativeWebview ref="mWebview" :unit="props.unit" :src="props.src" :config="props.config"
 				:userAgent="props.userAgent" @onPageStart="pageStart" @onPageReady="pageReady"
@@ -16,9 +11,10 @@
 				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate" @onPageAlert="pageAlert"
 				@onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole" @onNewWindow="onNewWindow"
 				@onLinkPress="onLinkPress" @onImagePress="onImagePress" @onLinkClick="onLinkClick"
-				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme" />
+				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme"
+				/>
 		</view>
-		<anydoor-webview-bridge :messageData="messageData" v-model:callbackMessage="callbackMessage" />
+		<anydoor-webview-bridge :messageData="messageData" :emits="emits" v-model:callbackMessage="callbackMessage" :mWebview="mWebview" />
 	</view>
 </template>
 
@@ -36,8 +32,6 @@ import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
 import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
 import { ICallback } from "./anydoor-webview-bridge/types"
-
-
 
 const info = reactive({
 	error: {
@@ -86,7 +80,7 @@ watch(()=>callbackMessage.value,(newVal:ICallback<any>)=>{
 //点击result按钮事件
 const doResult = function (action: NETErrorAction) {
 	switch (action) {
-		case NETErrorAction.retry:
+		case NETErrorAction.RETRY:
 			//取消显示
 			info.error.show = false
 			reload()
@@ -100,9 +94,9 @@ const progress = reactive({
 	show: false
 })
 //进度背景
-const progressBg = computed(() => {
-	return theme.getColor("primary").value
-})
+// const progressBg = computed(() => {
+// 	return theme.getColor("primary").value
+// })
 const emits = defineEmits([
 	"onPageStart",
 	"onPageReady",
@@ -125,7 +119,9 @@ const emits = defineEmits([
 	"onImageClick",
 	"onBack",
 	"onScheme",
-	"onError"
+	"onError",
+	'onHideTitleBar',
+	"onShowTitleBar"
 ])
 /**
  * 回调
@@ -185,7 +181,7 @@ const onConsole = (e: IOnConsoleResult) => {
 const pageError = (e: IPageErrorResult) => {
 	progress.show = false
 	if (e.isCurrent) {
-		info.error = getNETError(e.errorCode)
+		info.error = getNETError(e.errorCode) as any
 	}
 	if (e.description === "net::ERR_NAME_NOT_RESOLVED") {
 		info.error.subTitle = "无法连接(ERR_NAME_NOT_RESOLVED)"
@@ -197,7 +193,7 @@ const pageError = (e: IPageErrorResult) => {
 const httpError = (e: IPageHttpErrorResult) => {
 	progress.show = false
 	if (e.isCurrent) {
-		info.error = getNETError(e.errorCode, "httpError")
+		info.error = getNETError(e.errorCode, "httpError") as any
 	}
 	emits("onPageHttpError", e)
 }

@@ -14,7 +14,8 @@ export interface IAnydoorWebviewConfig {
     modeallowLocalPath?: boolean
     scheme?: boolean
     defaultAlert?: boolean,
-    height?: number | string
+    height?: number | string,
+    progress?:boolean
 }
 
 
@@ -43,6 +44,7 @@ export interface IAnydoorWebviewRef {
     send(data: string, callbackFn?: (res: IResult<string>) => void): void
     callHandler(data: ICallHandlerOption, callbackFn?: (res: IResult<string>) => void): void
     registerHandler(name: string, callbackFn?: (res: IResult<undefined>) => void): void
+    hideTitleBar():void
 }
 
 export interface IAnydoorEventResult<T> {

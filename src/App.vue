@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-03 08:44:17
+ * @LastEditTime: 2023-05-10 15:19:46
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -12,7 +12,7 @@
 import {
 	onLaunch
 } from "@dcloudio/uni-app"
-import init, { initUser, initLesson } from "./init"
+import init, { initUser, initLesson,initFromStorageSync } from "./init"
 
 
 
@@ -26,7 +26,8 @@ onLaunch(async function () {
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
 	// plus.navigator.setLogs(true)
-
+	//从storage初始化
+	initFromStorageSync()
 	//初始化
 	await init()
 

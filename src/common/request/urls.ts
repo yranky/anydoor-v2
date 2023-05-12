@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-09 16:43:37
+ * @LastEditTime: 2023-05-10 20:19:09
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -25,6 +25,12 @@ const urls: Array<url> = [
   {
     name: 'user_login',
     url: BASE_URL + '/center/app_login',
+    token: false
+  },
+  //刷新令牌
+  {
+    name: 'refresh_token',
+    url: BASE_URL + '/center/refresh_token',
     token: false
   },
   //通知列表
@@ -111,6 +117,12 @@ const urls: Array<url> = [
   {
     name: 'mprogram_item',
     url: BASE_URL + '/api/mprogram/item',
+    token: false
+  },
+  //用户信息
+  {
+    name: 'user_info',
+    url: BASE_URL + '/api/user/info',
     token: false
   }
 ]

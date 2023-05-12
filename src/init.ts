@@ -7,6 +7,10 @@ import useJiaowuStore from "@/store/jiaowu"
 import { useLessonStore } from "@/store/lesson"
 import { SQLITE_STATUS_CODE } from "./common/sql/SQLite"
 import dayjs from "dayjs"
+import Update from "./common/update/Update"
+import { useUserStore } from "./store/user"
+import { UNI_STORAGE } from "./common/database/UNI_STORAGE"
+import { isEmpty } from "lodash"
 
 /*
  * @Author: yranky douye@douye.top
@@ -21,23 +25,37 @@ import dayjs from "dayjs"
 export default async function init() {
     //初始化uni
     uni.$anydoor = {}
+    try {
+        //更新
+        Update.getInstance().update()
+    } catch {
 
+    }
     //初始化原生插件
     nativeInit()
-
     //初始化device_id
     await (await Device.getInstance()).initDeviceId()
-
     //初始化用户
     const UserModule = await User.getInstance()
     await UserModule.initDataTable()
-
     //主题部分
     const ThemeInstance = await Theme.getInstance()
 }
 
 //初始化用户信息等
 export async function initUser() {
+    //#endregion
+    //#region 用户
+    await (await User.getInstance()).freshStoreUser()
+    const userStore = useUserStore()
+    //如果有token说明登录了
+    if (userStore.token) {
+        //刷新用户信息
+        User.getInstance().then((res) => res.refreshUserInfo())
+    }
+    //#endregion
+
+
     //#region 教务用户
     //初始化用户
     const jiaowuAccount = await (await User.getInstance()).getJiaowuAccount(true)
@@ -65,10 +83,6 @@ export async function initUser() {
     } else {
         store.reset()
     }
-    //#endregion
-    //#region 用户
-
-    //#endregion
 
 }
 
@@ -92,17 +106,40 @@ export async function initLesson() {
         if (res?.code === SQLITE_STATUS_CODE.SUCCESS) {
             //当前的学期信息
             lessonStore.semester = res.data[0] ? (res.data[0].semester || "") : ''
-            const create_time=res.data[0] ? (res.data[0].create_time || 0) : 0
-            const create_time_dayjs=dayjs(Number(create_time))
+            const create_time = res.data[0] ? (res.data[0].create_time || 0) : 0
+            const create_time_dayjs = dayjs(Number(create_time))
             //根据创建时间(如果超过设定的时间,则进行更新操作)
-            if(dayjs().diff(create_time_dayjs,"day")>jiaowuStore.jiaowuConfig.timetable_temp||!create_time_dayjs.isValid()){
+            if (dayjs().diff(create_time_dayjs, "day") > jiaowuStore.jiaowuConfig.timetable_temp || !create_time_dayjs.isValid()) {
 
                 await LessonInstance.freshTimeTable(lessonStore.semester)
 
                 const data: any = await LessonInstance.getLessonList()
-                
+
                 lessonStore.lessonList = data || []
             }
         }
+    }
+}
+
+//从storage初始化数据
+export function initFromStorageSync() {
+    //初始化用户token信息
+    const token = uni.getStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
+    const userStore = useUserStore()
+    if (!isEmpty(token)) {
+        userStore.token = token.token
+        userStore.refreshToken = token.refresh_token
+    }
+
+    //加载用户信息
+    const userinfo = uni.getStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO)
+    if (!isEmpty(userinfo)) {
+        userStore.$patch((state) => {
+            for (let key in userinfo) {
+                if (Object.keys(state).includes(key)) {
+                    state[key as keyof typeof state] = userinfo[key]
+                }
+            }
+        })
     }
 }
