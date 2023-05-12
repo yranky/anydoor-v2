@@ -32,11 +32,11 @@
         "modules" : {
             /* 使用Canvas模块 */
             "Canvas" : "nvue canvas",
-            "VideoPlayer" : {},
             "UniMP" : {
                 "description" : "小程序模块"
             },
-            "OAuth" : {}
+            "OAuth" : {},
+            "Barcode" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -72,7 +72,17 @@
             /* SDK配置 */
             "sdkConfigs" : {
                 "ad" : {},
-                "oauth" : {}
+                "oauth" : {
+                    "qq" : {
+                        "appid" : "102048291",
+                        "UniversalLinks" : ""
+                    },
+                    "sina" : {
+                        "appkey" : "94221476",
+                        "redirect_uri" : "https://login.douyeblog.top/union/oauth/weibo/callback",
+                        "UniversalLinks" : ""
+                    }
+                }
             },
             "icons" : {
                 "android" : {

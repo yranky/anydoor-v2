@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 10:18:00
+ * @LastEditTime: 2023-05-12 13:28:03
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -36,8 +36,13 @@
 				</template>
 			</tm-cell>
 			<anydoor-text text="其它" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="清理缓存" @click="clearCache" :rightText="cacheSize" rightIcon=""> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="清理缓存" @click="clearCache" :rightText="cacheSize"
+				rightIcon=""> </tm-cell>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="关于我们"> </tm-cell>
+		</view>
+		<!-- 退出登录 -->
+		<view style="margin: 10rpx 20rpx;" v-if="userStore.token">
+			<tm-button block label="退出账户登录" @click="logout"></tm-button>
 		</view>
 	</tm-app>
 </template>
@@ -54,8 +59,12 @@ import { onBeforeMount, watch } from "vue"
 import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
 import { ref } from "vue"
 import ToastModule from "@/common/native/toast/ToastModule"
+import User from "@/common/database/user/User"
+import { useUserStore } from "@/store/user"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
 
 const store = useTmpiniaStore()
+const userStore=useUserStore()
 
 //主题配置
 const themeConfig = reactive({
@@ -95,13 +104,13 @@ const getCacheSize = () => {
 }
 const clearCache = () => {
 	uni.$anydoor_native.Dialog_Module.showMessageDialog({
-		title:'提示',
+		title: '提示',
 		okText: '确定',
 		cancelable: true,
 		cancelText: '取消',
-		content:`确认清除缓存吗(${cacheSize.value})`
+		content: `确认清除缓存吗(${cacheSize.value})`
 	}, (res) => {
-		console.log(res.data?.type )
+		console.log(res.data?.type)
 		if (res.data?.type === "ok") {
 			(plus as any).cache.clear(() => {
 				ToastModule.show({ text: '清除成功!' })
@@ -109,5 +118,17 @@ const clearCache = () => {
 			})
 		}
 	})
+}
+
+//退出账号登录
+const logout = async () => {
+	uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+	try {
+		await (await User.getInstance()).logoutUserAccount()
+		ToastModule.show({text:'退出登录成功!'})
+	} catch (e) {
+		console.log(e)
+	}
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 }
 </script>

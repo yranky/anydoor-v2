@@ -21,27 +21,25 @@
 				<!-- 填充占位元素 -->
 				<view :style="{ width: '100%', height: statusBarHeight, marginTop: '70rpx' }"></view>
 				<!-- 用户主信息 -->
-				<navigator>
-					<view class="user-info flex flex-row" @click="toUserInfo">
-						<view class="user-avatar">
-							<!-- 120rpx margin 20rpx 40rpx -->
-							<tm-avatar :img="userStore.avatar" :round="15" :size="120"></tm-avatar>
+				<view class="user-info flex flex-row" @click="toUserInfo">
+					<view class="user-avatar">
+						<!-- 120rpx margin 20rpx 40rpx -->
+						<tm-avatar :img="userStore.avatar" :round="15" :size="120"></tm-avatar>
+					</view>
+					<view class="user-info flex-1 flex flex-col">
+						<view class="user-info-username">
+							<anydoor-text :text="!userStore.token ? '未登录' : userStore.nickname" :fontSize="40" :lines="1"
+								lineHeight="80" bold></anydoor-text>
 						</view>
-						<view class="user-info flex-1 flex flex-col">
-							<view class="user-info-username">
-								<anydoor-text :text="!userStore.token ? '未登录' :userStore.nickname" :fontSize="40" :lines="1" lineHeight="80"
-									bold></anydoor-text>
-							</view>
-							<view class="user-info-other flex-1">
-								<anydoor-text text="" :fontSize="25" :lines="1" lineHeight="40" color="grey">
-								</anydoor-text>
-							</view>
-						</view>
-						<view class="user-action flex flex-col flex-center">
-							<tm-icon :font-size="30" name="tmicon-angle-right" color="grey"></tm-icon>
+						<view class="user-info-other flex-1">
+							<anydoor-text text="" :fontSize="25" :lines="1" lineHeight="40" color="grey">
+							</anydoor-text>
 						</view>
 					</view>
-				</navigator>
+					<view class="user-action flex flex-col flex-center">
+						<tm-icon :font-size="30" name="tmicon-angle-right" color="grey"></tm-icon>
+					</view>
+				</view>
 				<!-- 社区信息 -->
 				<!-- <view class="user-community flex flex-row">
 					<view class="user-community-itme flex-1">

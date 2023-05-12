@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 21:00:43
+ * @LastEditTime: 2023-05-12 13:45:27
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -195,6 +195,7 @@ export default class User {
     async logoutUserAccount() {
         //清除unistorage用户相关内容
         uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
+        uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO)
         try {
             //清除数据库中的相关内容
             const res = await this.sql?.executeSql([`DELETE FROM ${USER_TABLES_NAME.CURRENT}`], ERROR_TARGET.USER_CLASS)
@@ -218,7 +219,7 @@ export default class User {
             userStore.refreshToken = token.refresh_token
         } else {
             //否则就查询数据库
-            const current = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.ACCOUNT} order by id desc limit 1`, ERROR_TARGET.USER_CLASS)
+            const current = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.CURRENT}`, ERROR_TARGET.USER_CLASS)
             if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
                 ToastModule.show({ text: "获取用户出现问题!" })
             }
@@ -234,7 +235,7 @@ export default class User {
         }
     }
 
-    //刷新用户信息
+    //刷新用户信息(调用接口)
     async refreshUserInfo() {
         getUserInfoService({}).then(res => {
             if (res.code === CODE.SUCCESS) {
