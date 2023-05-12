@@ -1,0 +1,47 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title=""></tm-navbar>
+		<view style="margin: 60rpx 0;">
+			<tm-icon name="/static/logo/logo.png" :fontSize="120"></tm-icon>
+			<anydoor-text text="任意门" :fontSize="39" :lines="1" lineHeight="100rpx" bold :style="{
+				textAlign: 'center'
+			}">
+			</anydoor-text>
+		</view>
+		<!-- 版本信息 -->
+		<view style="margin: 0 10rpx;">
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="应用版本" right-text="2.0.0" right-icon="" :rightTextSize="28">
+			</tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="版本更新"> </tm-cell>
+		</view>
+		<!-- 联系信息 -->
+		<view style="margin: 0 10rpx;">
+			<tm-divider align="left" label=""></tm-divider>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="官网" :rightTextSize="28" right-text="anydoor.top">
+			</tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="联系邮箱" right-text="douye@douye.top" right-icon=""
+				:rightTextSize="28">
+			</tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="微信小程序" right-text="南瓜课程表" right-icon=""
+				:rightTextSize="28"> </tm-cell>
+		</view>
+		<!-- 版权声明 -->
+		<view style="margin: 20rpx 0 ;">
+			<anydoor-text text="2020 - present 任意门anydoor.top 版权所有" color="grey" :lines="1" :style="{
+				textAlign: 'center'
+			}" :fontSize="20">
+			</anydoor-text>
+		</view>
+	</tm-app>
+</template>
+
+<script lang='ts' setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+</script>
+
+<style lang="scss" scoped></style>

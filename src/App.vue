@@ -10,11 +10,11 @@
 -->
 <script lang="ts" setup>
 import {
-	onLaunch
+onHide,
+	onLaunch,
+onShow
 } from "@dcloudio/uni-app"
 import init, { initUser, initLesson,initFromStorageSync } from "./init"
-
-
 
 onLaunch(async function () {
 
@@ -39,7 +39,14 @@ onLaunch(async function () {
 
 	//初始化课程
 	await initLesson()
-
+})
+//应用隐藏
+onHide(() => {
+	uni.$emit("appHide")
+})
+//应用显示了
+onShow(() => {
+	uni.$emit("appShow")
 })
 </script>
 <style>

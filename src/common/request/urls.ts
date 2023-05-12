@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 20:19:09
+ * @LastEditTime: 2023-05-12 18:33:37
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -31,7 +31,7 @@ const urls: Array<url> = [
   {
     name: 'refresh_token',
     url: BASE_URL + '/center/refresh_token',
-    token: false
+    token: true
   },
   //通知列表
   {
@@ -123,7 +123,7 @@ const urls: Array<url> = [
   {
     name: 'user_info',
     url: BASE_URL + '/api/user/info',
-    token: false
+    token: true
   }
 ]
 

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 13:18:30
+ * @LastEditTime: 2023-05-12 14:13:52
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -13,13 +13,14 @@
 		<tm-message ref="msg"></tm-message>
 		<tm-navbar title=""></tm-navbar>
 		<view style="margin: 10rpx 40rpx;">
-			<tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
+			<!-- <tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
 				:list="loginTab" :height="80" :default-name="1" :style="{
 					margin: '0 10rpx'
 				}">
-			</tm-tabs>
+			</tm-tabs> -->
 			<view style="margin: 60rpx 0;">
-				<tm-input v-model="form.user" placeholder="用户名/邮箱" transprent :margin="[0, 20]"></tm-input>
+				<tm-input v-model="form.user" :placeholder="tabActive === 2 ? '手机号' : '用户名/邮箱'" transprent
+					:margin="[0, 20]"></tm-input>
 				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
 				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
 				<view class="flex flex-row flex-between">
@@ -27,9 +28,21 @@
 					<anydoor-text text="注册" color="primary" @click="register"></anydoor-text>
 				</view>
 			</view>
-			<tm-divider align="center" label="第三方登录"></tm-divider>
-			<view>
-				<tm-icon :font-size="32" name="tmicon-QQ" _class="pl-16 pr-16"></tm-icon>
+			<tm-divider align="center" label="其它登录方式"></tm-divider>
+			<view class="login-items">
+				<view class="login-item" @click="tabActive === 2 ? tabActive = 1 : tabActive = 2">
+					<tm-icon :font-size="60" :name="tabActive === 2 ? 'tmicon-md-mail-open' : 'tmicon-md-phone-portrait'"
+						_class="pl-16 pr-16" color="primary"></tm-icon>
+					<anydoor-text :text="tabActive === 2 ? '账号' : '手机号'" color="primary" lineHeight="50rpx"></anydoor-text>
+				</view>
+				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)">
+					<tm-icon :font-size="60" name="tmicon-QQ" _class="pl-16 pr-16" color="#368afe"></tm-icon>
+					<anydoor-text text="QQ" color="#368afe" lineHeight="50rpx"></anydoor-text>
+				</view>
+				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.WEIBO)">
+					<tm-icon :font-size="60" name="tmicon-weibo" _class="pl-16 pr-16" color="#e5254d"></tm-icon>
+					<anydoor-text text="新浪微博" color="#e5254d" lineHeight="50rpx"></anydoor-text>
+				</view>
 			</view>
 		</view>
 	</tm-app>
@@ -49,7 +62,7 @@ import { onLoad } from "@dcloudio/uni-app"
 
 import { getUserRule, login } from "@/common/service/login"
 import { IUserRuleResult, LoginForm } from "@/common/IForm/login/login"
-import { LOGIN_TYPE } from "@/common/define/login"
+import { LOGIN_TYPE,LOGIN_UNION_TYPE } from "@/common/define/login"
 import ToastModule from "@/common/native/toast/ToastModule"
 import md5 from "md5"
 import useDeviceStore from "@/store/device"
@@ -61,23 +74,24 @@ import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import CODE from "@/common/define/code"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import unionLoginBase from "@/common/login/union/common/unionLoginBase"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 //找回密码
 const findPassword = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{
+	linkTo(ROUTE_PATH.WEBVIEW, {
 		url: getUrlByName("user_find").url,
-		title:'找回密码'
+		title: '找回密码'
 	})
 }
 
 //注册
 const register = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{
+	linkTo(ROUTE_PATH.WEBVIEW, {
 		url: getUrlByName("user_register").url,
-		title:'注册'
+		title: '注册'
 	})
 }
 
@@ -123,7 +137,7 @@ const doLogin = (): void => {
 	uni.hideKeyboard()
 
 	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
-		title:'登录中...'
+		title: '登录中...'
 	})
 
 	const postData: any = {
@@ -220,4 +234,27 @@ const getUserRuleList = (): void => {
 		formRule.value = res
 	})
 }
+
+//第三方登录
+const loginByUnion = (type:LOGIN_UNION_TYPE) => {
+	unionLoginBase(type)
+}
 </script>
+<style lang="scss" scoped>
+.login-items {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+
+	.login-item {
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: fit-content;
+		margin: 20rpx;
+	}
+}
+</style>

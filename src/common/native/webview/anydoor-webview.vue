@@ -89,10 +89,10 @@ const doResult = function (action: NETErrorAction) {
 }
 
 //进度显示
-const progress = reactive({
-	value: 0,
-	show: false
-})
+// const progress = reactive({
+// 	value: 0,
+// 	show: false
+// })
 //进度背景
 // const progressBg = computed(() => {
 // 	return theme.getColor("primary").value
@@ -129,14 +129,14 @@ const emits = defineEmits([
 //webview页面开始加载回调
 const pageStart = (e: IPageStartResult) => {
 	//进度
-	progress.show = true
-	progress.value = 0
+	// progress.show = true
+	// progress.value = 0
 	emits("onPageStart", e)
 }
 //webview页面加载完成回调
 const pageReady = (e: IPageReadyResult) => {
 	//进度
-	progress.show = false
+	// progress.show = false
 	emits("onPageReady", e)
 }
 //webview页面资源加载回调
@@ -170,7 +170,7 @@ const onDownload = (e: IDownloadResult) => {
 }
 //加载进度的回调
 const onProgress = (e: IOnProgressResult) => {
-	progress.value = e.progress * 750 / 100
+	// progress.value = e.progress * 750 / 100
 	emits("onProgress", e)
 }
 //控制台打印回调
@@ -179,7 +179,7 @@ const onConsole = (e: IOnConsoleResult) => {
 }
 //pageError
 const pageError = (e: IPageErrorResult) => {
-	progress.show = false
+	// progress.show = false
 	if (e.isCurrent) {
 		info.error = getNETError(e.errorCode) as any
 	}
@@ -191,7 +191,7 @@ const pageError = (e: IPageErrorResult) => {
 }
 //http 安卓6及以上,detail:{url:url,description:描述，errorCode：code}
 const httpError = (e: IPageHttpErrorResult) => {
-	progress.show = false
+	// progress.show = false
 	if (e.isCurrent) {
 		info.error = getNETError(e.errorCode, "httpError") as any
 	}

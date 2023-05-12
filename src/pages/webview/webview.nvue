@@ -10,7 +10,8 @@
 				windowsAutomatically: true,
 				multipleWindow: true,
 				zoom: false,
-				cache: false
+				cache: false,
+				progress:false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
 				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
 				@onImagePress="onImagePress" @onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage"

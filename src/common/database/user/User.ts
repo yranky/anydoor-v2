@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 13:45:27
+ * @LastEditTime: 2023-05-12 18:55:07
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -184,7 +184,7 @@ export default class User {
         const time: number = new Date().getTime() / 1000
         //将当前行的id加入current,将token也保存
         const res = await this.sql?.executeSql([
-            `update ${USER_TABLES_NAME.TOKEN} set token = '${token}',refresh_token = '${refresh_token}',update_time='${time}' where uid='${id}')`
+            `update ${USER_TABLES_NAME.TOKEN} set token = '${token}',refresh_token = '${refresh_token}',update_time='${time}' where uid='${id}'`
         ], ERROR_TARGET.USER_CLASS)
         if (res?.code !== SQLITE_STATUS_CODE.SUCCESS) {
             ToastModule.show({ text: res?.error || '更新用户信息时发生未知错误!' })

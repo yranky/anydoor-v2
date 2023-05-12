@@ -133,6 +133,12 @@ const routes: IRoutes<ROUTE_PATH> = {
         NAME: "我的教务",
         AUTH: [],
         SEARCH: false
+    },
+    [ROUTE_PATH.APP_DETAIL]: {
+        PATH: ROUTE_PATH.APP_DETAIL,
+        NAME: "应用详情",
+        AUTH: [],
+        SEARCH: false
     }
 }
 

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 13:28:03
+ * @LastEditTime: 2023-05-12 16:41:52
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -38,7 +38,7 @@
 			<anydoor-text text="其它" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="清理缓存" @click="clearCache" :rightText="cacheSize"
 				rightIcon=""> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="关于我们"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="关于我们" @click="linkTo(ROUTE_PATH.APP_DETAIL)"> </tm-cell>
 		</view>
 		<!-- 退出登录 -->
 		<view style="margin: 10rpx 20rpx;" v-if="userStore.token">
@@ -62,6 +62,8 @@ import ToastModule from "@/common/native/toast/ToastModule"
 import User from "@/common/database/user/User"
 import { useUserStore } from "@/store/user"
 import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 
 const store = useTmpiniaStore()
 const userStore=useUserStore()

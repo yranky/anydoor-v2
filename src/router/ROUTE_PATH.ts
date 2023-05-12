@@ -42,5 +42,7 @@ export enum ROUTE_PATH {
     // 教务登录
     JIAOWU_LOGIN = "/pages/jw/login",
     //教务信息
-    JIAOWU_MY = "/pages/jw/detail"
+    JIAOWU_MY = "/pages/jw/detail",
+    //应用信息
+    APP_DETAIL = "/pages/app/app",
 }
