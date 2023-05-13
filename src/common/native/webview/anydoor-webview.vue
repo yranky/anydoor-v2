@@ -11,10 +11,10 @@
 				@onNameMessage="onNameMessage" @onMessage="onMessage" @onTitleUpdate="titleUpdate" @onPageAlert="pageAlert"
 				@onDownload="onDownload" @onProgress="onProgress" @onConsole="onConsole" @onNewWindow="onNewWindow"
 				@onLinkPress="onLinkPress" @onImagePress="onImagePress" @onLinkClick="onLinkClick"
-				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme"
-				/>
+				@onImageClick="onImageClick" @onBack="onBack" @onScheme="onScheme" />
 		</view>
-		<anydoor-webview-bridge :messageData="messageData" :emits="emits" v-model:callbackMessage="callbackMessage" :mWebview="mWebview" />
+		<anydoor-webview-bridge :messageData="messageData" :emits="emits" v-model:callbackMessage="callbackMessage"
+			:mWebview="mWebview" />
 	</view>
 </template>
 
@@ -26,7 +26,7 @@ import {
 	ref,
 	reactive,
 	computed,
-watch
+	watch
 } from "vue"
 import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
@@ -68,13 +68,15 @@ const props = defineProps({
 import {
 	ACTION as NETErrorAction
 } from "@/common/network/NETError"
+import { onHide, onShow } from "@dcloudio/uni-app"
+import { IHandler } from "./anydoor-webview-bridge/IHandler"
 
 //回调的值
-const messageData=ref<IMessageResult>()
+const messageData = ref<IMessageResult>()
 //要向网页回传的数据
-const callbackMessage=ref<any>()
-watch(()=>callbackMessage.value,(newVal:ICallback<any>)=>{
-	mWebview.value.send(JSON.stringify(newVal))
+const callbackMessage = ref<any>()
+watch(() => callbackMessage.value, (newVal: ICallback<any>) => {
+	mWebview.value && mWebview.value.send(JSON.stringify(newVal))
 })
 
 //点击result按钮事件
@@ -153,7 +155,7 @@ const onNameMessage = (e: INameMessageResult) => {
 }
 //jsbridge回调 接收传递过来的信息 默认
 const onMessage = (e: IMessageResult) => {
-	messageData.value=e
+	messageData.value = e
 	emits("onMessage", e)
 }
 //标题更改回调
@@ -236,7 +238,7 @@ const pluginError = (e: IOnErrorResult) => {
 }
 //end
 
-const mWebview: any = ref<IAnydoorWebviewRef>()
+const mWebview = ref<IAnydoorWebviewRef>()
 
 /**
  * 向外暴露的接口
@@ -246,102 +248,118 @@ const mWebview: any = ref<IAnydoorWebviewRef>()
 const shouldOverrideUrlLoading = (
 	option: IShouldOverrideUrlLoadingOption
 ) => {
-	return mWebview.value.shouldOverrideUrlLoading(option)
+	return mWebview.value && mWebview.value.shouldOverrideUrlLoading(option)
 }
 //获取cookie
 const getCookie = (url: string) => {
-	return mWebview.value.getCookie(url)
+	return mWebview.value && mWebview.value.getCookie(url)
 }
 //清除指定cookie,通过设置cookie为空来实现
 const removeCookie = (url: string) => {
-	return mWebview.value.removeCookie(url)
+	return mWebview.value && mWebview.value.removeCookie(url)
 }
 //清空cookie
 const removeAllCookie = () => {
-	return mWebview.value.removeAllCookie()
+	return mWebview.value && mWebview.value.removeAllCookie()
 }
 //setCookie 设置cookie
 const setCookie = (option: ISetCookieOption) => {
-	return mWebview.value.setCookie(option)
+	return mWebview.value && mWebview.value.setCookie(option)
 }
 //清空storage
 const removeAllStorage = () => {
-	return mWebview.value.removeAllStorage()
+	return mWebview.value && mWebview.value.removeAllStorage()
 }
 
 //设置夜间模式 实际上并没有很大效果
 const setDark = (dark: boolean = true) => {
-	return mWebview.value.setDark(dark)
+	return mWebview.value && mWebview.value.setDark(dark)
 }
 //是否可返回
 const canBack = () => {
-	return mWebview.value.canBack()
+	return mWebview.value && mWebview.value.canBack()
 }
 //返回上一层
 const back = () => {
-	return mWebview.value.back()
+	return mWebview.value && mWebview.value.back()
 }
 //下一层
 const forward = () => {
-	return mWebview.value.forward()
+	return mWebview.value && mWebview.value.forward()
 }
 //上一层或下一层
 const go = (step: string) => {
-	return mWebview.value.go(step)
+	return mWebview.value && mWebview.value.go(step as any)
 }
 //重新加载当前页面
 const reload = () => {
-	return mWebview.value.reload()
+	return mWebview.value && mWebview.value.reload()
 }
 //加载url
 const loadUrl = (url: string) => {
-	return mWebview.value.loadUrl(url)
+	return mWebview.value && mWebview.value.loadUrl(url)
 }
 //清除缓存
 const clear = (disk: boolean = true) => {
-	return mWebview.value.clear(disk)
+	return mWebview.value && mWebview.value.clear(disk)
 }
 //清除所有缓存,包含cookie和localstorage缓存
 const clearAll = (disk: boolean = true) => {
-	return mWebview.value.clearAll(disk)
+	return mWebview.value && mWebview.value.clearAll(disk)
 }
 //清除历史
 const clearHistory = () => {
-	return mWebview.value.clearHistory()
+	return mWebview.value && mWebview.value.clearHistory()
 }
 //获取当前title
 const getTitle = () => {
-	return mWebview.value.getTitle()
+	return mWebview.value && mWebview.value.getTitle()
 }
 //获取当前url
 const getUrl = () => {
-	return mWebview.value.getUrl()
+	return mWebview.value && mWebview.value.getUrl()
 }
 //停止加载
 const stopLoading = () => {
-	return mWebview.value.stopLoading()
+	return mWebview.value && mWebview.value.stopLoading()
 }
 //向网页发送信息|网页的回调 message:String
 const send = (message: string) => {
-	return mWebview.value.send(message)
+	return mWebview.value && mWebview.value.send(message)
 }
 //向网页注册一个handler name:string  通过onNameMessage接收
 const registerHandler = (name: string) => {
-	return mWebview.value.registerHandler(name)
+	return mWebview.value && mWebview.value.registerHandler(name)
 }
 //call网页的handler
 const callHandler = (data: ICallHandlerOption) => {
-	return mWebview.value.callHandler(data)
+	return mWebview.value && mWebview.value.callHandler(data)
 }
 //获取user-agent
 const getUserAgent = () => {
-	return mWebview.value.getUserAgent()
+	return mWebview.value && mWebview.value.getUserAgent()
 }
 //设置user-agent
 const setUserAgent = (s: string) => {
-	return mWebview.value.setUserAgent(s)
+	return mWebview.value && mWebview.value.setUserAgent(s)
 }
 //end
+
+//页面显示
+onShow(() => {
+	mWebview.value && mWebview.value.callHandler({
+		name: IHandler.PAGE_SHOW,
+		data: JSON.stringify({})
+	})
+})
+
+//页面隐藏
+onHide(() => {
+	mWebview.value && mWebview.value.callHandler({
+		name: IHandler.PAGE_HIDE,
+		data: JSON.stringify({})
+	})
+})
 
 defineExpose({
 	shouldOverrideUrlLoading,

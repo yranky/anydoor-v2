@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:50:42
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 20:36:19
+ * @LastEditTime: 2023-05-13 10:56:08
  * @FilePath: \anydoor-v2\src\common\service\login.ts
  * @Description: login service
  * 
@@ -70,6 +70,13 @@ export async function refreshToken(): Promise<restful> {
     }
   }
   const refreshTokenItem = token.refresh_token
+  if (isEmpty(refreshTokenItem)) {
+    return {
+      code: CODE.ERROR,
+      msg: '参数错误',
+      resCode: TYPE.EMPTY
+    }
+  }
   const data: any = await post('refresh_token', {
     token: refreshTokenItem
   })
@@ -85,4 +92,14 @@ export async function refreshToken(): Promise<restful> {
       resCode: data.code
     }
   }
+}
+
+
+//webview登录用户中心
+export async function loginCenter(formData: any): Promise<any> {
+  const data: any = await post('login_center', formData)
+  if (data.code !== CODE.SUCCESS) {
+    ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+  }
+  return data || {}
 }

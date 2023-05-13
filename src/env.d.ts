@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 08:25:29
+ * @LastEditTime: 2023-05-13 10:11:29
  * @FilePath: \anydoor-v2\src\env.d.ts
  * @Description: 声明
  * 
@@ -26,6 +26,7 @@ import User from "./common/database/user/User"
 import IDialogModuleNative from "./common/native/dialog/IDialogModule"
 import DialogModule from "./common/native/dialog/DialogModule"
 import Update from "./common/update/Update"
+import IToolModeleNative from "./common/native/tool/IToolModeleNative"
 
 declare module '*.vue' {
   import { DefineComponent } from 'vue'
@@ -44,10 +45,10 @@ declare global {
     BuglyModule?: BuglyModule,
     DownloadModule?: DownloadModule,
     ToastModule?: ToastModule,
-    DialogModule?:DialogModule,
+    DialogModule?: DialogModule,
     Device?: Device,
     User?: User,
-    Update?:Update
+    Update?: Update
   }
   interface $anydoor_native {
     SQLite_Module: any,
@@ -56,7 +57,8 @@ declare global {
     Bugly_Module: IBuglyModuleNative,
     Download_Module: IDownloadModuleNative,
     Toast_Module: IToastModuleNative,
-    Dialog_Module:IDialogModuleNative
+    Dialog_Module: IDialogModuleNative,
+    Tool_Module: IToolModeleNative
   }
   interface Uni {
     $anydoor: $anydoor,

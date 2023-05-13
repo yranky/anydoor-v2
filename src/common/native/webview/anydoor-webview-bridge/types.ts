@@ -8,7 +8,9 @@ export enum SEND_FUN {
     //显示titleBar
     SHOW_TITLE_BAR = 'fun_show_title_bar',
     //获取信息
-    GET_SYSTEM_INFO = 'fun_get_system_info'
+    GET_SYSTEM_INFO = 'fun_get_system_info',
+    //返回(非webview内网页返回)
+    PAGE_BACK = "fun_page_back"
 }
 
 

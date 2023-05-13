@@ -124,6 +124,12 @@ const urls: Array<url> = [
     name: 'user_info',
     url: BASE_URL + '/api/user/info',
     token: true
+  },
+  //用户信息
+  {
+    name: 'login_center',
+    url: BASE_URL + '/api/auth/center',
+    token: true
   }
 ]
 

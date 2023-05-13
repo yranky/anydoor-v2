@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 08:31:29
+ * @LastEditTime: 2023-05-13 10:09:52
  * @FilePath: \anydoor-v2\src\common\native\nativeInit.ts
  * @Description: 
  * 
@@ -39,7 +39,8 @@ export default function nativeInit() {
         Bugly_Module: uni.requireNativePlugin("anydoor_bugly"),
         Download_Module: uni.requireNativePlugin("anydoor_download"),
         Toast_Module: uni.requireNativePlugin("anydoor_toast"),
-        Dialog_Module:uni.requireNativePlugin("anydoor_dialog")
+        Dialog_Module: uni.requireNativePlugin("anydoor_dialog"),
+        Tool_Module: uni.requireNativePlugin("anydoor_tool")
     }
 
 

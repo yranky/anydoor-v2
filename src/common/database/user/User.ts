@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 18:55:07
+ * @LastEditTime: 2023-05-13 10:59:01
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -172,6 +172,11 @@ export default class User {
 
     //更新account
     async updateUserAccount(token: string, refresh_token: string) {
+        //先保存在uni_torage
+        uni.setStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN, {
+            token,
+            refresh_token
+        })
         //返回上一次插入的id
         const current = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.ACCOUNT} order by id desc limit 1`, ERROR_TARGET.USER_CLASS)
         if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
@@ -196,6 +201,10 @@ export default class User {
         //清除unistorage用户相关内容
         uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
         uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO)
+        //清除webview缓存
+        uni.$anydoor_native.Tool_Module && uni.$anydoor_native.Tool_Module.clearWebviewCache({}, (res) => {
+            console.log(res)
+        })
         try {
             //清除数据库中的相关内容
             const res = await this.sql?.executeSql([`DELETE FROM ${USER_TABLES_NAME.CURRENT}`], ERROR_TARGET.USER_CLASS)
