@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 13:21:32
+ * @LastEditTime: 2023-05-13 19:37:40
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -15,6 +15,8 @@ onHide,
 onShow
 } from "@dcloudio/uni-app"
 import init, { initUser, initLesson,initFromStorageSync } from "./init"
+import { OpenImg } from "./Open"
+import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
 
 onLaunch(async function () {
 
@@ -28,6 +30,8 @@ onLaunch(async function () {
 	// plus.navigator.setLogs(true)
 	//从storage初始化
 	initFromStorageSync()
+	//打开开屏图
+	OpenImg()
 	//初始化
 	await init()
 
@@ -42,11 +46,11 @@ onLaunch(async function () {
 })
 //应用隐藏
 onHide(() => {
-	uni.$emit("appHide")
+	uni.$emit(GLOABAL_EVENT.APP_HIDE)
 })
 //应用显示了
 onShow(() => {
-	uni.$emit("appShow")
+	uni.$emit(GLOABAL_EVENT.APP_SHOW)
 })
 </script>
 <style>
