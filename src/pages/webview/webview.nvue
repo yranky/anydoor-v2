@@ -97,9 +97,9 @@ const webviewConfig = ref<IWebviewItem>()
 
 //messgae
 const onMessage = (e: IMessageResult) => {
-	ToastModule.show({
-		text: JSON.stringify(e)
-	})
+	// ToastModule.show({
+	// 	text: JSON.stringify(e)
+	// })
 	console.log(e)
 }
 
@@ -129,12 +129,11 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 }
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
-	webview.value.send(JSON.stringify({
-		code: '111',
-		msg: "9999"
-	})).then(res => {
-		console.log(res)
-	})
+	// webview.value.send(JSON.stringify({
+	// 	code: 0,
+	// 	msg: "ok",
+	// 	data:{}
+	// }))
 
 	// webview.value.callHandler({
 	// 	name: "123",

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 10:59:01
+ * @LastEditTime: 2023-05-13 17:00:34
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
