@@ -249,7 +249,7 @@ const loadCache = () => {
 	//首先读取缓存
 	try {
 		//读取菜单列表
-		const menu_list_temp = JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST))
+		const menu_list_temp = uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST)
 		if (menu_list_temp) {
 			jw_menu_list.value = menu_list_temp[MENU_TYPES.JW]
 			life_menu_list.value = menu_list_temp[MENU_TYPES.LIFE]

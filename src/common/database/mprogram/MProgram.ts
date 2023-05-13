@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-10 07:52:55
+ * @LastEditTime: 2023-05-13 15:49:25
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -75,14 +75,14 @@ export default class MProgram {
             }
             if (!requestData.data.download_link) {
                 ToastModule.show({
-                    text:'无法加载此微应用:not found'
+                    text: '无法加载此微应用:not found'
                 })
                 uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
                 return
             }
             //需要更新,后台自动下载更新
             const downloadData: any = await this.downloadMProgram(requestData.data.download_link)
-            
+
             if (downloadData.statusCode !== 200) {
                 ToastModule.show({
                     text: '下载/更新微应用时发生错误!'
@@ -130,12 +130,7 @@ export default class MProgram {
      * @param item 更新信息
      */
     updateInfo(item: IMProgramItem) {
-        let installed: IMProgramItem[] = []
-        try {
-            installed = JSON.parse(uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED))
-        } catch {
-            installed = []
-        }
+        let installed: IMProgramItem[] = uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED) || []
         for (let i = 0; i < installed.length; i++) {
             if (installed[i].mpid === item.mpid) {
                 installed.splice(i, 1)
@@ -143,7 +138,7 @@ export default class MProgram {
             }
         }
         installed.push(item)
-        uni.setStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED, JSON.stringify(installed))
+        uni.setStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED, installed)
     }
 
     //下载微应用
@@ -178,12 +173,7 @@ export default class MProgram {
      * 获取已安装的
      */
     getInstalledItem(mpid: string | number) {
-        let installed: IMProgramItem[] = []
-        try {
-            installed = JSON.parse(uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED))
-        } catch {
-            installed = []
-        }
+        let installed: IMProgramItem[] = uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED) || []
         try {
             for (let i = 0; i < installed.length; i++) {
                 if (installed[i].mpid == mpid) {

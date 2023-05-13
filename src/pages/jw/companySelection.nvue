@@ -48,9 +48,9 @@ const refresh = async () => {
 const keyword = ref<string>("")
 
 //前往教务登录
-const toJWLogin=(item:any)=>{
+const toJWLogin = (item: any) => {
 	// console.log(item)
-	linkTo(ROUTE_PATH.JIAOWU_LOGIN,item)
+	linkTo(ROUTE_PATH.JIAOWU_LOGIN, item)
 }
 
 
@@ -62,11 +62,8 @@ onLoad(() => {
 
 const loadCache = () => {
 	//首先读取缓存
-	try {
-		//读取轮播图列表缓存
-		const company_list_temp = JSON.parse(uni.getStorageSync(UNI_STORAGE.COMPANY_LIST))
-		if (company_list_temp) companyList.value = company_list_temp instanceof Array ? company_list_temp : []
-	} catch { }
+	//读取轮播图列表缓存
+	companyList.value = uni.getStorageSync(UNI_STORAGE.COMPANY_LIST) || []
 }
 
 const companyList = ref<any>([])

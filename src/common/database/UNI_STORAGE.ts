@@ -33,5 +33,9 @@ export enum UNI_STORAGE {
     UNI_MPROGRAM_LIST = "uni_mprogram_list",
     //用户账号信息
     USER_ANYDOOR_TOKEN = "uni_user_anydoor_token",
-    USER_ANYDOOR_INFO = "uni_user_anydoor_info"
+    USER_ANYDOOR_INFO = "uni_user_anydoor_info",
+    //首页缓存(通知)
+    NOTICE_INDEX = "notice_index",
+    //首页文章
+    ARTICLE_INDEX = "article_index"
 }
