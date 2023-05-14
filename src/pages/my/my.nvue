@@ -4,10 +4,10 @@
 			<template #navBar>
 				<view class="index-navbar-box fixed l-0 t-0" ref="navbar" :style="{
 
-					}">
+				}">
 					<view class="index-navbar flex flex-row flex-nowrap" :style="{
-							paddingTop: statusBarHeight
-						}">
+						paddingTop: statusBarHeight
+					}">
 						<view class="flex-1 pl-32 pr-16">
 							<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
 						</view>
@@ -20,48 +20,28 @@
 			<template #content>
 				<!-- 填充占位元素 -->
 				<view :style="{ width: '100%', height: statusBarHeight, marginTop: '70rpx' }"></view>
-
-				<navigator url="/pages/article/article-web"><text>111</text></navigator>
-				<navigator url="/pages/article/article"><text>111</text></navigator>
-				<navigator url="/pages/user/login"><text>222</text></navigator>
-				<navigator url="/pages/mprogram/mprogram"><text>333</text></navigator>
-				<navigator url="/pages/setting/setting"><text>333</text></navigator>
-				<navigator url="/pages/article/list"><text>文章列表</text></navigator>
-				<navigator url="/pages/notice/list"><text>通知列表</text></navigator>
-				<navigator url="/pages/notice/detail"><text>通知详情</text></navigator>
-				<navigator url="/pages/more/exam"><text>考试查询</text></navigator>
-				<navigator url="/pages/more/score"><text>成绩查询</text></navigator>
-				<navigator url="/pages/more/plan"><text>教学计划</text></navigator>
-				<navigator url="/pages/lesson/setting"><text>课程表设置</text></navigator>
-				<navigator url="/pages/jw/companySelection"><text>学校选择</text></navigator>
-				<text @click="toWebviewTest">webview测试</text>
-				<text @click="toWebviewTest2">webview测试</text>
-
 				<!-- 用户主信息 -->
-				<navigator url="/pages/my/detail">
-					<view class="user-info flex flex-row">
-						<view class="user-avatar">
-							<!-- 120rpx margin 20rpx 40rpx -->
-							<tm-avatar img="https://picsum.photos/200/300" :round="15" :size="120"></tm-avatar>
+				<view class="user-info flex flex-row" @click="toUserInfo">
+					<view class="user-avatar">
+						<!-- 120rpx margin 20rpx 40rpx -->
+						<tm-avatar :img="userStore.avatar" :round="15" :size="120"></tm-avatar>
+					</view>
+					<view class="user-info flex-1 flex flex-col">
+						<view class="user-info-username">
+							<anydoor-text :text="!userStore.token ? '未登录' : userStore.nickname" :fontSize="40" :lines="1"
+								lineHeight="80" bold></anydoor-text>
 						</view>
-						<view class="user-info flex-1 flex flex-col">
-							<view class="user-info-username">
-								<anydoor-text
-									text="我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三我叫张三"
-									:fontSize="40" :lines="1" lineHeight="80" bold></anydoor-text>
-							</view>
-							<view class="user-info-other flex-1">
-								<anydoor-text text="我是签名" :fontSize="25" :lines="1" lineHeight="40" color="grey">
-								</anydoor-text>
-							</view>
-						</view>
-						<view class="user-action flex flex-col flex-center">
-							<tm-icon :font-size="30" name="tmicon-angle-right" color="grey"></tm-icon>
+						<view class="user-info-other flex-1">
+							<anydoor-text text="" :fontSize="25" :lines="1" lineHeight="40" color="grey">
+							</anydoor-text>
 						</view>
 					</view>
-				</navigator>
+					<view class="user-action flex flex-col flex-center">
+						<tm-icon :font-size="30" name="tmicon-angle-right" color="grey"></tm-icon>
+					</view>
+				</view>
 				<!-- 社区信息 -->
-				<view class="user-community flex flex-row">
+				<!-- <view class="user-community flex flex-row">
 					<view class="user-community-itme flex-1">
 						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
 						</anydoor-text>
@@ -80,12 +60,12 @@
 						<anydoor-text text="粉丝" :fontSize="25" :lines="1" lineHeight="40" color="grey"
 							style="text-align: center;"></anydoor-text>
 					</view>
-				</view>
+				</view> -->
 				<!-- 账户登录信息 -->
 				<view class="user-account-login">
 					<view class="user-account-login-item flex flex-row round-5" :style="{
-							backgroundColor: vipBg
-						}" @click="toJiaowuLogin">
+						backgroundColor: vipBg
+					}" @click="toJiaowuLogin">
 						<view class="flex flex-row flex-col flex-1 mr-n10">
 							<view class="flex flex-1 flex-row">
 								<tm-icon :font-size="32" name="tmicon-gem" _class="pr-10" color="vip"></tm-icon>
@@ -144,7 +124,7 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in life_menu_list" :key="item.mid">
+						<tm-grid-item :height="150" v-for="item in life_menu_list" :key="item.mid" @click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -179,7 +159,8 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid" @click="menuLink(item)">
+						<tm-grid-item :height="150" v-for="item in recommend_menu_list" :key="item.mid"
+							@click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -198,9 +179,6 @@ import {
 	ref,
 	onMounted
 } from "vue"
-import {
-	language
-} from "@/tmui/tool/lib/language"
 import {
 	useTmpiniaStore
 } from '@/tmui/tool/lib/tmpinia';
@@ -221,17 +199,13 @@ import {
 	onLoad,
 	onPageScroll
 } from "@dcloudio/uni-app"
-import {
-	result,
-	throttle
-} from "lodash"
 
-import { linkTo,menuLink  } from "@/common/utils/link"
+import { linkTo, menuLink } from "@/common/utils/link"
 import { listMyMenu } from "@/common/service/menu";
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
 import { MENU_TYPES } from "@/common/define/menuType";
 import useJiaowuStore from "@/store/jiaowu";
-import { ROUTE_PATH} from "@/router/ROUTE_PATH";
+import { ROUTE_PATH } from "@/router/ROUTE_PATH";
 const store = useTmpiniaStore();
 
 //教务的store
@@ -251,23 +225,12 @@ const toJiaowuLogin = () => {
 
 const {
 	proxy
-} = getCurrentInstance();
+}:any = getCurrentInstance()
 // 主题工具
 import theme from "@/tmui/tool/theme/theme"
-
-const toWebviewTest = () => {
-	// linkTo(ROUTE_PATH.WEBVIEW, { url: "http://192.168.137.1:5500" })
-	linkTo(ROUTE_PATH.WEBVIEW, { url: "http://bx.houqinbao.com/wechat/studentManage?universityId=gh_851e31ff9ca7" })
-}
-const toWebviewTest2 = () => {
-	uni.$anydoor_native.Dialog_Module.showInputDialog({
-		title: '请输入网址',
-		okText: '确定',
-		cancelText: '取消'
-	}, (result) => {
-		linkTo(ROUTE_PATH.WEBVIEW, { url: result.data?.value })
-	})
-}
+import { useUserStore } from "@/store/user";
+import User from "@/common/database/user/User";
+const userStore = useUserStore()
 
 //菜单项
 const jw_menu_list = ref<any>([])
@@ -286,7 +249,7 @@ const loadCache = () => {
 	//首先读取缓存
 	try {
 		//读取菜单列表
-		const menu_list_temp = JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST))
+		const menu_list_temp = uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST)
 		if (menu_list_temp) {
 			jw_menu_list.value = menu_list_temp[MENU_TYPES.JW]
 			life_menu_list.value = menu_list_temp[MENU_TYPES.LIFE]
@@ -328,7 +291,13 @@ const refreshComplete = ref<boolean>(true)
 // 页面刷新
 const refresh = async () => {
 	refreshComplete.value = false
+	//获取菜单
 	await getMyMenu()
+	//如果登录了
+	if (userStore.token) {
+		//刷新用户信息
+		await User.getInstance().then((res) => res.refreshUserInfo())
+	}
 	refreshComplete.value = true
 }
 
@@ -342,6 +311,18 @@ const getMyMenu = async () => {
 	my_menu_list.value = data[MENU_TYPES.MY]
 	recommend_menu_list.value = data[MENU_TYPES.RECOMMEND]
 }
+
+//跳转用户信息
+const toUserInfo = () => {
+	if (userStore.token) {
+		linkTo(ROUTE_PATH.DETAIL)
+	} else {
+		linkTo(ROUTE_PATH.LOGIN)
+	}
+}
+
+onLoad(() => {
+})
 </script>
 
 <style scoped lang="scss">

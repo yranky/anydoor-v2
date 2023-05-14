@@ -145,7 +145,7 @@ const loadCache = () => {
 	//首先读取缓存
 	try {
 		//读取轮播图列表缓存
-		const plan = JSON.parse(uni.getStorageSync(UNI_STORAGE.JW_PLAN))
+		const plan = uni.getStorageSync(UNI_STORAGE.JW_PLAN)
 		const plan_semester = uni.getStorageSync(UNI_STORAGE.JW_PLAN_SEMESTER)
 		if (plan) {
 			tags.value = plan.tag || []
@@ -188,11 +188,11 @@ const getPlan = async () => {
 	if (data.code === CODE.SUCCESS) {
 		tags.value = data.data.tag
 		datas.value = data.data.data
-		uni.setStorageSync(UNI_STORAGE.JW_PLAN, JSON.stringify({
+		uni.setStorageSync(UNI_STORAGE.JW_PLAN,{
 			"update_time": dayjs().format("YYYY/MM/DD HH:mm:ss"),
 			"tag": data.data.tag || [],
 			"data": data.data.data || []
-		}))
+		})
 	}
 	//加载中去掉
 	status.value.loading = false

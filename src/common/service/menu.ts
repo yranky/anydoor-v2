@@ -28,7 +28,7 @@ export async function listIndexMenu(formData: any): Promise<any> {
             }
         });
         //保存到缓存
-        uni.setStorageSync(UNI_STORAGE.MENU_INDEX_LIST, JSON.stringify(listData))
+        uni.setStorageSync(UNI_STORAGE.MENU_INDEX_LIST, listData)
     }
     return listData || []
 }
@@ -83,7 +83,7 @@ export async function listMyMenu(formData: any): Promise<any> {
             }
         });
         //保存到缓存
-        uni.setStorageSync(UNI_STORAGE.MENU_MY_LIST, JSON.stringify(lists))
+        uni.setStorageSync(UNI_STORAGE.MENU_MY_LIST, lists)
     }
     return lists || {}
 }

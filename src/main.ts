@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-02 11:32:43
+ * @LastEditTime: 2023-05-12 13:34:38
  * @FilePath: \anydoor-v2\src\main.ts
  * @Description: 入口文件
  * 
@@ -17,9 +17,9 @@ import config from "./config"
 export function createApp() {
   const app = createSSRApp(App);
   //合并配置到tmui中
-  app.use(tmui, { ...config } as Tmui.tmuiConfig);
+  app.use(tmui, { ...config } as any);
   return {
     app,
     Pinia,
-  };
+  }
 }

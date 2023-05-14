@@ -25,7 +25,7 @@ export async function listCompany(formData: any): Promise<restful<any>> {
             return a.index.charCodeAt() - b.index.charCodeAt()
         })
         //缓存
-        uni.setStorageSync(UNI_STORAGE.COMPANY_LIST, JSON.stringify(companys))
+        uni.setStorageSync(UNI_STORAGE.COMPANY_LIST, companys)
     }
     return companys
 }

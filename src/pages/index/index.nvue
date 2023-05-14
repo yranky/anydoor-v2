@@ -16,14 +16,14 @@
 							<text class="index-day" :style="{
 								color: store.tmStore.dark ? 'rgba(252, 252, 252, 1.0)' : 'rgba(34, 34, 34, 1.0)',
 								lineHeight: '60rpx'
-							}">南华大学</text>
+							}">{{ jiaowuStore.jiaowuConfig.school_name }}</text>
 							<view class="index-input flex-1">
 								<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
 									backgroundColor: store.tmStore.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.03)'
 								}" disabled @click="toSearch" class=" round-5"></tm-input>
 							</view>
 							<view class="index-icons flex flex-row flex-nowrap">
-								<view class="index-icon">
+								<view class="index-icon" @click="Scan.indexScan()">
 									<tm-icon name="tmicon-scan" :fontSize="40"></tm-icon>
 								</view>
 							</view>
@@ -40,12 +40,14 @@
 						:height="350" :list="swiperList" align="left"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
-				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false" :height="80" :max-length="1"></tm-alert>
+				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false"
+					:height="80" :max-length="1"></tm-alert>
 
 				<!-- 功能列表 -->
 				<tm-scrollx :width="750" :height="140" color="primary" transprent>
 					<tm-grid :col="menuList.length" :width="150 * menuList.length" transprent>
-						<tm-grid-item v-for="(item, index) in menuList" :key="index" :height="140" :count="item.count" @click="menuLink(item)">
+						<tm-grid-item v-for="(item, index) in menuList" :key="index" :height="140" :count="item.count"
+							@click="menuLink(item)">
 							<tm-image :width="110" :height="79" :src="item.path"></tm-image>
 							<tm-text :font-size="24" :label="item.title"></tm-text>
 						</tm-grid-item>
@@ -74,47 +76,21 @@
 
 				<!-- 通知 -->
 				<view style="padding: 10rpx 0;margin: 15rpx;">
-					<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"></anydoor-label>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']">
-					</anydoorNewsItem>
-
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']">
-					</anydoorNewsItem>
-
-					<anydoorNewsItem
-						video="https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']">
+					<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"
+						@click="linkTo(ROUTE_PATH.NOTICE_LIST)"></anydoor-label>
+					<template v-if="!noticeComplete">
+						<anydoorNewsItem :skeleton="true" v-for="item in 5" :key="item"></anydoorNewsItem>
+					</template>
+					<anydoorNewsItem v-for="item in noticeList" :key="item.id" @click="toNoticeDetail(item)"
+						:title="item.title" :infoList="[item.date, item.author]">
 					</anydoorNewsItem>
 				</view>
 
 				<!-- 新闻 -->
 				<view style="padding: 10rpx 0;margin: 15rpx;">
-					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"></anydoor-label>
-					<tm-tabs :activeFontSize="40" :itemHeight="80" :list="newsTab" :width="700" :height="80"
-						default-name="1" :style="{
-							margin: '0 30rpx'
-						}">
-					</tm-tabs>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
-					<anydoorNewsItem :skeleton="true"></anydoorNewsItem>
+					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"
+						@click="linkTo(ROUTE_PATH.ARTICLE_LIST)"></anydoor-label>
+					<anydoorNewsItem :skeleton="true" v-if="!articleComplete"></anydoorNewsItem>
 					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
 						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
 						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
@@ -203,7 +179,7 @@ import { merge } from "lodash"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { listIndexMenu } from "@/common/service/menu"
 import { listTip } from "@/common/service/tip"
-import { menuLink  } from "@/common/utils/link"
+import { linkTo, menuLink } from "@/common/utils/link"
 const {
 	proxy
 } = getCurrentInstance();
@@ -211,6 +187,18 @@ const {
 import {
 	throttle
 } from "lodash"
+import { listNotice } from "@/common/service/notice"
+import { diffTwoDays } from "@/common/utils/date"
+import CODE from "@/common/define/code"
+import { noticeFilter, toNoticeDetail } from "@/common/utils/notice"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { listArticle } from "@/common/service/article"
+import { articleFilter } from "@/common/utils/article"
+import useJiaowuStore from "@/store/jiaowu"
+import Scan from "@/common/utils/Scan"
+
+const jiaowuStore = useJiaowuStore()
+
 //临界值
 const num = 70
 const pageScrollY = ref(0);
@@ -245,100 +233,25 @@ const swiperList = ref<any>([])
 
 //加载数据
 onLoad(() => {
-	loadCache()
 	refresh()
 })
-
-const loadCache = () => {
-	//首先读取缓存
-	try {
-		//读取轮播图列表缓存
-		const swiper_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.SWIPER_LIST))
-		if(swiper_list_temp) swiperList.value = swiper_list_temp instanceof Array?swiper_list_temp:[]
-	} catch {}
-	try {
-		//读取tip
-		const tip_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
-		console.log(uni.getStorageSync(UNI_STORAGE.TIP_LIST))
-		if(tip_list_temp) tipList.value = tip_list_temp instanceof Array?tip_list_temp:[]
-	} catch {}
-	try {
-		//读取菜单列表
-		const menu_list_temp=JSON.parse(uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST))
-		if(menu_list_temp)  menuList.value = menu_list_temp
-	} catch {}
-}
-
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
 
 // 页面刷新
 const refresh = async () => {
 	refreshComplete.value = false
-	await getSwiperList()
-	await getTipList()
-	await getIndexMenuList()
+	await Promise.allSettled([
+		getSwiperList(),
+		getTipList(),
+		getIndexMenuList(),
+		getNotice()
+	])
 	refreshComplete.value = true
 }
 
 //菜单列表
-const menuList = ref<any>([
-// 	{
-// 	path: "https://gw.alicdn.com/imgextra/i4/O1CN01XCiY1B1px9ivHkDGm_!!6000000005426-2-tps-183-144.png_q90.jpg",
-// 	title: "天猫新品",
-// 	count: "热销"
-// }
-])
-
-const newsTab = ref([{
-	key: "1",
-	title: "选项1"
-},
-{
-	key: "2",
-	title: "选项2"
-},
-{
-	key: "3",
-	title: "选项3"
-},
-{
-	key: "4",
-	title: "选项4"
-},
-{
-	key: "5",
-	title: "选项4"
-},
-{
-	key: "6",
-	title: "选项4"
-},
-{
-	key: "7",
-	title: "选项4"
-},
-{
-	key: "8",
-	title: "选项4"
-},
-{
-	key: "9",
-	title: "选项4"
-},
-{
-	key: "10",
-	title: "选项4"
-},
-{
-	key: "11",
-	title: "选项4"
-},
-{
-	key: "12",
-	title: "选项4"
-}
-])
+const menuList = ref<any>([])
 
 const toSearch = function () {
 	uni.navigateTo({
@@ -348,15 +261,19 @@ const toSearch = function () {
 }
 
 //获取tip
-const tipList=ref<any>([])
+const tipList = ref<any>([])
 
-const getTipList=async () => {
+const getTipList = async () => {
+	//读取tip
+	tipList.value = uni.getStorageSync(UNI_STORAGE.TIP_LIST) || []
 	const data = await listTip({})
-	tipList.value=data
+	tipList.value = data
 }
 
 //获取轮播列表
 const getSwiperList = async () => {
+	//首先读取缓存
+	swiperList.value = uni.getStorageSync(UNI_STORAGE.SWIPER_LIST) || []
 	try {
 		const data = await listSwiper({})
 		swiperList.value = (data.data || []).map((item: any) => {
@@ -377,15 +294,58 @@ const getSwiperList = async () => {
 			return result
 		})
 		//保存数据到缓存
-		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, JSON.stringify(swiperList.value))
+		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, swiperList.value)
 	} catch { }
 }
 //获取首页菜单列表
-const getIndexMenuList= async ()=>{
+const getIndexMenuList = async () => {
+	//读取菜单列表
+	menuList.value = uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST) || []
 	try {
-		const data=await listIndexMenu({})
-		if(data.length>0) menuList.value=data
-	}catch { }
+		const data = await listIndexMenu({})
+		if (data.length > 0) menuList.value = data
+	} catch { }
+}
+
+//获取首页通知
+const noticeList = ref<any>([])
+const noticeComplete = ref(false)
+const getNotice = async () => {
+	//通知
+	noticeList.value = uni.getStorageSync(UNI_STORAGE.NOTICE_INDEX) || []
+	if (noticeList.value.length > 0) noticeComplete.value = true
+	try {
+		const data = await listNotice({
+			page: 1,
+			limit: 5,
+			cid: jiaowuStore.jiaowuConfig.cid
+		})
+		if (data.code === CODE.SUCCESS) {
+			noticeList.value = data.data.map(noticeFilter)
+		}
+	} catch { }
+	noticeComplete.value = true
+}
+
+//获取文章列表
+const articleList = ref<any>([])
+const articleComplete = ref(false)
+const getArticle = async () => {
+	//通知
+	articleList.value = uni.getStorageSync(UNI_STORAGE.ARTICLE_INDEX) || []
+	if (articleList.value.length > 0) articleComplete.value = true
+	try {
+		const data = await listArticle({
+			page: 1,
+			limit: 10,
+			cid: jiaowuStore.jiaowuConfig.cid
+		})
+		if (data.code === CODE.SUCCESS) {
+			articleList.value = data.data.map(articleFilter)
+		}
+	} catch { }
+	noticeComplete.value = true
+
 }
 </script>
 
@@ -422,7 +382,7 @@ const getIndexMenuList= async ()=>{
 }
 
 // .index-carousel-box {
-	
+
 // }
 
 .bg {

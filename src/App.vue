@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-03 08:44:17
+ * @LastEditTime: 2023-05-14 10:05:11
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -10,11 +10,13 @@
 -->
 <script lang="ts" setup>
 import {
-	onLaunch
+onHide,
+onLaunch,
+onShow
 } from "@dcloudio/uni-app"
-import init, { initUser, initLesson } from "./init"
-
-
+import init, { initUser, initLesson,initFromStorageSync } from "./init"
+import { OpenImg } from "./Open"
+import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
 
 onLaunch(async function () {
 
@@ -25,8 +27,13 @@ onLaunch(async function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
-	// plus.navigator.setLogs(true)
 
+
+	// plus.navigator.setLogs(true)
+	//从storage初始化
+	initFromStorageSync()
+	//打开开屏图
+	OpenImg()
 	//初始化
 	await init()
 
@@ -38,7 +45,14 @@ onLaunch(async function () {
 
 	//初始化课程
 	await initLesson()
-
+})
+//应用隐藏
+onHide(() => {
+	uni.$emit(GLOABAL_EVENT.APP_HIDE)
+})
+//应用显示了
+onShow(() => {
+	uni.$emit(GLOABAL_EVENT.APP_SHOW)
 })
 </script>
 <style>

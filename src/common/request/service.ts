@@ -1,11 +1,16 @@
+import { useUserStore } from '@/store/user'
 import CODE, { restful, TYPE } from '../define/code'
 import { refreshToken } from '../service/login'
 import service from './common/baseService'
+import User from '../database/user/User'
+import ToastModule from '../native/toast/ToastModule'
+import { linkTo } from '../utils/link'
+import { ROUTE_PATH } from '@/router/ROUTE_PATH'
 
 function getTokenByLocal() {
   let token = null
   try {
-    token = localStorage.getItem('token')
+    token = useUserStore().token
   } catch (e) { }
   return token
 }
@@ -13,7 +18,7 @@ function getTokenByLocal() {
 service.interceptors.request.use((config) => {
   const token = getTokenByLocal()
   if (token) {
-    config.headers && (config.headers.token = token)
+    config.header && (config.header.token = token)
   }
   // config.headers &&
   //   (config.headers['Content-Type'] = 'application/x-www-form-urlencoded')
@@ -35,25 +40,38 @@ service.interceptors.response.use(
           // 如果是refresh_token为空了或者refresh_token失效了
           if (e.resCode === TYPE.EMPTY || e.resCode === 1806) {
             // 清除token和refresh_token
-            localStorage.removeItem('token')
-            localStorage.removeItem('refresh_token')
-
-            //跳转首页
-
-
-            return Promise.resolve(res)
+            return User.getInstance().then(res => {
+              return res.logoutUserAccount()
+            }).then(() => {
+              //跳转登录页
+              if (e.resCode === 1806) ToastModule.show({
+                text: "用户登录过期，请重新登录"
+              })
+              else ToastModule.show({
+                text: "请先登录"
+              })
+              //跳转登录页
+              return linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
+            }).then(() => {
+              return Promise.resolve(res)
+            })
           }
         }
       })
       // 用户退出登录了或者refresh_token失效
     } else if (res.code === 8001 || res.code === 1806) {
-      // 清除token和refresh_token
-      localStorage.removeItem('token')
-      localStorage.removeItem('refresh_token')
-
-      //跳转首页
-
-      return Promise.resolve(res)
+      return User.getInstance().then(res => {
+        return res.logoutUserAccount()
+      }).then(() => {
+        //跳转登录页
+        ToastModule.show({
+          text: "用户登录过期，请重新登录"
+        })
+        //跳转登录页
+        return linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
+      }).then(() => {
+        return Promise.resolve(res)
+      })
     }
     return Promise.resolve(res)
   },

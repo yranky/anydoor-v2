@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<title>启动页</title>
+		<link rel="stylesheet" href="../css/advertise.css">
+		<!-- uni 的 SDK -->
+		<script type="text/javascript" src="../js/webView.js"></script>
+	</head>
+	<style>
+	</style>
+	<body>
+		<div class="logo-main">
+			<img class='logo-img-main' title="logo" src="../imgs/logo.png">
+			<span class='logo-text-main'>任意门</span>
+		</div>
+		<div class="content" style="visibility:hidden;">
+			<div class="con">
+				<img id="img" class='img' title="image" onload='imgCompelete()' src="">
+				<div class="info" style="display: none;">
+					点击跳转到详情
+				</div>
+			</div>
+			<div class="logo" style='display: none;'>
+				<img class='logo-img' title="logo" src="../imgs/logo.png">
+				<span class='logo-text'>任意门</span>
+			</div>
+			<div class="timer">
+				<div class="timer-skip">跳过<span id="timer-timer"></span></div>
+			</div>
+		</div>
+	</body>
+	<script>
+		// var params = GetRequest();
+		// setELs(params);
+		var urlParams = {};
+
+		function setELs(paramss) {
+			let params = JSON.parse(paramss);
+			urlParams = params;
+			if (params['src']) {
+				document.getElementById("img").setAttribute("src", decodeURIComponent(params['src']));
+			}
+			if (params['timer']) {
+				try {
+					let timer = parseInt(params['timer']);
+					let timerEl = document.getElementById("timer-timer");
+					var timerTimerEl = setInterval(function() {
+						if (timer <= 0) {
+							plus.webview.currentWebview().close();
+							clearInterval(timerTimerEl);
+						}
+						timerEl.innerHTML = timer;
+						timer--;
+					}, 1000);
+				} catch (e) {
+					console.log(e);
+				}
+			}
+			if (params['introductionText']) {
+				document.getElementsByClassName("info")[0].innerHTML = getQueryVariable('introductionText');
+			}
+			if (params['introduction'] == 1) {
+				document.getElementsByClassName("info")[0].style.display = "block";
+			}
+		}
+
+
+		//页面加载完成
+		var loaded = false;
+		//图片加载完成
+		var imgLoaded = false;
+		document.addEventListener('UniAppJSBridgeReady', function() {
+			loaded = true;
+			if (loaded && imgLoaded) {
+				loadImg();
+			}
+			document.querySelector('.timer').addEventListener('click', function(e) {
+				if (e.isTrusted) {
+					plus.webview.currentWebview().close();
+				}
+			});
+
+			document.querySelector('.info').addEventListener('click', function(e) {
+				if (e.isTrusted) {
+					let link = urlParams['linkTo'];
+					if (link.indexOf("http") > -1) {
+						uni.navigateTo({
+							url: "../webview/webview?changeTitle=true&url=" + decodeURIComponent(link)
+						});
+					} else {
+						uni.navigateTo({
+							url: decodeURIComponent(link)
+						});
+					}
+					plus.webview.currentWebview().close();
+				};
+			});
+		});
+
+		function imgCompelete() {
+			imgLoaded = true;
+			if (loaded && imgLoaded) {
+				loadImg();
+			}
+		}
+
+		function loadImg() {
+			document.getElementsByClassName("logo-main")[0].style.display = "none";
+			document.getElementsByClassName("content")[0].style.visibility = "unset";
+			// 计算是否还有空余显示logo
+			var height = document.body.clientHeight - document.getElementById("img").offsetHeight;
+			if (height > 80) {
+				var el = document.getElementsByClassName("logo")[0];
+				el.style.bottom = ((height - 60) / 2) + "px";
+				el.style.display = "flex";
+			} else {
+				var imgEl = document.getElementsByClassName("img")[0];
+				var conEl = document.getElementsByClassName("con")[0];
+				imgEl.style.height = "100%";
+				conEl.style.height = "100%";
+			}
+		}
+
+		function GetRequest() {
+			var url = location.search;
+			var theRequest = new Object();
+			if (url.indexOf("?") != -1) {
+				var str = url.substr(1);
+				strs = str.split("&");
+				for (var i = 0; i < strs.length; i++) {
+					theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+				}
+			}
+			return theRequest;
+		}
+
+		function getQueryVariable(variable) {
+			var query = window.location.search.substring(1);
+			var vars = query.split("&");
+			for (var i = 0; i < vars.length; i++) {
+				var pair = vars[i].split("=");
+				if (pair[0] == variable) {
+					return decodeURIComponent(pair[1]);
+				}
+			}
+			return (false);
+		}
+	</script>
+</html>

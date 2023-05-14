@@ -181,7 +181,17 @@
 				"navigationStyle": "custom"
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/app/app",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "应用详情",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+    ],
 	"subPackages": [],
 	"preloadRule": [],
 	"globalStyle": {

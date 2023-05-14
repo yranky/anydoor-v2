@@ -1,16 +1,23 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
 		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
-		<anydoor-webview ref="webview" :src="src" :config="{
-			height: webviewHeight + 'px',
-			windowsAutomatically: true,
-			multipleWindow: true,
-			zoom: false,
-			cache: false
-		}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-			@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate" @onImagePress="onImagePress"
-			@onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage">
-		</anydoor-webview>
+		<view :style="{
+			position: showTitleBar ? '' : 'fixed',
+			top: showTitleBar ? '' : 0
+		}">
+			<anydoor-webview ref="webview" :src="src" :config="{
+				height: webviewHeight + 'px',
+				windowsAutomatically: true,
+				multipleWindow: true,
+				zoom: false,
+				cache: false,
+				progress:false
+			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
+				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
+				@onImagePress="onImagePress" @onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage"
+				@onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)">
+			</anydoor-webview>
+		</view>
 	</tm-app>
 </template>
 
@@ -40,7 +47,6 @@ import { linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
-import { WebviewBridge } from "@/common/WebviewBridge/WebviewBridge"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const {
 	proxy
@@ -56,26 +62,44 @@ const webviewStyle = reactive({
 })
 const loadWebviewHeight = throttle(function () {
 	//加载高度
-	dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
-		if (option && option.result) {
-			const navBarHeight = option.size.height
-			//如果没获取到
-			if (navBarHeight === 0) loadWebviewHeight()
-			else {
-				webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+	if (showTitleBar.value) {
+		dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
+			if (option && option.result) {
+				const navBarHeight = option.size.height
+				//如果没获取到
+				if (navBarHeight === 0) loadWebviewHeight()
+				else {
+					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
+				}
 			}
-		}
-	})
+		})
+	} else {
+		//隐藏titleBar
+		webviewHeight.value = uni.getSystemInfoSync().windowHeight
+	}
+
 }, 200)
+
+//展示titlebar
+const showTitleBar = ref<boolean>(true)
+const hideTitleBar = (hide: boolean) => {
+	if (hide) {
+		showTitleBar.value = false
+	} else {
+		showTitleBar.value = true
+	}
+	loadWebviewHeight()
+}
+
 const webview = ref(null)
 //webview的配置
 const webviewConfig = ref<IWebviewItem>()
 
 //messgae
 const onMessage = (e: IMessageResult) => {
-	ToastModule.show({
-		text: JSON.stringify(e)
-	})
+	// ToastModule.show({
+	// 	text: JSON.stringify(e)
+	// })
 	console.log(e)
 }
 
@@ -83,7 +107,7 @@ const onMessage = (e: IMessageResult) => {
 //加载时调用
 onLoad((e: any) => {
 	try {
-		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item||e.data)))
+		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item || e.data)))
 		src.value = webviewConfig.value.url
 		navTitle.value = webviewConfig.value.title
 	} catch { }
@@ -105,12 +129,11 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 }
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
-	webview.value.send(JSON.stringify({
-		code: '111',
-		msg: "9999"
-	})).then(res => {
-		console.log(res)
-	})
+	// webview.value.send(JSON.stringify({
+	// 	code: 0,
+	// 	msg: "ok",
+	// 	data:{}
+	// }))
 
 	// webview.value.callHandler({
 	// 	name: "123",
@@ -134,7 +157,7 @@ const pageError = (e: IPageErrorResult) => {
 }
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
-	linkTo(ROUTE_PATH.WEBVIEW,{ url: e.url })
+	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
 }
 //页面的链接
 const src = ref("")

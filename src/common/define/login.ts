@@ -13,3 +13,11 @@ export enum LOGIN_TYPE {
     //以手机验证码形式进行登录
     PHONE_CODE = "phone_code"
 }
+
+
+export enum LOGIN_UNION_TYPE {
+    //qq登录
+    QQ = "qq",
+    //微博登录
+    WEIBO = "sinaweibo"
+}

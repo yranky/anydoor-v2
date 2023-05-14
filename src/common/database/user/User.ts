@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 15:46:57
+ * @LastEditTime: 2023-05-13 21:34:45
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -15,6 +15,11 @@ import { USER_TABLES_NAME } from "../tables/user"
 import ToastModule from "@/common/native/toast/ToastModule"
 import Encrypt from "@/common/encrypt/Encrypt"
 import dayjs from "dayjs"
+import { UNI_STORAGE } from "../UNI_STORAGE"
+import { isEmpty } from "lodash"
+import { useUserStore } from "@/store/user"
+import { getUserInfoService } from "@/common/service/user"
+import CODE from "@/common/define/code"
 
 export default class User {
     //sqlite对象
@@ -119,6 +124,8 @@ export default class User {
              DELETE FROM ${USER_TABLES_NAME.JAIOWU}
             `]
             , ERROR_TARGET.USER_CLASS)
+        //清除storage的学校信息
+        uni.removeStorageSync(UNI_STORAGE.JW_SCHOOL_INFO)
         //不成功
         if (current?.code === SQLITE_STATUS_CODE.SUCCESS) {
             return true
@@ -129,6 +136,12 @@ export default class User {
 
     //插入一个用户
     async insertUserAccount(token: string, refresh_token: string) {
+        //先保存在uni_torage
+        uni.setStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN, {
+            token,
+            refresh_token
+        })
+
         //初始工作
         await this.sql?.executeSql([
             //清空当前的
@@ -150,11 +163,117 @@ export default class User {
         } catch { }
         const time: number = new Date().getTime() / 1000
         //将当前行的id加入current,将token也保存
-        await this.sql?.executeSql([`insert into  ${USER_TABLES_NAME.CURRENT} (uid) values (${id})`,
+        const res = await this.sql?.executeSql([`insert into  ${USER_TABLES_NAME.CURRENT} (uid) values ('${id}')`,
         //将token也保存
-        `insert into  ${USER_TABLES_NAME.TOKEN} (token,refresh_token,create_time,update_time,uid) values (${token},${refresh_token},${time},${time},${id})`
+        `insert into  ${USER_TABLES_NAME.TOKEN} (token,refresh_token,create_time,update_time,uid) values ('${token}','${refresh_token}','${time}','${time}','${id}')`
         ], ERROR_TARGET.USER_CLASS)
+        if (res?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            ToastModule.show({ text: res?.error || '未知错误!' })
+        }
+    }
 
+    //更新account
+    async updateUserAccount(token: string, refresh_token: string) {
+        //先保存在uni_torage
+        uni.setStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN, {
+            token,
+            refresh_token
+        })
+        //返回上一次插入的id
+        const current = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.ACCOUNT} order by id desc limit 1`, ERROR_TARGET.USER_CLASS)
+        if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            ToastModule.show({ text: "登录出现问题!" })
+        }
+        let id = 0
+        try {
+            id = current?.data[0].id
+        } catch { }
+        const time: number = new Date().getTime() / 1000
+        //将当前行的id加入current,将token也保存
+        const res = await this.sql?.executeSql([
+            `update ${USER_TABLES_NAME.TOKEN} set token = '${token}',refresh_token = '${refresh_token}',update_time='${time}' where uid='${id}'`
+        ], ERROR_TARGET.USER_CLASS)
+        if (res?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            ToastModule.show({ text: res?.error || '更新用户信息时发生未知错误!' })
+        }
+    }
+
+    //退出登录
+    async logoutUserAccount() {
+        //清除unistorage用户相关内容
+        uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
+        uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO)
+        //清除webview缓存
+        try {
+            uni.$anydoor_native.Tool_Module && uni.$anydoor_native.Tool_Module.clearWebviewCache({}, () => { })
+        } catch { }
+
+        try {
+            //清除数据库中的相关内容
+            const res = await this.sql?.executeSql([`DELETE FROM ${USER_TABLES_NAME.CURRENT}`], ERROR_TARGET.USER_CLASS)
+            if (res?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+                ToastModule.show({ text: res?.error || '退出登录时发生未知错误!' })
+            }
+        } catch { }
+        //重置pinia
+        const userStore = useUserStore()
+        userStore.$reset()
+    }
+
+    /**
+     * 获取用户token 
+     */
+    async freshStoreUser() {
+        const token = uni.getStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
+        const userStore = useUserStore()
+        if (!isEmpty(token)) {
+            userStore.token = token.token
+            userStore.refreshToken = token.refresh_token
+        } else {
+            //否则就查询数据库
+            const current = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.CURRENT}`, ERROR_TARGET.USER_CLASS)
+            if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+                ToastModule.show({ text: "获取用户出现问题!" })
+            }
+            if (current?.data[0]) {
+                const user = await this.sql?.selectSql(`select * from ${USER_TABLES_NAME.TOKEN} where uid=` + current.data[0].id, ERROR_TARGET.USER_CLASS)
+                if (user?.data && user.data[0]) {
+                    userStore.token = user.data[0].token || ''
+                    userStore.refreshToken = user.data[0].refresh_token || ''
+                } else {
+                    ToastModule.show({ text: "获取用户出现问题!" + current.error })
+                }
+            }
+        }
+    }
+
+    //刷新用户信息(调用接口)
+    async refreshUserInfo() {
+        getUserInfoService({}).then(res => {
+            if (res.code === CODE.SUCCESS) {
+                //保存到storage
+                const info: any = {
+                    username: res.data.username,
+                    nickname: res.data.nickname,
+                    avatar: res.data.avatar,
+                    sex: res.data.sex,
+                    birth: dayjs(res.data.birth * 1000).format("YYYY/MM/DD"),
+                    updateTime: dayjs().format("YYYY/MM/DD HH:mm:ss")
+                }
+                uni.setStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO, info)
+                //加载到pinia
+                const userStore = useUserStore()
+                userStore.$patch((state) => {
+                    for (let key in info) {
+                        if (Object.keys(state).includes(key)) {
+                            state[key as keyof typeof state] = info[key]
+                        }
+                    }
+                })
+            }
+        }).catch(e => {
+            ToastModule.show({ text: "获取用户信息发生错误!" + e })
+        })
     }
 
 }

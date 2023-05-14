@@ -18,7 +18,7 @@ export async function listTip(formData: any): Promise<restful<any>> {
             }
         })
         //缓存
-        uni.setStorageSync(UNI_STORAGE.TIP_LIST, JSON.stringify(tipData))
+        uni.setStorageSync(UNI_STORAGE.TIP_LIST, tipData)
     }
     return tipData
 }

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-05 19:08:31
+ * @LastEditTime: 2023-05-12 14:13:52
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -13,13 +13,14 @@
 		<tm-message ref="msg"></tm-message>
 		<tm-navbar title=""></tm-navbar>
 		<view style="margin: 10rpx 40rpx;">
-			<tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
+			<!-- <tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
 				:list="loginTab" :height="80" :default-name="1" :style="{
 					margin: '0 10rpx'
 				}">
-			</tm-tabs>
+			</tm-tabs> -->
 			<view style="margin: 60rpx 0;">
-				<tm-input v-model="form.user" placeholder="用户名/邮箱" transprent :margin="[0, 20]"></tm-input>
+				<tm-input v-model="form.user" :placeholder="tabActive === 2 ? '手机号' : '用户名/邮箱'" transprent
+					:margin="[0, 20]"></tm-input>
 				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
 				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
 				<view class="flex flex-row flex-between">
@@ -27,8 +28,21 @@
 					<anydoor-text text="注册" color="primary" @click="register"></anydoor-text>
 				</view>
 			</view>
-			<tm-divider align="center" label="第三方登录"></tm-divider>
-			<view>
+			<tm-divider align="center" label="其它登录方式"></tm-divider>
+			<view class="login-items">
+				<view class="login-item" @click="tabActive === 2 ? tabActive = 1 : tabActive = 2">
+					<tm-icon :font-size="60" :name="tabActive === 2 ? 'tmicon-md-mail-open' : 'tmicon-md-phone-portrait'"
+						_class="pl-16 pr-16" color="primary"></tm-icon>
+					<anydoor-text :text="tabActive === 2 ? '账号' : '手机号'" color="primary" lineHeight="50rpx"></anydoor-text>
+				</view>
+				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)">
+					<tm-icon :font-size="60" name="tmicon-QQ" _class="pl-16 pr-16" color="#368afe"></tm-icon>
+					<anydoor-text text="QQ" color="#368afe" lineHeight="50rpx"></anydoor-text>
+				</view>
+				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.WEIBO)">
+					<tm-icon :font-size="60" name="tmicon-weibo" _class="pl-16 pr-16" color="#e5254d"></tm-icon>
+					<anydoor-text text="新浪微博" color="#e5254d" lineHeight="50rpx"></anydoor-text>
+				</view>
 			</view>
 		</view>
 	</tm-app>
@@ -48,33 +62,36 @@ import { onLoad } from "@dcloudio/uni-app"
 
 import { getUserRule, login } from "@/common/service/login"
 import { IUserRuleResult, LoginForm } from "@/common/IForm/login/login"
-import { LOGIN_TYPE } from "@/common/define/login"
+import { LOGIN_TYPE,LOGIN_UNION_TYPE } from "@/common/define/login"
 import ToastModule from "@/common/native/toast/ToastModule"
 import md5 from "md5"
 import useDeviceStore from "@/store/device"
 import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
 import User from "@/common/database/user/User"
-import { linkTo } from "@/common/utils/link"
+import { linkBack, linkTo } from "@/common/utils/link"
 import getUrlByName from "@/common/request/urls"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import CODE from "@/common/define/code"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+import unionLoginBase from "@/common/login/union/common/unionLoginBase"
 
 //加载
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 //找回密码
 const findPassword = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{
+	linkTo(ROUTE_PATH.WEBVIEW, {
 		url: getUrlByName("user_find").url,
-		title:'找回密码'
+		title: '找回密码'
 	})
 }
 
 //注册
 const register = () => {
-	linkTo(ROUTE_PATH.WEBVIEW,{
+	linkTo(ROUTE_PATH.WEBVIEW, {
 		url: getUrlByName("user_register").url,
-		title:'注册'
+		title: '注册'
 	})
 }
 
@@ -119,7 +136,10 @@ const doLogin = (): void => {
 	//收起键盘
 	uni.hideKeyboard()
 
-	msg.value && msg.value.show({ model: 'load', text: "登录中，请稍等" })
+	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+		title: '登录中...'
+	})
+
 	const postData: any = {
 		type: LOGIN_TYPE.USERNAME,
 		username: form.value.user,
@@ -128,7 +148,7 @@ const doLogin = (): void => {
 	//先判空
 	if (form.value.user.trim() === '') {
 		ToastModule.show({ text: '请输入用户名/邮箱/手机号' })
-		msg.value && msg.value.hide()
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 		return;
 	}
 	//验证是不是用户名/邮箱
@@ -139,7 +159,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.mail.reg as string);
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.mail.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			//说明是邮箱登录
@@ -150,7 +170,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.username.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.username.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			//说明是用户名登录
@@ -164,7 +184,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.phone.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.phone.msg as string })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -172,7 +192,7 @@ const doLogin = (): void => {
 		} else {
 			if (form.value.user.trim() === '') {
 				ToastModule.show({ text: '请输入手机号' })
-				msg.value && msg.value.hide()
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -185,29 +205,27 @@ const doLogin = (): void => {
 		const reg = new RegExp(formRule.value.password.reg as string)
 		if (!reg.test(form.value.password.trim())) {
 			ToastModule.show({ text: formRule.value.password.msg as string })
-			msg.value && msg.value.hide()
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
 	} else {
 		if (form.value.password.trim() === '') {
 			ToastModule.show({ text: '请输入密码' })
-			msg.value && msg.value.hide()
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
 	}
-
 	//进行登录操作
-	login(postData).then(async res => {
-
-		console.log(res);
-		//插入表中
-		(await User.getInstance()).insertUserAccount('1', '1')
+	login(postData).then((res) => {
+		if (res.code === CODE.SUCCESS) {
+			//返回上一层
+			linkBack()
+		}
 	}).finally(() => {
-		msg.value && msg.value.hide()
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 	})
-
 }
 
 //加载表单验证规则
@@ -216,4 +234,27 @@ const getUserRuleList = (): void => {
 		formRule.value = res
 	})
 }
+
+//第三方登录
+const loginByUnion = (type:LOGIN_UNION_TYPE) => {
+	unionLoginBase(type)
+}
 </script>
+<style lang="scss" scoped>
+.login-items {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+
+	.login-item {
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: fit-content;
+		margin: 20rpx;
+	}
+}
+</style>

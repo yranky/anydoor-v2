@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 17:31:29
+ * @LastEditTime: 2023-05-13 15:49:15
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -146,8 +146,7 @@ const checkNeedUpdate = (): boolean => {
 const loadCache = () => {
 	//首先读取缓存
 	try {
-		//读取轮播图列表缓存
-		const score = JSON.parse(uni.getStorageSync(UNI_STORAGE.JW_SCORE))
+		const score = uni.getStorageSync(UNI_STORAGE.JW_SCORE)
 		const score_semester = uni.getStorageSync(UNI_STORAGE.JW_SCORE_SEMESTER)
 		if (score) {
 			tags.value = score.tag || []
@@ -191,11 +190,11 @@ const getScore = async () => {
 	if (data.code === CODE.SUCCESS) {
 		tags.value = data.data.tag
 		datas.value = data.data.data
-		uni.setStorageSync(UNI_STORAGE.JW_SCORE, JSON.stringify({
+		uni.setStorageSync(UNI_STORAGE.JW_SCORE,{
 			"update_time": dayjs().format("YYYY/MM/DD HH:mm:ss"),
 			"tag": data.data.tag || [],
 			"data": data.data.data || []
-		}))
+		})
 	}
 	//加载
 	status.value.loading = false

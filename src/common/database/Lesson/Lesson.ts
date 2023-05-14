@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-07 09:40:06
+ * @LastEditTime: 2023-05-13 21:45:08
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -170,7 +170,7 @@ export default class Lesson {
             `
             select * from ${LESSON_TABLES_NAME.RECORDS} where company_id='${cid}' order by create_time desc limit 0,1
             `
-        , ERROR_TARGET.LESSON_CLASS)
+            , ERROR_TARGET.LESSON_CLASS)
     }
 
 
@@ -236,7 +236,6 @@ export default class Lesson {
         if (jw_config_data.code !== CODE.SUCCESS) return false
         encrypt.setPublicKey(jw_config_data.data.public_key)
         const password_encrypt = encrypt.encrypt(password)
-
         const data = await jwTimetable({
             username,
             password: password_encrypt,
@@ -285,7 +284,8 @@ export default class Lesson {
             //#endregion
             return true
         } else {
-            ToastModule.show({ text: '数据更新失败' })
+            console.log(data)
+            ToastModule.show({ text: '（教务课程）数据更新失败' + data.msg })
             return false
         }
     }
