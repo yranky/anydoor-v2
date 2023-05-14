@@ -5,8 +5,6 @@
 				<tm-segtab :width="500" :list="tabList" :defaultValue="2" v-model:model-value="tabId"></tm-segtab>
 			</template>
 		</tm-navbar>
-		<button @click="downloadItem">下载</button>
-		<video src="https://pull-l3-cny.douyincdn.com/live/6341faaba6a912c83d597c2a7688d2b2.m3u8"></video>
 		<anydoorDownloadItem v-for="item in dataList" :item-info="item" :key="item.id" />
 	</tm-app>
 </template>
@@ -23,22 +21,22 @@ import { onUnmounted } from "vue"
 import { IDownloadInfo } from "@/common/native/download/IDownloadModule"
 import { computed } from "vue"
 import fileSize from "@/common/utils/fileSize"
+import { getFiles, requestFilesURLReader } from "@/common/utils/ioUtils"
+import { v4 as uuidv4 } from "uuid"
 
 // tab的list
 const tabList = ref([
 	{ text: '下载中', id: 1 },
-	{ text: '已下载', id: 2 }
+	{ text: '已下载', id: 2 },
+	{ text: '其它下载', id: 3 }
 ])
 //当前的tabId
 const tabId = ref<number>(2)
-
-
-
-
+//监听
 const listen = (tasks: IDownloadTask[]) => {
 	list.value = tasks || []
 }
-
+//下载列表
 const list = ref<IDownloadTask[]>([])
 
 //下载中
@@ -51,14 +49,6 @@ const downloading = computed(() => {
 	})
 })
 
-
-//当前的dataList
-const dataList = computed(() => {
-	if (tabId.value === 1) return downloading.value
-	if (tabId.value === 2) return downloaded.value
-	return []
-})
-
 //已下载
 const downloaded = computed(() => {
 	const data: IDownloadInfo[] = list.value.filter((item: IDownloadInfo) => {
@@ -69,12 +59,54 @@ const downloaded = computed(() => {
 	})
 })
 
+
+
+
+//当前的dataList
+const dataList = computed(() => {
+	if (tabId.value === 1) return downloading.value
+	if (tabId.value === 2) return downloaded.value
+	if (tabId.value === 3) {
+		getFilesList()
+		return filesOther.value
+	}
+	return []
+})
+
 //获取下载列表
 const getTaskList = () => {
 	DownloadModule.getInstance().getTaskList((result: IDownloadInfo[]) => {
 		list.value = result || []
 	})
 
+}
+
+const filesOther = ref<any>([])
+
+//其它下载
+const getFilesList = async () => {
+	filesOther.value = []
+	try {
+		// const fs = await requestFilesURLReader()
+		// const filesDirList = await getFiles("downloads", fs)
+		// //处于下载中的
+		// const downloadingFullPaths = downloading.value.map(item => plus.io.convertLocalFileSystemURL(item.detail.filePath))
+		// filesDirList.forEach(item => {
+		// 	//剔除处于下载中的
+		// 	if (downloadingFullPaths.indexOf(plus.io.convertLocalFileSystemURL(item.fullPath || "")) <= -1) {
+		// 		item.getMetadata((result: PlusIoMetadata) => {
+		// 			//判断是否处于下载中的文件
+		// 			filesOther.value.push({
+		// 				id: uuidv4(),
+		// 				total: fileSize(result.size || 0) || "未知",
+		// 				filename: item.name,
+		// 				fullPath: item.fullPath,
+		// 				fromFileSystem: true
+		// 			})
+		// 		}, () => { })
+		// 	}
+		// })
+	} catch { }
 }
 
 //filter
@@ -100,10 +132,6 @@ onLoad(() => {
 onUnmounted(() => {
 	DownloadModule.getInstance().unListen(listen)
 })
-
-const downloadItem = () => {
-	DownloadModule.getInstance().create("https://down11.zol.com.cn/liaotian/wangzherongyao3.81.1.8_3.apk")
-}
 
 </script>
 

@@ -12,6 +12,10 @@ export default interface IDialogModuleNative {
     hideWaitingDialog(option: IHideWaitingDialogDialogOption): void
     //显示弹出选择框
     showShareMenuDialog(option: IShareMenuDialogDialogOption, callbackfn?: (result: IResult<IShareMenuDialogDialogCallback>) => void): void
+    //显示单选弹出框
+    showRadioDialog(option: IRadioDialogDialogOption, callbackfn?: (result: IResult<IRadioDialogDialogCallback>) => void): void
+    //多选
+    showCheckboxDialog(option: ICheckboxDialogDialogOption, callbackfn?: (result: IResult<ICheckboxDialogDialogCallback>) => void): void
 }
 
 interface IDialogInitOption {
@@ -44,12 +48,12 @@ interface IShowInputDialogOption extends IShowMessageDialogOption {
 }
 
 interface IShowInputDialogCallback {
-    type: 'cancel' | 'ok',
+    type: 'cancel' | 'ok' | 'mask',
     value: string
 }
 
 interface IMessageDialogCallback {
-    type: 'cancel' | 'ok'
+    type: 'cancel' | 'ok' | 'mask'
 }
 
 //加载框
@@ -63,18 +67,48 @@ interface IShowWaitingDialogOption {
 }
 
 interface IHideWaitingDialogDialogOption {
-
+    type: 'cancel' | 'ok' | 'mask'
 }
 
 
 interface IShareMenuDialogDialogOption {
     items: string[],
     //是否可取消
-    cancelable?: boolean
+    cancelable?: boolean,
+    title?: string,
+    content?: string
 }
 
 interface IShareMenuDialogDialogCallback {
-    type: 'cancel' | 'ok',
-    which?: string,
+    type: 'cancel' | 'ok' | 'mask',
+    which?: number,
     label?: string
+}
+
+interface IRadioDialogDialogOption extends IShareMenuDialogDialogOption {
+    default?: number,
+    okText?: string
+}
+
+interface IRadioDialogDialogCallback {
+    type: 'cancel' | 'ok' | 'mask',
+    which?: number,
+    label?: string
+}
+
+interface ICheckboxDialogDialogOption {
+    items: string[],
+    //是否可取消
+    cancelable?: boolean,
+    title?: string,
+    content?: string,
+    default?: number[],
+    okText?: string
+}
+
+
+interface ICheckboxDialogDialogCallback {
+    type: 'cancel' | 'ok' | 'mask',
+    which?: number[],
+    label?: string[]
 }

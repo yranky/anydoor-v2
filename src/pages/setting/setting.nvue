@@ -112,7 +112,6 @@ const clearCache = () => {
 		cancelText: '取消',
 		content: `确认清除缓存吗(${cacheSize.value})`
 	}, (res) => {
-		console.log(res.data?.type)
 		if (res.data?.type === "ok") {
 			(plus as any).cache.clear(() => {
 				ToastModule.show({ text: '清除成功!' })

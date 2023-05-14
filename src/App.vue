@@ -33,7 +33,7 @@ onLaunch(async function () {
 	//从storage初始化
 	initFromStorageSync()
 	//打开开屏图
-	OpenImg()
+	// OpenImg()
 	//初始化
 	await init()
 

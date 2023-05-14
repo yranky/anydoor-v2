@@ -1,6 +1,12 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
+		<tm-navbar ref="navBar" :title="navTitle">
+			<template v-slot:right>
+				<view style="padding: 10rpx;" @click="openMenuSheet">
+					<tm-icon rotate :rotate-deg="90" name="tmicon-md-more" _class="mr-39 ml-20"></tm-icon>
+				</view>
+			</template>
+		</tm-navbar>
 		<view :style="{
 			position: showTitleBar ? '' : 'fixed',
 			top: showTitleBar ? '' : 0
@@ -10,12 +16,13 @@
 				windowsAutomatically: true,
 				multipleWindow: true,
 				zoom: false,
-				cache: false,
-				progress:false
+				cache: 1,
+				progress: false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
 				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
 				@onImagePress="onImagePress" @onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage"
-				@onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)">
+				@onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload"
+				@onScheme="onSchema">
 			</anydoor-webview>
 		</view>
 	</tm-app>
@@ -29,6 +36,7 @@ import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 // import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
 import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import {
 	computed,
 	getCurrentInstance,
@@ -45,12 +53,15 @@ import {
 } from "lodash"
 import { linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
-import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
+import { IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { getFileNameFromDownload } from "@/common/utils/fileName"
+import fileSize from "@/common/utils/fileSize"
+import DownloadModule from "@/common/native/download/DownloadModule"
 const {
 	proxy
-} = getCurrentInstance()
+} = getCurrentInstance() as any
 const dom = uni.requireNativePlugin("dom")
 //webview的高度
 const webviewHeight = ref(0)
@@ -151,6 +162,26 @@ const pageReady = (e: IPageReadyResult) => {
 	// })
 	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
 }
+
+//下载
+const onDownload = (e: IDownloadResult) => {
+	const fileName: string = getFileNameFromDownload(decodeURIComponent(e.contentDisposition || ""), decodeURIComponent(e.url) || "")
+	const filesize: string = fileSize(e.contentLength)
+	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+		items: ['下载', '下载并打开', '跳转外部下载', '取消'],
+		content: `下载 ${fileName}(${filesize})`
+	}, (res) => {
+		if (res.data?.type !== "ok") return
+		if (res.data?.which === 0) {
+			DownloadModule.getInstance().create(e.url)
+		} else if (res.data?.which === 1) {
+			DownloadModule.getInstance().create(e.url, true)
+		} else if (res.data?.which === 2) {
+			plus.runtime.openURL(e.url)
+		}
+	})
+}
+
 //页面加载异常
 const pageError = (e: IPageErrorResult) => {
 	console.log(e)
@@ -213,6 +244,31 @@ const onImagePress = (e: IOnImagePressResult) => {
 			}
 		});
 	}
+}
+
+// 打开操作菜单
+const openMenuSheet = () => {
+	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+		content: '本页面由login.douyeblog.top提供',
+		items: ['刷新', '关闭', '在浏览器中打开', '分享到QQ', '分享到QQ空间', '分享到新浪微博', '其他分享', '复制链接']
+	}, (res) => {
+		console.log(res.data)
+	})
+}
+
+//打开外部应用
+const onSchema = (e: IOnSchemeResult) => {
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		okText: '打开',
+		cancelText: '取消',
+		cancelable: true,
+		content: '网页请求打开应用',
+		title: '提示'
+	}, (res) => {
+		if (res.data?.type === "ok") {
+			plus.runtime.openURL(e.url)
+		}
+	})
 }
 </script>
 
