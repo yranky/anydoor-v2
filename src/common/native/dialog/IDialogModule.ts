@@ -10,6 +10,8 @@ export default interface IDialogModuleNative {
     showWaitingDialog(option: IShowWaitingDialogOption): void
     //隐藏加载框
     hideWaitingDialog(option: IHideWaitingDialogDialogOption): void
+    //显示弹出选择框
+    showShareMenuDialog(option: IShareMenuDialogDialogOption, callbackfn?: (result: IResult<IShareMenuDialogDialogCallback>) => void): void
 }
 
 interface IDialogInitOption {
@@ -62,4 +64,17 @@ interface IShowWaitingDialogOption {
 
 interface IHideWaitingDialogDialogOption {
 
+}
+
+
+interface IShareMenuDialogDialogOption {
+    items: string[],
+    //是否可取消
+    cancelable?: boolean
+}
+
+interface IShareMenuDialogDialogCallback {
+    type: 'cancel' | 'ok',
+    which?: string,
+    label?: string
 }

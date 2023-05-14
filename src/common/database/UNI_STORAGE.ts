@@ -19,6 +19,8 @@ export enum UNI_STORAGE {
     MENU_MY_LIST = "menu_my_list",
     //高校列表
     COMPANY_LIST = "company_list",
+    //教务学校信息
+    JW_SCHOOL_INFO = "jw_school_info",
     //教学计划
     JW_PLAN = "jw_plan",
     //教学计划当前选择的学期
@@ -37,5 +39,7 @@ export enum UNI_STORAGE {
     //首页缓存(通知)
     NOTICE_INDEX = "notice_index",
     //首页文章
-    ARTICLE_INDEX = "article_index"
+    ARTICLE_INDEX = "article_index",
+    //设备id
+    UNI_DEVICE_ID = "uni_device_id"
 }

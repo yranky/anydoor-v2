@@ -60,9 +60,11 @@ import { watch } from "vue"
 import CODE from "@/common/define/code"
 import { listNotice } from "@/common/service/notice"
 import { diffTwoDays } from "@/common/utils/date"
+import useJiaowuStore from "@/store/jiaowu"
 const {
 	proxy
 } = getCurrentInstance()
+const jiaowuStore=useJiaowuStore()
 
 //获取列表
 onLoad(()=>{
@@ -112,7 +114,7 @@ const getArticleList = debounce(async (currentTabIndex:number,isRefresh?:boolean
 		const data = await listNotice({
 			page: morePage !== undefined ? morePage : page.value,
 			limit: limit.value,
-			cid: '',
+			cid: jiaowuStore.jiaowuConfig.cid,
 			//分类
 			type:currentTabIndex
 		})

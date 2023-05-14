@@ -11,9 +11,10 @@ const jiaowu_config = {
     user_login_description: '已登录',
     user_not_login_description: '未登录',
     cid: '',
-    timetable_temp:7,
-    plan_temp:7,
-    score_temp:7
+    timetable_temp: 7,
+    plan_temp: 7,
+    score_temp: 7,
+    school_name: ''
 }
 
 export const useJiaowuStore = defineStore("jiaowu_store", () => {
@@ -50,9 +51,10 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
         jiaowuConfig.value.user_login_description = data.user_login_description || "已登录"
         jiaowuConfig.value.user_not_login_description = data.user_not_login_description || "未登录"
         jiaowuConfig.value.cid = data.cid || ""
-        jiaowuConfig.value.timetable_temp= isNaN(Number(data.timetable_temp))?7:data.timetable_temp
-        jiaowuConfig.value.score_temp= isNaN(Number(data.score_temp))?7:data.score_temp
-        jiaowuConfig.value.plan_temp= isNaN(Number(data.plan_temp))?7:data.plan_temp
+        jiaowuConfig.value.timetable_temp = isNaN(Number(data.timetable_temp)) ? 7 : data.timetable_temp
+        jiaowuConfig.value.score_temp = isNaN(Number(data.score_temp)) ? 7 : data.score_temp
+        jiaowuConfig.value.plan_temp = isNaN(Number(data.plan_temp)) ? 7 : data.plan_temp
+        jiaowuConfig.value.school_name = data.school_name || ""
     }
 
     //教务个人信息

@@ -16,14 +16,14 @@
 							<text class="index-day" :style="{
 								color: store.tmStore.dark ? 'rgba(252, 252, 252, 1.0)' : 'rgba(34, 34, 34, 1.0)',
 								lineHeight: '60rpx'
-							}">南华大学</text>
+							}">{{ jiaowuStore.jiaowuConfig.school_name }}</text>
 							<view class="index-input flex-1">
 								<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
 									backgroundColor: store.tmStore.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.03)'
 								}" disabled @click="toSearch" class=" round-5"></tm-input>
 							</view>
 							<view class="index-icons flex flex-row flex-nowrap">
-								<view class="index-icon">
+								<view class="index-icon" @click="Scan.indexScan()">
 									<tm-icon name="tmicon-scan" :fontSize="40"></tm-icon>
 								</view>
 							</view>
@@ -76,17 +76,20 @@
 
 				<!-- 通知 -->
 				<view style="padding: 10rpx 0;margin: 15rpx;">
-					<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27" @click="linkTo(ROUTE_PATH.NOTICE_LIST)"></anydoor-label>
+					<anydoor-label labelText="校园通知" rectColor="primary" :actionFontSize="27"
+						@click="linkTo(ROUTE_PATH.NOTICE_LIST)"></anydoor-label>
 					<template v-if="!noticeComplete">
 						<anydoorNewsItem :skeleton="true" v-for="item in 5" :key="item"></anydoorNewsItem>
 					</template>
-					<anydoorNewsItem  v-for="item in noticeList" :key="item.id" @click="toNoticeDetail(item)" :title="item.title" :infoList="[item.date, item.author]">
+					<anydoorNewsItem v-for="item in noticeList" :key="item.id" @click="toNoticeDetail(item)"
+						:title="item.title" :infoList="[item.date, item.author]">
 					</anydoorNewsItem>
 				</view>
 
 				<!-- 新闻 -->
 				<view style="padding: 10rpx 0;margin: 15rpx;">
-					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27" @click="linkTo(ROUTE_PATH.ARTICLE_LIST)"></anydoor-label>
+					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"
+						@click="linkTo(ROUTE_PATH.ARTICLE_LIST)"></anydoor-label>
 					<anydoorNewsItem :skeleton="true" v-if="!articleComplete"></anydoorNewsItem>
 					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
 						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
@@ -187,10 +190,15 @@ import {
 import { listNotice } from "@/common/service/notice"
 import { diffTwoDays } from "@/common/utils/date"
 import CODE from "@/common/define/code"
-import {noticeFilter, toNoticeDetail} from "@/common/utils/notice"
+import { noticeFilter, toNoticeDetail } from "@/common/utils/notice"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { listArticle } from "@/common/service/article"
 import { articleFilter } from "@/common/utils/article"
+import useJiaowuStore from "@/store/jiaowu"
+import Scan from "@/common/utils/Scan"
+
+const jiaowuStore = useJiaowuStore()
+
 //临界值
 const num = 70
 const pageScrollY = ref(0);
@@ -233,10 +241,12 @@ const refreshComplete = ref<boolean>(true)
 // 页面刷新
 const refresh = async () => {
 	refreshComplete.value = false
-	await getSwiperList()
-	await getTipList()
-	await getIndexMenuList()
-	await getNotice()
+	await Promise.allSettled([
+		getSwiperList(),
+		getTipList(),
+		getIndexMenuList(),
+		getNotice()
+	])
 	refreshComplete.value = true
 }
 
@@ -308,12 +318,12 @@ const getNotice = async () => {
 		const data = await listNotice({
 			page: 1,
 			limit: 5,
-			cid: ''
+			cid: jiaowuStore.jiaowuConfig.cid
 		})
 		if (data.code === CODE.SUCCESS) {
 			noticeList.value = data.data.map(noticeFilter)
 		}
-	} catch {}
+	} catch { }
 	noticeComplete.value = true
 }
 
@@ -328,14 +338,14 @@ const getArticle = async () => {
 		const data = await listArticle({
 			page: 1,
 			limit: 10,
-			cid: ''
+			cid: jiaowuStore.jiaowuConfig.cid
 		})
 		if (data.code === CODE.SUCCESS) {
 			articleList.value = data.data.map(articleFilter)
 		}
-	} catch {}
+	} catch { }
 	noticeComplete.value = true
-	
+
 }
 </script>
 

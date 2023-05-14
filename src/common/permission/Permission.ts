@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-04-09 11:25:49
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 12:22:41
+ * @LastEditTime: 2023-05-13 22:38:57
  * @FilePath: \anydoor-v2\src\common\permission\Permission.ts
  * @Description: 权限管理模块
  * 
@@ -12,14 +12,14 @@
 import ToastModule from "../native/toast/ToastModule";
 import { IPermissionItem, PERMISSIONS, PERMISSION_TYPE } from "./IPermission";
 
-export default class Permission{
-    static request(permissionItem:PERMISSION_TYPE,description?:string,title?:string){
-        const permission:IPermissionItem=PERMISSIONS[permissionItem]
+export default class Permission {
+    static request(permissionItem: PERMISSION_TYPE, description?: string, title?: string) {
+        const permission: IPermissionItem = PERMISSIONS[permissionItem]
         //显示出提示
-        ToastModule.show({text:description || permission.description})
-        
-        return new Promise((resolve:any,reject:any)=>{
-            plus.android.requestPermissions([permissionItem], (e:any) => {
+        ToastModule.show({ text: description || permission.description })
+
+        return new Promise((resolve: any, reject: any) => {
+            plus.android.requestPermissions([permissionItem], (e: any) => {
                 if (e.deniedAlways.length > 0) {
                     // 弹出提示框解释为何需要定位权限，引导用户打开设置页面开启,用户一直拒绝
                     ToastModule.show({ text: permission.toast })
@@ -35,7 +35,7 @@ export default class Permission{
                 if (e.granted.length > 0) {
                     resolve()
                 }
-            }, function (e:any) {
+            }, function (e: any) {
                 ToastModule.show({ text: "授权失败!" })
                 reject(e)
             })

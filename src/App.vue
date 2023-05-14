@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 19:37:40
+ * @LastEditTime: 2023-05-14 10:05:11
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import {
 onHide,
-	onLaunch,
+onLaunch,
 onShow
 } from "@dcloudio/uni-app"
 import init, { initUser, initLesson,initFromStorageSync } from "./init"
@@ -27,6 +27,8 @@ onLaunch(async function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
+
+
 	// plus.navigator.setLogs(true)
 	//从storage初始化
 	initFromStorageSync()

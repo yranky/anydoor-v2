@@ -73,7 +73,8 @@ const getJiaowuInfo = async () => {
 	if (data.stuInfo) {
 		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
 			...jw_config_data.data,
-			cid: store.jiaowuConfig.cid
+			cid: store.jiaowuConfig.cid,
+			school_name:store.jiaowuConfig.school_name
 		}, data)
 		if (isSuccess === false) {
 			ToastModule.show({ text: "刷新失败!" })

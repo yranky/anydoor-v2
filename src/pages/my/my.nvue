@@ -225,7 +225,7 @@ const toJiaowuLogin = () => {
 
 const {
 	proxy
-} = getCurrentInstance();
+}:any = getCurrentInstance()
 // 主题工具
 import theme from "@/tmui/tool/theme/theme"
 import { useUserStore } from "@/store/user";

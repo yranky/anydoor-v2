@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-12 16:51:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-12 17:38:17
+ * @LastEditTime: 2023-05-13 20:18:10
  * @FilePath: \anydoor-v2\src\common\database\device\Device.ts
  * @Description: 设备类
  * 
@@ -15,6 +15,8 @@ import { DEVICE_TABLES_NAME } from "../tables/device"
 import { v4 as uuidv4 } from 'uuid'
 import ToastModule from "@/common/native/toast/ToastModule"
 import useDeviceStore from "@/store/device"
+import { isEmpty } from "lodash"
+import { UNI_STORAGE } from "../UNI_STORAGE"
 
 export default class Device {
     //sqlite对象
@@ -43,7 +45,12 @@ export default class Device {
 
     //初始化设备id
     async initDeviceId() {
-        const uuid = uuidv4()
+        let uuid
+        try {
+            uuid = await this.getOAID()
+        } catch {
+            uuid = uuidv4()
+        }
         //先查询
         const result = await this.sql?.selectSql(`select * from ${DEVICE_TABLES_NAME.INFO}`, ERROR_TARGET.DEVICE_CLASS)
         if (result?.code !== SQLITE_STATUS_CODE.SUCCESS) {
@@ -54,9 +61,12 @@ export default class Device {
             insert into  ${DEVICE_TABLES_NAME.INFO} (key,value) values ('device_id','${uuid}')
             `
             //初始化
-            this.sql!.executeSql([
+            await this.sql!.executeSql([
                 sql
             ], ERROR_TARGET.DEVICE_CLASS)
+
+            //保存到storage
+            uni.setStorageSync(UNI_STORAGE.UNI_DEVICE_ID, uuid)
         }
         //最终的结果
         const last_result = await this.sql?.selectSql(`select * from ${DEVICE_TABLES_NAME.INFO}`, ERROR_TARGET.DEVICE_CLASS)
@@ -73,6 +83,25 @@ export default class Device {
         const uuid = uuidv4()
         const item = result.find((item: any) => item.key === 'device_id')
         return item ? item.value : uuid
+    }
+
+    //获取oaid
+    private getOAID() {
+        return new Promise((resolve, reject) => {
+            //先看看能不能获取到oaid
+            plus.device.getOAID({
+                success: function (e) {
+                    if (!isEmpty(e.oaid)) {
+                        resolve(e.oaid)
+                    } else {
+                        reject()
+                    }
+                },
+                fail: function () {
+                    reject()
+                }
+            })
+        })
     }
 
 }

@@ -6,7 +6,7 @@
 			<tm-result v-if="status.error" :showBtn="false" subTitle="点击重试" :title="status.tip"></tm-result>
 		</view>
 		<!-- 加载中提示 -->
-		<tm-icon name="tmicon-shuaxin" :spin="true" v-if="!status.error&&status.loading"></tm-icon>
+		<tm-icon name="tmicon-shuaxin" :spin="true" v-if="!status.error && status.loading"></tm-icon>
 		<view style="margin: 10rpx 40rpx;" v-if="!status.error && !status.loading">
 			<view style="margin: 60rpx 0;">
 				<tm-input v-model="form.username" placeholder="学号" transprent :margin="[0, 20]"></tm-input>
@@ -41,6 +41,7 @@ import CODE from "@/common/define/code"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { initUser } from "@/init"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 
 //登录的表单
 const form = ref<any>({
@@ -127,7 +128,9 @@ const login = async () => {
 		return
 	}
 
-	msg.value && msg.value.show({ model: 'load', text: "登录中，请稍等" })
+	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+		title:'正在登录,请稍等'
+	})
 	const data = await jwLogin({
 		username,
 		password: password_encrypt,
@@ -135,21 +138,26 @@ const login = async () => {
 		cid
 	})
 	if (data.stuInfo !== undefined) {
-		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password,{
+		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
 			...jwConfigObj.value,
-			cid
-		},data)
+			cid,
+			school_name: item.value.name
+		}, data)
 		if (isSuccess === false) {
 			ToastModule.show({ text: "登录失败!" })
 		} else {
 			ToastModule.show({ text: "登录成功!" })
 			//刷新user
 			initUser()
-			
-			linkTo(ROUTE_PATH.MY, {},{}, true);
+			//保存到uni storage
+			uni.setStorageSync(UNI_STORAGE.JW_SCHOOL_INFO, {
+				cid,
+				school_name:item.value.name
+			})
+			linkTo(ROUTE_PATH.MY, {}, {}, true);
 		}
 	}
-	msg.value && msg.value.hide()
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 }
 
 //去找

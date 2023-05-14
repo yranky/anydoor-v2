@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 16:50:44
+ * @LastEditTime: 2023-05-14 10:03:21
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -211,9 +211,11 @@ onReady(() => {
 	//监听加载情况
 	watch(() => lessonStore.initing, (val) => {
 		if (val === true) {
-			msg.value && msg.value.show({ model: 'load' })
+			uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+				title:'加载中，请稍等'
+			})
 		} else {
-			msg.value && msg.value.hide()
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
 		}
 	}, { immediate: true })
 })

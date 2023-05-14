@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 17:00:34
+ * @LastEditTime: 2023-05-13 21:34:45
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -124,6 +124,8 @@ export default class User {
              DELETE FROM ${USER_TABLES_NAME.JAIOWU}
             `]
             , ERROR_TARGET.USER_CLASS)
+        //清除storage的学校信息
+        uni.removeStorageSync(UNI_STORAGE.JW_SCHOOL_INFO)
         //不成功
         if (current?.code === SQLITE_STATUS_CODE.SUCCESS) {
             return true
@@ -202,9 +204,10 @@ export default class User {
         uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_TOKEN)
         uni.removeStorageSync(UNI_STORAGE.USER_ANYDOOR_INFO)
         //清除webview缓存
-        uni.$anydoor_native.Tool_Module && uni.$anydoor_native.Tool_Module.clearWebviewCache({}, (res) => {
-            console.log(res)
-        })
+        try {
+            uni.$anydoor_native.Tool_Module && uni.$anydoor_native.Tool_Module.clearWebviewCache({}, () => { })
+        } catch { }
+
         try {
             //清除数据库中的相关内容
             const res = await this.sql?.executeSql([`DELETE FROM ${USER_TABLES_NAME.CURRENT}`], ERROR_TARGET.USER_CLASS)
