@@ -130,6 +130,24 @@ const urls: Array<url> = [
     name: 'login_center',
     url: BASE_URL + '/api/auth/center',
     token: true
+  },
+  //文章列表
+  {
+    name: 'article_list',
+    url: BASE_URL + '/api/article/list',
+    token: false
+  },
+  //文章列表
+  {
+    name: 'article_type',
+    url: BASE_URL + '/api/article/type',
+    token: false
+  },
+  //文章详情
+  {
+    name: 'article_detail',
+    url: BASE_URL + '/api/article/detail',
+    token: false
   }
 ]
 

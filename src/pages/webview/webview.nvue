@@ -8,8 +8,8 @@
 			</template>
 		</tm-navbar>
 		<view :style="{
-			position: showTitleBar ? '' : 'fixed',
-			top: showTitleBar ? '' : 0
+			position: 'fixed',
+			top: showTitleBar ? navBarHeight + 'px' : 0
 		}">
 			<anydoor-webview ref="webview" :src="src" :config="{
 				height: webviewHeight + 'px',
@@ -20,9 +20,8 @@
 				progress: false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
 				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
-				@onImagePress="onImagePress" @onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage"
-				@onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload"
-				@onScheme="onSchema">
+				@onImagePress="onImagePress" @onImageClick="onImageClick" @onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload"
+				@onScheme="onScheme">
 			</anydoor-webview>
 		</view>
 	</tm-app>
@@ -59,61 +58,14 @@ import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { getFileNameFromDownload } from "@/common/utils/fileName"
 import fileSize from "@/common/utils/fileSize"
 import DownloadModule from "@/common/native/download/DownloadModule"
+import { onUnmounted } from "vue"
 const {
 	proxy
 } = getCurrentInstance() as any
-const dom = uni.requireNativePlugin("dom")
-//webview的高度
-const webviewHeight = ref(0)
-//webview的style样式
-const webviewStyle = reactive({
-	progress: {
-		color: theme.getColor("primary").value
-	}
-})
-const loadWebviewHeight = throttle(function () {
-	//加载高度
-	if (showTitleBar.value) {
-		dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
-			if (option && option.result) {
-				const navBarHeight = option.size.height
-				//如果没获取到
-				if (navBarHeight === 0) loadWebviewHeight()
-				else {
-					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
-				}
-			}
-		})
-	} else {
-		//隐藏titleBar
-		webviewHeight.value = uni.getSystemInfoSync().windowHeight
-	}
-
-}, 200)
-
-//展示titlebar
-const showTitleBar = ref<boolean>(true)
-const hideTitleBar = (hide: boolean) => {
-	if (hide) {
-		showTitleBar.value = false
-	} else {
-		showTitleBar.value = true
-	}
-	loadWebviewHeight()
-}
-
+//webview原生控件
 const webview = ref(null)
 //webview的配置
 const webviewConfig = ref<IWebviewItem>()
-
-//messgae
-const onMessage = (e: IMessageResult) => {
-	// ToastModule.show({
-	// 	text: JSON.stringify(e)
-	// })
-	console.log(e)
-}
-
 
 //加载时调用
 onLoad((e: any) => {
@@ -123,14 +75,19 @@ onLoad((e: any) => {
 		navTitle.value = webviewConfig.value.title
 	} catch { }
 })
-
+//加载webview的配置
+onReady(() => {
+	loadWebviewHeight()
+})
+//取消事件监听
+onUnmounted(() => {
+	// uni.offKeyboardHeightChange(listenKeyboard)
+})
 
 //拦截的url
 const interceptUrl = (e: IUrlLoadingPaternResult) => {
 	console.log(e)
 }
-//标题
-const navTitle = ref<string>("")
 
 //标题更新了
 const titleUpdate = (e: ITitleUpdateResult) => {
@@ -138,29 +95,48 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 	//如果可以changeTitle
 	if (webviewConfig.value?.titleChange) navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
 }
+
+//页面加载异常
+const pageError = (e: IPageErrorResult) => {
+	console.log(e)
+}
+//打开新窗口
+const onNewWindow = (e: IOnNewWindowResult) => {
+	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
+}
+
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
-	// webview.value.send(JSON.stringify({
-	// 	code: 0,
-	// 	msg: "ok",
-	// 	data:{}
-	// }))
-
-	// webview.value.callHandler({
-	// 	name: "123",
-	// 	data: JSON.stringify({
-	// 		code: '111',
-	// 		msg: "9999"
-	// 	})
-	// }, (res) => {
-	// 	console.log(res)
-	// })
-	// console.log(e)
-
 	// webview.value.getUrl().then(url => {
 	// 	console.log(url);
 	// })
 	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
+}
+
+// 打开操作菜单
+const openMenuSheet = () => {
+	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+		content: '本页面由login.douyeblog.top提供',
+		items: ['刷新', '关闭', '在浏览器中打开', '分享到QQ', '分享到QQ空间', '分享到新浪微博', '其他分享', '复制链接']
+	}, (res) => {
+		console.log(res.data)
+	})
+}
+
+//打开外部应用
+const onScheme = (e: IOnSchemeResult) => {
+	console.log(e)
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		okText: '打开',
+		cancelText: '取消',
+		cancelable: true,
+		content: '网页请求打开应用',
+		title: '提示'
+	}, (res) => {
+		if (res.data?.type === "ok") {
+			plus.runtime.openURL(e.url)
+		}
+	})
 }
 
 //下载
@@ -169,7 +145,7 @@ const onDownload = (e: IDownloadResult) => {
 	const filesize: string = fileSize(e.contentLength)
 	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
 		items: ['下载', '下载并打开', '跳转外部下载', '取消'],
-		content: `下载 ${fileName}(${filesize})`
+		content: `${fileName}(${filesize})`
 	}, (res) => {
 		if (res.data?.type !== "ok") return
 		if (res.data?.which === 0) {
@@ -181,21 +157,6 @@ const onDownload = (e: IDownloadResult) => {
 		}
 	})
 }
-
-//页面加载异常
-const pageError = (e: IPageErrorResult) => {
-	console.log(e)
-}
-//打开新窗口
-const onNewWindow = (e: IOnNewWindowResult) => {
-	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
-}
-//页面的链接
-const src = ref("")
-//加载webview的配置
-onReady(() => {
-	loadWebviewHeight()
-})
 //图片点击
 const onImageClick = (e: IOnImageClickResult) => {
 	//如果为点击预览图片
@@ -246,30 +207,57 @@ const onImagePress = (e: IOnImagePressResult) => {
 	}
 }
 
-// 打开操作菜单
-const openMenuSheet = () => {
-	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
-		content: '本页面由login.douyeblog.top提供',
-		items: ['刷新', '关闭', '在浏览器中打开', '分享到QQ', '分享到QQ空间', '分享到新浪微博', '其他分享', '复制链接']
-	}, (res) => {
-		console.log(res.data)
-	})
+//页面的链接
+const src = ref("")
+//标题
+const navTitle = ref<string>("")
+//#region 界面高度相关
+const dom = uni.requireNativePlugin("dom")
+//webview的高度
+const webviewHeight = ref(0)
+//webview的style样式
+const webviewStyle = reactive({
+	progress: {
+		color: theme.getColor("primary").value
+	}
+})
+const navBarHeight = ref<number>(0)
+//键盘事件
+// const listenKeyboard = (res: { height: number }) => {
+// 	loadWebviewHeight(res.height)
+// }
+// uni.onKeyboardHeightChange(listenKeyboard)
+//加载webview的高度
+const loadWebviewHeight = throttle(function (keyboardHeight: number = 0) {
+	keyboardHeight = typeof keyboardHeight === "number" ? keyboardHeight : 0
+	//加载高度
+	if (showTitleBar.value) {
+		dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
+			if (option && option.result) {
+				navBarHeight.value = option.size.height
+				//如果没获取到
+				if (navBarHeight.value === 0) loadWebviewHeight()
+				else {
+					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight.value - keyboardHeight
+				}
+			}
+		})
+	} else {
+		//隐藏titleBar
+		webviewHeight.value = uni.getSystemInfoSync().windowHeight - keyboardHeight
+	}
+}, 200)
+//展示titlebar
+const showTitleBar = ref<boolean>(true)
+const hideTitleBar = (hide: boolean) => {
+	if (hide) {
+		showTitleBar.value = false
+	} else {
+		showTitleBar.value = true
+	}
+	loadWebviewHeight()
 }
-
-//打开外部应用
-const onSchema = (e: IOnSchemeResult) => {
-	uni.$anydoor_native.Dialog_Module.showMessageDialog({
-		okText: '打开',
-		cancelText: '取消',
-		cancelable: true,
-		content: '网页请求打开应用',
-		title: '提示'
-	}, (res) => {
-		if (res.data?.type === "ok") {
-			plus.runtime.openURL(e.url)
-		}
-	})
-}
+//#endregion
 </script>
 
 <style lang="scss" scoped>

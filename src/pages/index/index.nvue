@@ -91,45 +91,9 @@
 					<anydoor-label labelText="文章" rectColor="primary" :actionFontSize="27"
 						@click="linkTo(ROUTE_PATH.ARTICLE_LIST)"></anydoor-label>
 					<anydoorNewsItem :skeleton="true" v-if="!articleComplete"></anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
-					</anydoorNewsItem>
-					<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
-						img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
-						:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
+					<anydoorNewsItem v-for="item in articleList" :key="item.id" @click="toArticleDetail(item)"
+						:title="item.title"
+						:infoList="[item.date, item.author, ...((item.tag || '').split(',')).join(' ')]">
 					</anydoorNewsItem>
 				</view>
 			</template>
@@ -146,8 +110,8 @@ import {
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmInput from "@/tmui/components/tm-input/tm-input.vue"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
-import tmText from "@/tmui/components/tm-text/tm-text"
-import tmCarousel from "@/tmui/components/tm-carousel/tm-carousel"
+import tmText from "@/tmui/components/tm-text/tm-text.vue"
+import tmCarousel from "@/tmui/components/tm-carousel/tm-carousel.vue"
 import tmScrollx from "@/tmui/components/tm-scrollx/tm-scrollx.vue"
 import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
 import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
@@ -182,7 +146,7 @@ import { listTip } from "@/common/service/tip"
 import { linkTo, menuLink } from "@/common/utils/link"
 const {
 	proxy
-} = getCurrentInstance();
+} = getCurrentInstance() as any
 
 import {
 	throttle
@@ -193,7 +157,7 @@ import CODE from "@/common/define/code"
 import { noticeFilter, toNoticeDetail } from "@/common/utils/notice"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { listArticle } from "@/common/service/article"
-import { articleFilter } from "@/common/utils/article"
+import { articleFilter, toArticleDetail } from "@/common/utils/article"
 import useJiaowuStore from "@/store/jiaowu"
 import Scan from "@/common/utils/Scan"
 
@@ -245,7 +209,8 @@ const refresh = async () => {
 		getSwiperList(),
 		getTipList(),
 		getIndexMenuList(),
-		getNotice()
+		getNotice(),
+		getArticle()
 	])
 	refreshComplete.value = true
 }
@@ -322,6 +287,7 @@ const getNotice = async () => {
 		})
 		if (data.code === CODE.SUCCESS) {
 			noticeList.value = data.data.map(noticeFilter)
+			uni.setStorageSync(UNI_STORAGE.NOTICE_INDEX, noticeList.value)
 		}
 	} catch { }
 	noticeComplete.value = true
@@ -344,7 +310,7 @@ const getArticle = async () => {
 			articleList.value = data.data.map(articleFilter)
 		}
 	} catch { }
-	noticeComplete.value = true
+	articleComplete.value = true
 
 }
 </script>

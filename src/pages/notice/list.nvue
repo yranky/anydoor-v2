@@ -29,7 +29,7 @@ import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import anydoorNewsItem from "@/components/anydoor-news-item/anydoor-news-item.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line"
+import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line.vue"
 import {
 	ref,
 	getCurrentInstance,

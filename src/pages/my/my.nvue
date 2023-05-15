@@ -24,7 +24,7 @@
 				<view class="user-info flex flex-row" @click="toUserInfo">
 					<view class="user-avatar">
 						<!-- 120rpx margin 20rpx 40rpx -->
-						<tm-avatar :img="userStore.avatar" :round="15" :size="120"></tm-avatar>
+						<tm-avatar :img="userStore.avatar || '/static/logo/logo.png'" :round="15" :size="120"></tm-avatar>
 					</view>
 					<view class="user-info flex-1 flex flex-col">
 						<view class="user-info-username">
