@@ -64,6 +64,7 @@ import useJiaowuStore from "@/store/jiaowu"
 import { listArticle, typeArticle } from "@/common/service/article"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { articleFilter, toArticleDetail } from "@/common/utils/article"
+import { triggerRef } from "vue"
 const {
 	proxy
 } = getCurrentInstance() as any
@@ -94,6 +95,7 @@ const limit = ref<number>(10)
 //获取通知列表
 const getArticleList = debounce(async (currentTab: number | string, isRefresh?: boolean, morePage?: number): Promise<void> => {
 	try {
+		console.log(jiaowuStore.jiaowuConfig.cid)
 		const data = await listArticle({
 			page: morePage !== undefined ? morePage : page.value,
 			limit: limit.value,
@@ -129,7 +131,6 @@ const getArticleList = debounce(async (currentTab: number | string, isRefresh?: 
 const getArticleType = debounce(async () => {
 	//加载缓存
 	tabList.value = uni.getStorageSync(UNI_STORAGE.ARTICLE_TYPE_LIST) || []
-	console.log(tabList.value)
 	try {
 		const data = await typeArticle({
 			cid: jiaowuStore.jiaowuConfig.cid
@@ -179,7 +180,8 @@ const retryList = (isRefresh: boolean = false) => {
 
 //获取当前的文章列表
 const currentArticleList = computed(() => {
-	return articleList.value[currentTab.value] || []
+	if (!(articleList.value[currentTab.value] instanceof Array)) articleList.value[currentTab.value] = []
+	return articleList.value[currentTab.value]
 })
 </script>
 
