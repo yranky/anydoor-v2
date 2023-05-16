@@ -29,26 +29,44 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use(
   (response: any) => {
     const res = response.data
-    // 定义8000为token失效 请求重发
+    // 8000是用户未登录
+    // 8001是token过期
+    // 8002是用户退出登录了
     if (res.code === 8000) {
+      //跳转登录,不提示
+      linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
+      return Promise.resolve(res)
+      //用户退出了
+    } else if (res.code === 8002) {
+      //提示用户身份过期，并退出登录
+      ToastModule.show({
+        text: "用户登录过期，请重新登录"
+      })
+      return User.getInstance().then(instance => {
+        return instance.logoutUserAccount()
+      }).then(() => {
+        //跳转登录页
+        return linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
+      }).then(() => {
+        return Promise.resolve(res)
+      })
+      //token过期了，就刷新token
+    } else if (res.code === 8001) {
       return refreshToken().then((e: restful) => {
         if (e.code === CODE.SUCCESS) {
           // 请求重发
           return service.request(response.config)
         } else {
           // 如果失败 则返回原来的 并且返回登录页
-          // 如果是refresh_token为空了或者refresh_token失效了
-          if (e.resCode === TYPE.EMPTY || e.resCode === 1806) {
+          // 如果是refresh_token为空了或者refresh_token失效了 1806:用户退出了登录,1804：token解析错误,不是有效的token
+          if (e.resCode === TYPE.EMPTY || e.resCode === 1806 || e.resCode === 1804) {
             // 清除token和refresh_token
             return User.getInstance().then(res => {
               return res.logoutUserAccount()
             }).then(() => {
               //跳转登录页
-              if (e.resCode === 1806) ToastModule.show({
+              ToastModule.show({
                 text: "用户登录过期，请重新登录"
-              })
-              else ToastModule.show({
-                text: "请先登录"
               })
               //跳转登录页
               return linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
@@ -57,20 +75,6 @@ service.interceptors.response.use(
             })
           }
         }
-      })
-      // 用户退出登录了或者refresh_token失效
-    } else if (res.code === 8001 || res.code === 1806) {
-      return User.getInstance().then(res => {
-        return res.logoutUserAccount()
-      }).then(() => {
-        //跳转登录页
-        ToastModule.show({
-          text: "用户登录过期，请重新登录"
-        })
-        //跳转登录页
-        return linkTo(ROUTE_PATH.LOGIN, {}, {}, false)
-      }).then(() => {
-        return Promise.resolve(res)
       })
     }
     return Promise.resolve(res)

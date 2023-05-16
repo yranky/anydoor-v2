@@ -308,6 +308,7 @@ const getArticle = async () => {
 		})
 		if (data.code === CODE.SUCCESS) {
 			articleList.value = data.data.map(articleFilter)
+	  		uni.setStorageSync(UNI_STORAGE.ARTICLE_INDEX,articleList.value)
 		}
 	} catch { }
 	articleComplete.value = true
