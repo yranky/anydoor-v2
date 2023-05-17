@@ -183,6 +183,16 @@
             }
             
         }
+        ,{
+            "path" : "pages/ext/qresult",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "扫码结果",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
     ],
 	"subPackages": [],
 	"preloadRule": [],

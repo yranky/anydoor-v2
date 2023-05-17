@@ -101,3 +101,41 @@ export async function linkBack(de: number = 1) {
         })
     })
 }
+
+//参数转换获取
+export function linkOptionsParse(options: any) {
+    try {
+        const data = JSON.parse(decodeURIComponent(options.data))
+        options['data'] = data || {}
+    } catch {
+        options['data'] = {}
+    }
+    return options
+}
+
+//获取hostname
+export function getHostnameByUrl(url: string) {
+    const protocolEnd = url.indexOf("://");
+    if (protocolEnd < 0) {
+        return "";
+    }
+    let hostnameStart = protocolEnd + 3;
+    let hostnameEnd = url.indexOf("/", hostnameStart);
+    if (hostnameEnd < 0) {
+        hostnameEnd = url.indexOf("?", hostnameStart);
+        if (hostnameEnd < 0) {
+            hostnameEnd = url.indexOf("#", hostnameStart);
+            if (hostnameEnd < 0) {
+                hostnameEnd = url.length;
+            }
+        }
+    }
+    let hostname = url.substring(hostnameStart, hostnameEnd);
+
+    const portStart = hostname.indexOf(":");
+    if (portStart >= 0) {
+        hostname = hostname.substring(0, portStart);
+    }
+
+    return hostname;
+}

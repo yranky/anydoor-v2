@@ -1,0 +1,23 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="扫码结果"></tm-navbar>
+		<anydoor-text :text="content"  style="margin:0 20rpx"/>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import { onLoad } from "@dcloudio/uni-app"
+import { ref } from "vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { linkOptionsParse } from "@/common/utils/link"
+
+const content = ref<string>("")
+onLoad((options: any) => {
+	const params=linkOptionsParse(options)
+	content.value = params.data.result || ""
+})
+</script>
+
+<style lang="scss" scoped></style>

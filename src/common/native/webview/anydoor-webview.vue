@@ -31,7 +31,7 @@ import {
 import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
 import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
-import { ICallback } from "./anydoor-webview-bridge/types"
+import { ICallback } from "@/common/webviewHandler/action/types"
 
 const info = reactive({
 	error: {
@@ -69,7 +69,7 @@ import {
 	ACTION as NETErrorAction
 } from "@/common/network/NETError"
 import { onHide, onShow } from "@dcloudio/uni-app"
-import { IHandler } from "./anydoor-webview-bridge/IHandler"
+import { IHandler } from "@/common/webviewHandler/action/IHandler"
 
 //回调的值
 const messageData = ref<IMessageResult>()
@@ -123,7 +123,8 @@ const emits = defineEmits([
 	"onScheme",
 	"onError",
 	'onHideTitleBar',
-	"onShowTitleBar"
+	"onShowTitleBar",
+	"onHideTitleBarItem"
 ])
 /**
  * 回调

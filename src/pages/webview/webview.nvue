@@ -19,9 +19,10 @@
 				cache: 1,
 				progress: false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
-				@onImagePress="onImagePress" @onImageClick="onImageClick" @onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload"
-				@onScheme="onScheme">
+				@onNewWindow="onNewWindow" @onPageStart="pageStart" @onTitleUpdate="titleUpdate"
+				@onImagePress="onImagePress" @onImageClick="onImageClick" @onHideTitleBar="hideTitleBar(true)"
+				@onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload" @onScheme="onScheme"
+				@onHideTitleBarItem="hideTitleBarItem">
 			</anydoor-webview>
 		</view>
 	</tm-app>
@@ -48,9 +49,10 @@ import {
 	onLoad
 } from "@dcloudio/uni-app"
 import {
+	cloneDeep,
 	throttle
 } from "lodash"
-import { linkTo } from "@/common/utils/link"
+import { getHostnameByUrl, linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
@@ -59,6 +61,8 @@ import { getFileNameFromDownload } from "@/common/utils/fileName"
 import fileSize from "@/common/utils/fileSize"
 import DownloadModule from "@/common/native/download/DownloadModule"
 import { onUnmounted } from "vue"
+import { MENU_ITEM, menuItemDetail } from "@/common/webviewHandler/action/IFun"
+import { webviewMenuHandler } from "@/common/webviewHandler/webTitleBar"
 const {
 	proxy
 } = getCurrentInstance() as any
@@ -95,31 +99,64 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 	//如果可以changeTitle
 	if (webviewConfig.value?.titleChange) navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
 }
-
+const menuItemTitle = ref<string[]>([])
+const menuItem = ref<MENU_ITEM[]>([])
+const hideItem = ref<MENU_ITEM[]>([])
 //页面加载异常
-const pageError = (e: IPageErrorResult) => {
-	console.log(e)
+const pageStart = (e: IPageReadyResult) => {
+	//复原
+	menuItem.value = [MENU_ITEM.FRESH, MENU_ITEM.CLOSE]
+}
+//隐藏titleBarItem
+const hideTitleBarItem = (e: MENU_ITEM[]) => {
+	hideItem.value = e || []
+}
+// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
+//加载完成之后，定义拦截
+const pageReady = (e: IPageReadyResult) => {
+
 }
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
 	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
 }
-
-//加载完成之后，定义拦截
-const pageReady = (e: IPageReadyResult) => {
-	// webview.value.getUrl().then(url => {
-	// 	console.log(url);
-	// })
-	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
+//更新菜单项
+const updateMenuItem = () => {
+	//处理menuItem
+	menuItemTitle.value = []
+	menuItem.value = [];
+	// 获取所有的menuItem
+	(Object.keys(menuItemDetail) as MENU_ITEM[]).map((item: MENU_ITEM) => {
+		if (hideItem.value.indexOf(menuItemDetail[item].id) <= -1) {
+			menuItemTitle.value.push(menuItemDetail[item].name)
+			menuItem.value.push(menuItemDetail[item].id)
+		}
+	})
 }
 
 // 打开操作菜单
 const openMenuSheet = () => {
-	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
-		content: '本页面由login.douyeblog.top提供',
-		items: ['刷新', '关闭', '在浏览器中打开', '分享到QQ', '分享到QQ空间', '分享到新浪微博', '其他分享', '复制链接']
-	}, (res) => {
-		console.log(res.data)
+	updateMenuItem()
+	const menuItemIds = cloneDeep(menuItem.value)
+	webview.value && (webview.value as any).getUrl().then((res: string | undefined) => {
+		let hostname = getHostnameByUrl(res || "")
+		//去除掉应用的
+		if (hostname.endsWith("douyeblog.top") || hostname.endsWith("anydoor.top") || hostname.endsWith("douye.top")) {
+			hostname = ""
+		}
+		uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+			content: hostname ? `本页面由 ${hostname} 提供` : "",
+			items: cloneDeep(menuItemTitle.value)
+		}, (res) => {
+			if (res.data?.type === "ok") {
+				return webviewMenuHandler(menuItemIds[(res.data as any).which as number], webview.value)
+			}
+			return Promise.reject()
+		})
+	}).catch((e: any) => {
+		ToastModule.show({
+			text: '打开失败!' + e
+		})
 	})
 }
 

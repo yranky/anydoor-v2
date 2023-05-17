@@ -67,7 +67,7 @@ interface IShowWaitingDialogOption {
 }
 
 interface IHideWaitingDialogDialogOption {
-    type: 'cancel' | 'ok' | 'mask'
+    // type: 'cancel' | 'ok' | 'mask'
 }
 
 

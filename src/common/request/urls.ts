@@ -9,7 +9,7 @@
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 import url from './model/url'
-import { isUndefined } from 'lodash'
+import { isUndefined, truncate } from 'lodash'
 
 const BASE_URL = 'http://192.168.124.9:10001'
 
@@ -125,7 +125,13 @@ const urls: Array<url> = [
     url: BASE_URL + '/api/user/info',
     token: true
   },
-  //用户信息
+  //扫码登录
+  {
+    name: 'user_scan_login',
+    url: BASE_URL + '/api/user/scan',
+    token: true
+  },
+  //登录中心
   {
     name: 'login_center',
     url: BASE_URL + '/api/auth/center',

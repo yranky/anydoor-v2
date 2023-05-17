@@ -3,13 +3,14 @@
 import { toRefs } from 'vue';
 import { IMessageResult, IAnydoorWebviewRef } from '../IAnydoorWebview';
 import { watch } from 'vue';
-import { ICallback, ISend } from './types';
-import WebviewAction from './WebviewAction';
+import { ICallback, ISend } from '@/common/webviewHandler/action/types';
+import WebviewAction from '@/common/webviewHandler/action/WebviewAction';
 
 const props = defineProps(['messageData', 'mWebview','emits'])
 
 const emits = defineEmits(['update:callbackMessage'])
 
+// @ts-ignore
 const { messageData, callbackMessage, mWebview } = toRefs<{ messageData: IMessageResult, callbackMessage: ICallback<any>, mWebview: IAnydoorWebviewRef }>(props)
 
 const webviewAction = new WebviewAction()
