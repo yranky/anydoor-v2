@@ -35,20 +35,20 @@
 			</template>
 			<template #content>
 				<!-- 轮播 -->
-				<view class="index-carousel-box round-5" style="margin: 35rpx;">
+				<view class="index-carousel-box round-5" style="margin: 35rpx;" v-if="swiperList.length > 0">
 					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
 						:height="350" :list="swiperList" align="left" @click="toSwiperDetail"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
 				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false"
-					:height="80" :max-length="1"></tm-alert>
+					:height="80" :max-length="1" v-if="tipList.length > 0"></tm-alert>
 
 				<!-- 功能列表 -->
-				<tm-scrollx :width="750" :height="140" color="primary" transprent>
+				<tm-scrollx :width="750" :height="140" color="primary" transprent v-if="menuList.length > 0">
 					<tm-grid :col="menuList.length" :width="150 * menuList.length" transprent>
-						<tm-grid-item v-for="(item, index) in menuList" :key="index" :height="140" :count="item.count"
-							@click="menuLink(item)">
-							<tm-image :width="110" :height="79" :src="item.path"></tm-image>
+						<tm-grid-item v-for="(item, index) in menuList" :key="index" :width="140" :height="140"
+							:count="item.count" @click="menuLink(item)">
+							<tm-image :width="79" :height="79" :src="item.path"></tm-image>
 							<tm-text :font-size="24" :label="item.title"></tm-text>
 						</tm-grid-item>
 					</tm-grid>
@@ -57,21 +57,25 @@
 				<!-- 今日课程 -->
 				<view style="margin: 15rpx 10rpx;">
 					<view class="lesson-tips flex flex-nowrap flex-row">
-						<anydoor-text text="7/24 周三" class="flex-1" lineHeight="50" :fontSize="30" color="primary2"
+						<anydoor-text :text="todayTimeStr" class="flex-1" lineHeight="50" :fontSize="30" color="primary2"
 							:lines="1" bold style="margin:0 20rpx"></anydoor-text>
-						<anydoor-text class="flex-2" text="111" :fontSize="25" lineHeight="50" color="grey" :lines="1"
+						<anydoor-text class="flex-2" text="" :fontSize="25" lineHeight="50" color="grey" :lines="1"
 							style="margin:0 20rpx;text-align: right;"></anydoor-text>
 					</view>
-					<anydoor-index-lesson time="第1-2节" lessonName="高等数学A2" lessonRoom="xxx楼701"></anydoor-index-lesson>
-					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
+					<anydoor-index-lesson v-for="item in currentDayLessonList" :dotColor="item.color"
+						:time="'第' + item.time.join(',') + '节'" :lessonName="item.name"
+						:lessonRoom="item.position"></anydoor-index-lesson>
+					<!-- <anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
 					</anydoor-index-lesson>
 					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
 					</anydoor-index-lesson>
 					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
 					</anydoor-index-lesson>
 					<anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
-					</anydoor-index-lesson>
-					<tm-divider align="center" label="今天没课~~~"></tm-divider>
+					</anydoor-index-lesson> -->
+					<tm-icon name="tmicon-shuaxin" :spin="true" v-if="currentDayLessonLoading"></tm-icon>
+					<tm-divider align="center" label="今天没课~~~"
+						v-if="currentDayLessonList.length === 0 && !currentDayLessonLoading"></tm-divider>
 				</view>
 
 				<!-- 通知 -->
@@ -125,7 +129,8 @@ import {
 import {
 	computed,
 	onMounted,
-	ref
+	ref,
+	watch
 } from "vue"
 import theme from "@/tmui/tool/theme/theme"
 
@@ -160,6 +165,9 @@ import { listArticle } from "@/common/service/article"
 import { articleFilter, toArticleDetail } from "@/common/utils/article"
 import useJiaowuStore from "@/store/jiaowu"
 import Scan from "@/common/utils/Scan"
+import { useLessonStore } from "@/store/lesson"
+import Lesson from "@/common/database/Lesson/Lesson"
+import dayjs from "dayjs"
 
 const jiaowuStore = useJiaowuStore()
 
@@ -199,6 +207,11 @@ const swiperList = ref<any>([])
 onLoad(() => {
 	refresh()
 })
+
+onShow(() => {
+	getTime()
+})
+
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
 
@@ -240,7 +253,9 @@ const getSwiperList = async () => {
 	//首先读取缓存
 	swiperList.value = uni.getStorageSync(UNI_STORAGE.SWIPER_LIST) || []
 	try {
-		const data = await listSwiper({})
+		const data = await listSwiper({
+			cid: jiaowuStore.jiaowuConfig.cid
+		})
 		swiperList.value = (data.data || []).map((item: any) => {
 			const result = {
 				sid: item.sid,
@@ -251,7 +266,7 @@ const getSwiperList = async () => {
 				title: item.title,
 				link: item.url,
 				link_type: item.link_type,
-				params:item.params
+				params: item.params
 			}
 			if (item.type === SOURCE_TYPE.VIDEO) {
 				merge(result, {
@@ -266,7 +281,7 @@ const getSwiperList = async () => {
 }
 
 //去轮播图详情
-const toSwiperDetail = (index: number)=>{
+const toSwiperDetail = (index: number) => {
 	const item = swiperList.value[index]
 	if (item) {
 		swiperLink(item)
@@ -278,7 +293,9 @@ const getIndexMenuList = async () => {
 	//读取菜单列表
 	menuList.value = uni.getStorageSync(UNI_STORAGE.MENU_INDEX_LIST) || []
 	try {
-		const data = await listIndexMenu({})
+		const data = await listIndexMenu({
+			cid: useJiaowuStore().jiaowuConfig.cid
+		})
 		if (data.length > 0) menuList.value = data
 	} catch { }
 }
@@ -319,11 +336,32 @@ const getArticle = async () => {
 		})
 		if (data.code === CODE.SUCCESS) {
 			articleList.value = data.data.map(articleFilter)
-	  		uni.setStorageSync(UNI_STORAGE.ARTICLE_INDEX,articleList.value)
+			uni.setStorageSync(UNI_STORAGE.ARTICLE_INDEX, articleList.value)
 		}
 	} catch { }
 	articleComplete.value = true
+}
 
+
+//今日课程相关
+const currentDayLessonList = ref<any>([])
+const currentDayLessonLoading = ref<boolean>(true)
+const getCurrentDayLessonList = async () => {
+	currentDayLessonList.value = (await Lesson.getInstance()).getCurrentDayLesson()
+	currentDayLessonLoading.value = false
+}
+
+const lessonStore = useLessonStore()
+watch(() => lessonStore.initing, async (val) => {
+	if (val === false) {
+		getCurrentDayLessonList()
+	}
+}, { immediate: true })
+
+const todayTimeStr = ref<string>()
+const getTime = () => {
+	const weekMapper = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+	todayTimeStr.value = `${dayjs().format("MM/DD")} ${weekMapper[dayjs().day()]}`
 }
 </script>
 

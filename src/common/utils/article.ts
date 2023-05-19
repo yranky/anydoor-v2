@@ -11,7 +11,7 @@ export const articleFilter = (item: any) => {
         date: diffTwoDays(item.release_time),
         sort: item.sort,
         author: item.author,
-        url: item.ext.url,
+        url: item.url || item.ext.url,
         external: item.ext.external
     }
 }

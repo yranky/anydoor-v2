@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-14 10:03:21
+ * @LastEditTime: 2023-05-19 23:46:29
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -18,8 +18,8 @@
 			<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 				<template #navBar>
 					<!-- 课程表 -->
-					<tm-navbar :title="'第' + currentShowWeeks + '周'" transprent></tm-navbar>
-					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight">
+					<tm-navbar :title="'第' + currentShowWeeks + '周'" transprent hideBack hideHome></tm-navbar>
+					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight" :currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks">
 					</anydoorLessonDate>
 				</template>
 				<template #content>
@@ -60,6 +60,8 @@ import { onLoad, onReady, onShow } from "@dcloudio/uni-app"
 import { useLessonStore } from "@/store/lesson"
 import { watch } from "vue"
 import useJiaowuStore from "@/store/jiaowu"
+import AnydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { cloneDeep } from "lodash"
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 const store = useTmpiniaStore()
@@ -212,7 +214,7 @@ onReady(() => {
 	watch(() => lessonStore.initing, (val) => {
 		if (val === true) {
 			uni.$anydoor_native.Dialog_Module.showWaitingDialog({
-				title:'加载中，请稍等'
+				title: '加载中，请稍等'
 			})
 		} else {
 			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})

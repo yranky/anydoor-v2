@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 21:34:45
+ * @LastEditTime: 2023-05-19 21:52:30
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -103,12 +103,11 @@ export default class User {
                 `,
                 //插入一条新的
                 `
-                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext,data) values (0,${username},'${encryptData}','${encodeURIComponent(JSON.stringify({
+                insert into  ${USER_TABLES_NAME.JAIOWU} (uid,username,password,ext,data) values (0,'${username}','${encryptData}','${encodeURIComponent(JSON.stringify({
                     ...ext,
                     update_time: dayjs().format("YYYY/MM/DD HH:mm:ss")
                 }))}','${encodeURIComponent(JSON.stringify(jw_data))}')
              `], ERROR_TARGET.USER_CLASS)
-
             if (current?.code !== SQLITE_STATUS_CODE.SUCCESS) {
                 ToastModule.show({ text: "教务登录出现问题!" })
                 return false

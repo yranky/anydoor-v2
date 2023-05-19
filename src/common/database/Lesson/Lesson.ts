@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 21:45:08
+ * @LastEditTime: 2023-05-19 23:53:49
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -59,27 +59,31 @@ export default class Lesson {
     async updateSemester(data: ISemesterItem[], company_id: string, getUpdated: boolean = true): Promise<ISemesterItem[]> {
         if (!(data instanceof Array)) return []
         //先查询已有的学期
-        const res = await this.sql?.selectSql(`select * from ${LESSON_TABLES_NAME.SEMESTER}`, ERROR_TARGET.LESSON_CLASS)
-        //学期数据
-        let semester_data: ISemesterItem[] = []
-        if (res && res?.code === SQLITE_STATUS_CODE.SUCCESS) {
-            semester_data = Filter_ISemester(res.data) as ISemesterItem[]
-        }
+        // const res = await this.sql?.selectSql(`select * from ${LESSON_TABLES_NAME.SEMESTER}`, ERROR_TARGET.LESSON_CLASS)
+        // //学期数据
+        // let semester_data: ISemesterItem[] = []
+        // if (res && res?.code === SQLITE_STATUS_CODE.SUCCESS) {
+        //     semester_data = Filter_ISemester(res.data) as ISemesterItem[]
+        // }
+        await this.sql?.executeSql([
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.SEMESTER].drop || '',
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.SEMESTER].init,
+        ])
         //比对，并生成sql
         const sqls: string[] = data.map((item: ISemesterItem) => {
             //如果已经存在，则进行更新
-            const disUnique: ISemesterItem | undefined = semester_data.find((s_item: ISemesterItem) => s_item.name === item.name && s_item.company_id === company_id)
-            if (disUnique) {
-                const filter_item: ISemesterItem = Filter_ISemester(mergeItem(disUnique, item)) as ISemesterItem
-                return `
-                update  ${LESSON_TABLES_NAME.SEMESTER} set name='${filter_item.name}',ext = '${encodeURIComponent(JSON.stringify(filter_item.ext))}' where id='${filter_item.id}'
-                `
-            } else {
-                const filter_item: ISemesterItem = Filter_ISemester(item) as ISemesterItem
-                return `
+            // const disUnique: ISemesterItem | undefined = semester_data.find((s_item: ISemesterItem) => s_item.name === item.name && s_item.company_id === company_id)
+            // if (disUnique) {
+            //     const filter_item: ISemesterItem = Filter_ISemester(mergeItem(disUnique, item)) as ISemesterItem
+            //     return `
+            //     update  ${LESSON_TABLES_NAME.SEMESTER} set name='${filter_item.name}',ext = '${encodeURIComponent(JSON.stringify(filter_item.ext))}' where id='${filter_item.id}'
+            //     `
+            // } else {
+            const filter_item: ISemesterItem = Filter_ISemester(item) as ISemesterItem
+            return `
                 insert into ${LESSON_TABLES_NAME.SEMESTER} (name,tag,ext,company_id) values ('${filter_item.name}','${filter_item.tag}','${encodeURIComponent(JSON.stringify(filter_item.ext))}','${company_id}')
                 `
-            }
+            // }
         })
         //执行sql语句
         const res_update = await this.sql?.executeSql(sqls, ERROR_TARGET.LESSON_CLASS)
@@ -221,73 +225,77 @@ export default class Lesson {
 
     //获取更新教务信息
     async freshTimeTable(term: string): Promise<boolean> {
-        const store = useJiaowuStore()
-        const username = store.jiaowuAccount.username
-        const password = store.jiaowuAccount.password
+        try {
+            const store = useJiaowuStore()
+            const username = store.jiaowuAccount.username
+            const password = store.jiaowuAccount.password
 
-        if (!store.jiaowuConfig.cid) return false
-        const encrypt = new Encrypt()
+            if (!store.jiaowuConfig.cid) return false
+            const encrypt = new Encrypt()
 
-        //教务配置重新配置
-        const jw_config_data = await jwConfig({
-            cid: store.jiaowuConfig.cid
-        })
-        //未成功，终止流程
-        if (jw_config_data.code !== CODE.SUCCESS) return false
-        encrypt.setPublicKey(jw_config_data.data.public_key)
-        const password_encrypt = encrypt.encrypt(password)
-        const data = await jwTimetable({
-            username,
-            password: password_encrypt,
-            cid: store.jiaowuConfig.cid,
-            term
-        })
-        //获取信息
-        if (data.code === CODE.SUCCESS) {
-            //#region 学期信息
-            const semester_origin = data.data.semester
-            const semester = (Object.keys(semester_origin) || []).map((item: any) => {
-                return {
-                    name: semester_origin[item],
-                    tag: item,
-                    company_id: store.jiaowuConfig.cid
-                }
+            //教务配置重新配置
+            const jw_config_data = await jwConfig({
+                cid: store.jiaowuConfig.cid
             })
-            //更新到数据库
-            await this.updateSemester(semester as ISemesterItem[], store.jiaowuConfig.cid, false)
-            //#endregion
-            //#region 当前学期
-            const semester_current_origin = data.data.semesterNow
+            //未成功，终止流程
+            if (jw_config_data.code !== CODE.SUCCESS) return false
+            encrypt.setPublicKey(jw_config_data.data.public_key)
+            const password_encrypt = encrypt.encrypt(password)
+            const data = await jwTimetable({
+                username,
+                password: password_encrypt,
+                cid: store.jiaowuConfig.cid,
+                term
+            })
+            //获取信息
+            if (data.code === CODE.SUCCESS) {
+                //#region 学期信息
+                const semester_origin = data.data.semester
+                const semester = (Object.keys(semester_origin) || []).map((item: any) => {
+                    return {
+                        name: semester_origin[item],
+                        tag: item,
+                        company_id: store.jiaowuConfig.cid
+                    }
+                })
+                //更新到数据库
+                await this.updateSemester(semester as ISemesterItem[], store.jiaowuConfig.cid, false)
+                //#endregion
+                //#region 当前学期
+                const semester_current_origin = data.data.semesterNow
 
-            let semester_current = term
-            if (term === "") {
-                semester_current = (semester_current_origin || {}).value || ""
+                let semester_current = term
+                if (term === "") {
+                    semester_current = (semester_current_origin || {}).value || ""
+                }
+
+                //#endregion
+                //更新课程名称信息
+                //#region 课程名称
+                const lesson_name_origin = data.data.datalist
+                const lesson_name: ILessonNameItem[] = Array.from(new Set((lesson_name_origin || []).map((item: any) => item.name))).map((item) => ({
+                    name: item,
+                    semester: semester_current
+                })) as ILessonNameItem[]
+                const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name, semester_current, store.jiaowuConfig.cid)
+                //更新课程名称信息
+                //#endregion
+                //#region 更新temp信息
+                await this.updateLessonTempStorage(data.data.datalist || [], lesson_name_result, semester_current, store.jiaowuConfig.cid)
+                //#endregion
+
+                //#region 更新record
+                await this.updateRecord(store.jiaowuConfig.cid, semester_current, data.data || {})
+                //#endregion
+                return true
+            } else {
+                ToastModule.show({ text: '（教务课程）数据更新失败' + data.msg })
+                return false
             }
-
-            //#endregion
-            //更新课程名称信息
-            //#region 课程名称
-            const lesson_name_origin = data.data.datalist
-            const lesson_name: ILessonNameItem[] = Array.from(new Set((lesson_name_origin || []).map((item: any) => item.name))).map((item) => ({
-                name: item,
-                semester: semester_current
-            })) as ILessonNameItem[]
-            const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name, semester_current, store.jiaowuConfig.cid)
-            //更新课程名称信息
-            //#endregion
-            //#region 更新temp信息
-            await this.updateLessonTempStorage(data.data.datalist || [], lesson_name_result, semester_current, store.jiaowuConfig.cid)
-            //#endregion
-
-            //#region 更新record
-            await this.updateRecord(store.jiaowuConfig.cid, semester_current, data.data || {})
-            //#endregion
-            return true
-        } else {
-            console.log(data)
-            ToastModule.show({ text: '（教务课程）数据更新失败' + data.msg })
-            return false
+        } catch (e: any) {
+            ToastModule.show({ text: '（教务课程）数据更新失败' + e })
         }
+        return false
     }
 
     //计算并设置当前的周次
@@ -309,6 +317,25 @@ export default class Lesson {
             //计算出了周次
             lessonStore.currentWeek = week + diff
         }
+    }
+
+    //获取当前周次的课程，必须等待加载完毕(initing=false)
+    getCurrentWeekLesson() {
+        const lessonStore = useLessonStore()
+        // const filter = 
+        return lessonStore.lessonList.filter(item => {
+            return item.weeks instanceof Array && item.weeks.indexOf(lessonStore.currentWeek) > 0
+        })
+    }
+
+    //获取今天的课程
+    getCurrentDayLesson() {
+        return this.getCurrentWeekLesson().filter(item => {
+            if (item.week == 0 || item.week == 7) {
+                return dayjs().day() == 0 ? true : false
+            }
+            return item.week && (item.week == dayjs().day())
+        })
     }
 
 

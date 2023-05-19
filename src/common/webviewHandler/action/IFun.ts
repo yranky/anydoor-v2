@@ -43,7 +43,7 @@ export const menuItemDetail: IMENU_ITEM_DETAIL = {
         id: MENU_ITEM.FRESH
     },
     [MENU_ITEM.CLOSE]: {
-        name: "关闭",
+        name: "退出",
         id: MENU_ITEM.CLOSE
     },
     [MENU_ITEM.OPEN_BROWSER]: {

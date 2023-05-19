@@ -304,7 +304,9 @@ const refresh = async () => {
 
 //我的部分的菜单
 const getMyMenu = async () => {
-	const data = await listMyMenu({})
+	const data = await listMyMenu({
+		cid:jiaowuStore.jiaowuConfig.cid
+	})
 	//菜单类型
 	jw_menu_list.value = data[MENU_TYPES.JW]
 	life_menu_list.value = data[MENU_TYPES.LIFE]

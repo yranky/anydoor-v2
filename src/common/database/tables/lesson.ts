@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:42:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 14:30:14
+ * @LastEditTime: 2023-05-19 22:45:36
  * @FilePath: \anydoor-v2\src\common\database\tables\lesson.ts
  * @Description: 
  * 
@@ -77,7 +77,10 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
             'company_id' text  NOT NULL,
             'ext' text
           )
-          `
+          `,
+    drop: `
+    delete from  ${LESSON_TABLES_NAME.SEMESTER}
+    `
   },
   [LESSON_TABLES_NAME.RECORDS]: {
     init: `
