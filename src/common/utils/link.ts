@@ -7,6 +7,12 @@ import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 export function menuLink(item: any) {
     menuLinkTo(item.url, item.params || [], item.link_type || '')
 }
+//轮播图跳转
+export function swiperLink(item: any) {
+    console.log(item)
+    menuLinkTo(item.link, item.params || [], item.link_type || '')
+}
+
 //菜单链接具体
 export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYPE) {
     //解析参数

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-05-16 21:25:51
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-17 11:25:06
+ * @LastEditTime: 2023-05-17 14:18:06
  * @FilePath: \anydoor-v2\src\common\webviewHandler\webTitleBar.ts
  * @Description: titlebar相关的
  * 
@@ -99,7 +99,7 @@ export function share(type: SHARE_TYPE, webview: any) {
     return new Promise((resolve) => {
         webview && webview.getUrl().then((url: string | undefined) => {
             webview.getTitle().then((title: string | undefined) => {
-                return resolve(Share.shareText(type, title || "", url || ""))
+                return resolve(Share.shareLink(type, title || "", url || ""))
             })
         })
     })

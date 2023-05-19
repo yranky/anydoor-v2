@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-14 10:05:11
+ * @LastEditTime: 2023-05-17 13:11:10
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -19,7 +19,6 @@ import { OpenImg } from "./Open"
 import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
 
 onLaunch(async function () {
-
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
 	if (userAgent && userAgent.indexOf("anydoor") <= -1) {
@@ -45,6 +44,13 @@ onLaunch(async function () {
 
 	//初始化课程
 	await initLesson()
+})
+onShow(() => {
+	const args= plus.runtime.arguments;
+	console.log(args)
+	if(args){
+		// 处理args参数，如直达到某新页面等
+	}
 })
 //应用隐藏
 onHide(() => {

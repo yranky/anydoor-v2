@@ -37,7 +37,7 @@
 				<!-- 轮播 -->
 				<view class="index-carousel-box round-5" style="margin: 35rpx;">
 					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
-						:height="350" :list="swiperList" align="left"></tm-carousel>
+						:height="350" :list="swiperList" align="left" @click="toSwiperDetail"></tm-carousel>
 				</view>
 				<!-- 全局提醒组件 -->
 				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false"
@@ -143,7 +143,7 @@ import { merge } from "lodash"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { listIndexMenu } from "@/common/service/menu"
 import { listTip } from "@/common/service/tip"
-import { linkTo, menuLink } from "@/common/utils/link"
+import { linkTo, menuLink, swiperLink } from "@/common/utils/link"
 const {
 	proxy
 } = getCurrentInstance() as any
@@ -249,7 +249,9 @@ const getSwiperList = async () => {
 				version: item.version,
 				description: item.description,
 				title: item.title,
-				link: item.url
+				link: item.url,
+				link_type: item.link_type,
+				params:item.params
 			}
 			if (item.type === SOURCE_TYPE.VIDEO) {
 				merge(result, {
@@ -262,6 +264,15 @@ const getSwiperList = async () => {
 		uni.setStorageSync(UNI_STORAGE.SWIPER_LIST, swiperList.value)
 	} catch { }
 }
+
+//去轮播图详情
+const toSwiperDetail = (index: number)=>{
+	const item = swiperList.value[index]
+	if (item) {
+		swiperLink(item)
+	}
+}
+
 //获取首页菜单列表
 const getIndexMenuList = async () => {
 	//读取菜单列表

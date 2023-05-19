@@ -19,7 +19,7 @@
 				cache: 1,
 				progress: false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-				@onNewWindow="onNewWindow" @onPageStart="pageStart" @onTitleUpdate="titleUpdate"
+				@onNewWindow="onNewWindow" @onPageStart="pageStart" @onTitleUpdate="titleUpdate" @onPageError="pageError"
 				@onImagePress="onImagePress" @onImageClick="onImageClick" @onHideTitleBar="hideTitleBar(true)"
 				@onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload" @onScheme="onScheme"
 				@onHideTitleBarItem="hideTitleBarItem">
@@ -106,6 +106,7 @@ const hideItem = ref<MENU_ITEM[]>([])
 const pageStart = (e: IPageReadyResult) => {
 	//复原
 	menuItem.value = [MENU_ITEM.FRESH, MENU_ITEM.CLOSE]
+	isPageError.value = false
 }
 //隐藏titleBarItem
 const hideTitleBarItem = (e: MENU_ITEM[]) => {
@@ -116,6 +117,10 @@ const hideTitleBarItem = (e: MENU_ITEM[]) => {
 const pageReady = (e: IPageReadyResult) => {
 
 }
+const isPageError = ref<boolean>(false)
+const pageError = () => {
+	isPageError.value = true
+}
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
 	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
@@ -125,13 +130,21 @@ const updateMenuItem = () => {
 	//处理menuItem
 	menuItemTitle.value = []
 	menuItem.value = [];
-	// 获取所有的menuItem
-	(Object.keys(menuItemDetail) as MENU_ITEM[]).map((item: MENU_ITEM) => {
-		if (hideItem.value.indexOf(menuItemDetail[item].id) <= -1) {
-			menuItemTitle.value.push(menuItemDetail[item].name)
-			menuItem.value.push(menuItemDetail[item].id)
-		}
-	})
+	// 获取所有的menuItem(页面没有出问题)
+	if (!isPageError.value) {
+		(Object.keys(menuItemDetail) as MENU_ITEM[]).map((item: MENU_ITEM) => {
+			if (hideItem.value.indexOf(menuItemDetail[item].id) <= -1) {
+				menuItemTitle.value.push(menuItemDetail[item].name)
+				menuItem.value.push(menuItemDetail[item].id)
+			}
+		})
+	} else {
+		//只保留刷新和关闭
+		menuItemTitle.value.push(menuItemDetail[MENU_ITEM.FRESH].name)
+		menuItem.value.push(MENU_ITEM.FRESH)
+		menuItemTitle.value.push(menuItemDetail[MENU_ITEM.CLOSE].name)
+		menuItem.value.push(MENU_ITEM.CLOSE)
+	}
 }
 
 // 打开操作菜单

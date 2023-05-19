@@ -231,7 +231,7 @@ const onBack = (e: IOnBackResult) => {
 }
 //拦截scheme
 const onScheme = (e: IOnSchemeResult) => {
-	if(e.url.startsWith("anydoorbridge://")) return
+	if (e.url.startsWith("anydoorbridge://")) return
 	emits("onScheme", e)
 }
 //插件try catch捕获的错误
@@ -295,6 +295,7 @@ const go = (step: string) => {
 }
 //重新加载当前页面
 const reload = () => {
+	info.error.show = false
 	return mWebview.value && mWebview.value.reload()
 }
 //加载url

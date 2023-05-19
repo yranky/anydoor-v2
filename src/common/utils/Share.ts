@@ -1,6 +1,6 @@
 export class Share {
     //分享文字
-    public static shareText(type: SHARE_TYPE, title: string, text: string) {
+    public static shareLink(type: SHARE_TYPE, title: string, text: string) {
         return new Promise((resolve, reject) => {
             if (type === SHARE_TYPE.QQ || type === SHARE_TYPE.WEIBO) {
                 uni.share({
@@ -8,13 +8,11 @@ export class Share {
                     title: title,
                     href: text,
                     type: SHARE_CONTENT_TYPE.TEXT,
-                    summary: text,
+                    summary: "第三方外链内容来自于第三方,与本平台(www.anydoor.top)无关",
                     success: function (res) {
-                        console.log(res)
                         resolve(res)
                     },
                     fail: function (err) {
-                        console.log(err)
                         reject(err)
                     }
                 })

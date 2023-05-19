@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 18:33:37
+ * @LastEditTime: 2023-05-18 23:06:13
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -11,7 +11,7 @@
 import url from './model/url'
 import { isUndefined, truncate } from 'lodash'
 
-const BASE_URL = 'http://192.168.124.9:10001'
+const BASE_URL = 'http://192.168.157.97:10001'
 
 // 链接
 const urls: Array<url> = [
@@ -25,6 +25,12 @@ const urls: Array<url> = [
   {
     name: 'user_login',
     url: BASE_URL + '/center/app_login',
+    token: false
+  },
+  //用户登录
+  {
+    name: 'user_union_login',
+    url: BASE_URL + '/center/app_login/union',
     token: false
   },
   //刷新令牌

@@ -26,7 +26,7 @@ export async function listIndexMenu(formData: any): Promise<any> {
                 device: item.device,
                 icon_type: item.icon_type
             }
-        });
+        })
         //保存到缓存
         uni.setStorageSync(UNI_STORAGE.MENU_INDEX_LIST, listData)
     }
