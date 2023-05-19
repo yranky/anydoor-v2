@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:27:24
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 16:41:52
+ * @LastEditTime: 2023-05-19 10:16:00
  * @FilePath: \anydoor-v2\src\pages\setting\setting.nvue
  * @Description: 我的设置
  * 
@@ -13,7 +13,7 @@
 		<tm-navbar title="我的设置"></tm-navbar>
 		<view style="margin: 10rpx 20rpx;">
 			<anydoor-text text="账号" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="账号与安全"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="账号与安全" @click="toWebDetail"> </tm-cell>
 			<anydoor-text text="隐私" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="权限设置"> </tm-cell>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="个人信息手机清单"> </tm-cell>
@@ -64,6 +64,7 @@ import { useUserStore } from "@/store/user"
 import tmButton from "@/tmui/components/tm-button/tm-button.vue"
 import { linkTo } from "@/common/utils/link"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { UCENTER_BASE_URL } from "@/common/request/urls"
 
 const store = useTmpiniaStore()
 const userStore=useUserStore()
@@ -131,5 +132,13 @@ const logout = async () => {
 		console.log(e)
 	}
 	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+}
+
+//跳转到修改信息
+const toWebDetail = (e: any) => {
+	linkTo(ROUTE_PATH.WEBVIEW, {
+		url: UCENTER_BASE_URL + "/user/home",
+		title: "账号与安全"
+	})
 }
 </script>

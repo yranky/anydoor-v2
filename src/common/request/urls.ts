@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-18 23:06:13
+ * @LastEditTime: 2023-05-19 10:07:49
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -12,6 +12,7 @@ import url from './model/url'
 import { isUndefined, truncate } from 'lodash'
 
 const BASE_URL = 'http://192.168.157.97:10001'
+export const UCENTER_BASE_URL = 'http://test.anydoor.douyeblog.top:10000'
 
 // 链接
 const urls: Array<url> = [
