@@ -197,7 +197,8 @@ import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import {
 	onLoad,
-	onPageScroll
+	onPageScroll,
+onShow
 } from "@dcloudio/uni-app"
 
 import { linkTo, menuLink } from "@/common/utils/link"
@@ -238,6 +239,10 @@ const life_menu_list = ref<any>([])
 const my_menu_list = ref<any>([])
 const recommend_menu_list = ref<any>([])
 
+
+onShow(() => {
+	getMyMenu()
+})
 
 //加载数据
 onLoad(() => {

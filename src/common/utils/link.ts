@@ -1,6 +1,7 @@
 import qs from "querystringify"
 import { NAVIGATE_TYPE } from "@/common/define/navigateType"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { BASE_LEGO_URL } from "../request/urls"
 
 //链接
 //菜单跳转
@@ -26,6 +27,11 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
         uni.$anydoor.MProgram?.open(path)
     } else if (type === NAVIGATE_TYPE.PAGE) {
         linkTo(path, option, option)
+    } else if (type === NAVIGATE_TYPE.LEGO) {
+        linkTo(ROUTE_PATH.WEBVIEW, {
+            ...option,
+            url: BASE_LEGO_URL + path
+        })
     } else {
         linkTo(ROUTE_PATH.WEBVIEW, {
             ...option,

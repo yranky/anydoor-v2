@@ -63,7 +63,7 @@
 							style="margin:0 20rpx;text-align: right;"></anydoor-text>
 					</view>
 					<anydoor-index-lesson v-for="item in currentDayLessonList" :dotColor="item.color"
-						:time="'第' + item.time.join(',') + '节'" :lessonName="item.name"
+						:time="'第' + item.time.join('-') + '节'" :lessonName="item.name"
 						:lessonRoom="item.position"></anydoor-index-lesson>
 					<!-- <anydoor-index-lesson time="第2-4节" dotColor="#ff2414" lessonName="高等数学A12" lessonRoom="xxx楼702">
 					</anydoor-index-lesson>
@@ -204,12 +204,14 @@ const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
 const swiperList = ref<any>([])
 
 //加载数据
-onLoad(() => {
-	refresh()
-})
+// onLoad(() => {
+// 	refresh()
+// })
 
 onShow(() => {
+	refresh()
 	getTime()
+	if(!currentDayLessonLoading.value) getCurrentDayLessonList()
 })
 
 //下拉刷新是否完成
