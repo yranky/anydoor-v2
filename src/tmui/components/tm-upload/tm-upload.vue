@@ -38,7 +38,7 @@
               class="relative flex-1 flex flex-col flex-col-bottom-start"
             >
               <view
-                v-if="!_disabled"
+                v-if="!_disabled&&props.showStatus"
                 :style="{
                   background: 'rgba(0, 0, 0, 0.5)',
                   width: itemWidth - 10 + 'rpx',
@@ -298,6 +298,10 @@ const props = defineProps({
   statusCode:{
     type: Number,
     default: 200,
+  },
+  showStatus:{
+    type:Boolean,
+    default:true
   }
 });
 /**

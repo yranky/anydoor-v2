@@ -195,7 +195,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-
+  beforeClose:{
+    type:Function,
+    default:null
+  }
 });
 const emits = defineEmits(["click", "close", "change", "update:checked"]);
 
@@ -282,9 +285,17 @@ function aniEnd() {
   show.value = false;
   emits("close");
 }
-function closeTag(e:TouchEvent|MouseEvent) {
+async function closeTag(e:TouchEvent|MouseEvent) {
   if (loading.value) return;
   e.stopPropagation();
+  let p:Function|boolean = true;
+  if(typeof props.beforeClose  == 'function'){
+    p = await props.beforeClose();
+    if(typeof p == 'function'){
+      p = await p();
+    }
+    if(!p) return;
+  }
   if (anitag.value) {
     anitag.value.play();
   } else {
