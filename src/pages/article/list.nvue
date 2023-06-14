@@ -95,7 +95,6 @@ const limit = ref<number>(10)
 //获取通知列表
 const getArticleList = debounce(async (currentTab: number | string, isRefresh?: boolean, morePage?: number): Promise<void> => {
 	try {
-		console.log(jiaowuStore.jiaowuConfig.cid)
 		const data = await listArticle({
 			page: morePage !== undefined ? morePage : page.value,
 			limit: limit.value,

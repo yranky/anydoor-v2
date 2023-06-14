@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 23:53:49
+ * @LastEditTime: 2023-06-14 15:37:55
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -143,6 +143,19 @@ export default class Lesson {
         const last_result = await this.getLessonName()
         return Filter_ILessonName(last_result?.data || []) as ILessonNameItem[]
     }
+
+    //更新课程颜色
+    async updateLessonNameColor(name:string, color:string, semester: string, company_id: string):Promise<boolean> {
+        const sqlStr=`update  ${LESSON_TABLES_NAME.NAME} set color='${color}' where name='${name}' and semester='${semester}' and company_id='${company_id}'`
+        const res_update = await this.sql?.executeSql([sqlStr], ERROR_TARGET.LESSON_CLASS)
+        if (res_update?.code !== SQLITE_STATUS_CODE.SUCCESS) {
+            ToastModule.show({ text: "课程名称颜色更新失败!(数据错误)" })
+            return false
+        }
+        return true
+    }
+
+
     //获取课程名称信息
     async getLessonName() {
         //最终的结果

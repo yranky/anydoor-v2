@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 23:46:29
+ * @LastEditTime: 2023-06-14 15:33:43
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -18,8 +18,32 @@
 			<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 				<template #navBar>
 					<!-- 课程表 -->
-					<tm-navbar :title="'第' + currentShowWeeks + '周'" transprent hideBack hideHome></tm-navbar>
-					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight" :currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks">
+					<tm-navbar transprent hideBack hideHome :leftWidth="250">
+						<template #left>
+							<anydoor-text class="flex-2" text="2023年春季学期" :lines="1"
+								style="margin:0 16rpx;text-align: right;"></anydoor-text>
+						</template>
+						<template #default>
+							<view class="flex flex-center flex-row">
+								<tm-icon customicon name="tmicon-angle-left" :fontSize="30"></tm-icon>
+								<anydoor-text class="flex-2" :text="'第' + currentShowWeeks + '周'" :lines="1" :fontSize="30"
+									style="margin:0 3rpx;text-align: right;"></anydoor-text>
+								<tm-icon customicon name="tmicon-angle-right" :fontSize="30"></tm-icon>
+							</view>
+						</template>
+						<template #right>
+							<view class="flex flex-center flex-row pl-16 pr-16">
+								<view class=" pl-16 pr-16">
+									<tm-icon customicon name="tmicon-plus"></tm-icon>
+								</view>
+								<view class=" pl-16 pr-16" @click="linkTo(ROUTE_PATH.LESSON_SETTING)">
+									<tm-icon customicon name="tmicon-cog"></tm-icon>
+								</view>
+							</view>
+						</template>
+					</tm-navbar>
+					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight"
+						:currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks">
 					</anydoorLessonDate>
 				</template>
 				<template #content>
@@ -45,6 +69,7 @@ import anydoorLessonView from "@/components/anydoor-lesson-view/anydoor-lesson-v
 import anydoorLessonDate from "@/components/anydoor-lesson-view/anydoor-lesson-date.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import {
 	ref,
 	computed,
@@ -62,6 +87,8 @@ import { watch } from "vue"
 import useJiaowuStore from "@/store/jiaowu"
 import AnydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import { cloneDeep } from "lodash"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 const store = useTmpiniaStore()
@@ -224,7 +251,6 @@ onReady(() => {
 
 onShow(async () => {
 	updateData()
-
 })
 
 

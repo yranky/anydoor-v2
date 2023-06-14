@@ -193,6 +193,36 @@
             }
             
         }
+        ,{
+            "path" : "pages/lesson/color",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "课程颜色",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+        ,{
+            "path" : "pages/lesson/edit",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "已编辑",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+        ,{
+            "path" : "pages/lesson/background",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "背景",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
     ],
 	"subPackages": [],
 	"preloadRule": [],

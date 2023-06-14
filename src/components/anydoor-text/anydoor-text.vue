@@ -129,7 +129,7 @@ const textColor = computed(() => {
 		return appTextColor.value
 	};
 	return 'rgba(34, 34, 34, 1.0)';
-});
+})
 </script>
 
 <style lang="scss" scoped></style>
