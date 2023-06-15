@@ -34,6 +34,7 @@
 				</view>
 			</template>
 			<template #content>
+
 				<!-- 轮播 -->
 				<view class="index-carousel-box round-5" style="margin: 35rpx;" v-if="swiperList.length > 0">
 					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
@@ -211,7 +212,7 @@ const swiperList = ref<any>([])
 onShow(() => {
 	refresh()
 	getTime()
-	if(!currentDayLessonLoading.value) getCurrentDayLessonList()
+	if (!currentDayLessonLoading.value) getCurrentDayLessonList()
 })
 
 //下拉刷新是否完成
@@ -405,5 +406,12 @@ const getTime = () => {
 
 .bg {
 	background-image: linear-gradient(to bottom, rgba(64, 169, 255, .5), rgba(102, 255, 0, 0));
+}
+
+.animation {
+	width: 750rpx;
+	height: 300rpx;
+	background-color: #FF0000;
+	margin-bottom: 20px;
 }
 </style>

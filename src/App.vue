@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-17 13:11:10
+ * @LastEditTime: 2023-06-15 00:27:57
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -10,15 +10,17 @@
 -->
 <script lang="ts" setup>
 import {
-onHide,
-onLaunch,
-onShow
+	onHide,
+	onLaunch,
+	onShow
 } from "@dcloudio/uni-app"
-import init, { initUser, initLesson,initFromStorageSync } from "./init"
+import init, { initUser, initLesson, initFromStorageSync } from "./init"
 import { OpenImg } from "./Open"
 import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
+import { getBatteryCapacity } from "@/uni_modules/anydoor-dialog"
 
 onLaunch(async function () {
+	getBatteryCapacity()
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
 	if (userAgent && userAgent.indexOf("anydoor") <= -1) {
@@ -26,7 +28,6 @@ onLaunch(async function () {
 		const info: any = uni.getAppBaseInfo()
 		plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 	}
-
 
 	// plus.navigator.setLogs(true)
 	//从storage初始化
@@ -46,9 +47,9 @@ onLaunch(async function () {
 	await initLesson()
 })
 onShow(() => {
-	const args= plus.runtime.arguments;
+	const args = plus.runtime.arguments;
 	console.log(args)
-	if(args){
+	if (args) {
 		// 处理args参数，如直达到某新页面等
 	}
 })

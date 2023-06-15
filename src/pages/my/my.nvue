@@ -18,18 +18,21 @@
 				</view>
 			</template>
 			<template #content>
+				<anydoor-video style="width: 750rpx;height: 442rpx;"
+					src="https://www.usc.edu.cn/__local/3/81/C8/FF52671018D19471F9A3153A4DA_CE2F8772_5664FF9.mp4?e=.mp4"></anydoor-video>
 				<!-- 填充占位元素 -->
 				<view :style="{ width: '100%', height: statusBarHeight, marginTop: '70rpx' }"></view>
 				<!-- 用户主信息 -->
 				<view class="user-info flex flex-row" @click="toUserInfo">
 					<view class="user-avatar">
 						<!-- 120rpx margin 20rpx 40rpx -->
-						<tm-avatar :img="userStore.avatar || '/static/logo/logo.png'" :round="15" :size="120"></tm-avatar>
+						<tm-avatar :img="userStore.avatar || '/static/logo/logo.png'" :round="15"
+							:size="120"></tm-avatar>
 					</view>
 					<view class="user-info flex-1 flex flex-col">
 						<view class="user-info-username">
-							<anydoor-text :text="!userStore.token ? '未登录' : userStore.nickname" :fontSize="40" :lines="1"
-								lineHeight="80" bold></anydoor-text>
+							<anydoor-text :text="!userStore.token ? '未登录' : userStore.nickname" :fontSize="40"
+								:lines="1" lineHeight="80" bold></anydoor-text>
 						</view>
 						<view class="user-info-other flex-1">
 							<anydoor-text text="" :fontSize="25" :lines="1" lineHeight="40" color="grey">
@@ -104,7 +107,8 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid" @click="menuLink(item)">
+						<tm-grid-item :height="150" v-for="item in jw_menu_list" :key="item.mid"
+							@click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -124,7 +128,8 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in life_menu_list" :key="item.mid" @click="menuLink(item)">
+						<tm-grid-item :height="150" v-for="item in life_menu_list" :key="item.mid"
+							@click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -144,7 +149,8 @@
 						</template>
 					</anydoor-label>
 					<tm-grid :width="750" :col="4" transprent>
-						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid" @click="menuLink(item)">
+						<tm-grid-item :height="150" v-for="item in my_menu_list" :key="item.mid"
+							@click="menuLink(item)">
 							<tm-icon :name="item.path" :font-size="58"></tm-icon>
 							<anydoor-text _class="pt-10" :text="item.title" :fontSize="22" :lines="1">
 							</anydoor-text>
@@ -173,207 +179,207 @@
 </template>
 
 <script lang="ts" setup>
-import {
-	getCurrentInstance,
-	computed,
-	ref,
-	onMounted
-} from "vue"
-import {
-	useTmpiniaStore
-} from '@/tmui/tool/lib/tmpinia';
+	import {
+		getCurrentInstance,
+		computed,
+		ref,
+		onMounted
+	} from "vue"
+	import {
+		useTmpiniaStore
+	} from '@/tmui/tool/lib/tmpinia';
 
-import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
-import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
-import tmAvatar from "@/tmui/components/tm-avatar/tm-avatar.vue"
-import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
-import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
-import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
-import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
-import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
-import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
-import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-import {
-	onLoad,
-	onPageScroll,
-onShow
-} from "@dcloudio/uni-app"
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
+	import tmSheet from "@/tmui/components/tm-sheet/tm-sheet.vue"
+	import tmAvatar from "@/tmui/components/tm-avatar/tm-avatar.vue"
+	import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+	import anydoorLabel from "@/components/anydoor-label/anydoor-label.vue"
+	import tmGridItem from "@/tmui/components/tm-grid-item/tm-grid-item.vue"
+	import tmGrid from "@/tmui/components/tm-grid/tm-grid.vue"
+	import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+	import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+	import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+	import {
+		onLoad,
+		onPageScroll,
+		onShow
+	} from "@dcloudio/uni-app"
 
-import { linkTo, menuLink } from "@/common/utils/link"
-import { listMyMenu } from "@/common/service/menu";
-import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
-import { MENU_TYPES } from "@/common/define/menuType";
-import useJiaowuStore from "@/store/jiaowu";
-import { ROUTE_PATH } from "@/router/ROUTE_PATH";
-const store = useTmpiniaStore();
+	import { linkTo, menuLink } from "@/common/utils/link"
+	import { listMyMenu } from "@/common/service/menu";
+	import { UNI_STORAGE } from "@/common/database/UNI_STORAGE";
+	import { MENU_TYPES } from "@/common/define/menuType";
+	import useJiaowuStore from "@/store/jiaowu";
+	import { ROUTE_PATH } from "@/router/ROUTE_PATH";
+	const store = useTmpiniaStore();
 
-//教务的store
-const jiaowuStore = useJiaowuStore()
+	//教务的store
+	const jiaowuStore = useJiaowuStore()
 
-//跳转教务Login
-const toJiaowuLogin = () => {
-	//已登录
-	if (jiaowuStore.isLogin) {
-		linkTo(ROUTE_PATH.JIAOWU_MY)
-	}
-	//未登录
-	else {
-		linkTo(ROUTE_PATH.COMPANY_SELECT)
-	}
-}
-
-const {
-	proxy
-}:any = getCurrentInstance()
-// 主题工具
-import theme from "@/tmui/tool/theme/theme"
-import { useUserStore } from "@/store/user";
-import User from "@/common/database/user/User";
-const userStore = useUserStore()
-
-//菜单项
-const jw_menu_list = ref<any>([])
-const life_menu_list = ref<any>([])
-const my_menu_list = ref<any>([])
-const recommend_menu_list = ref<any>([])
-
-
-onShow(() => {
-	getMyMenu()
-})
-
-//加载数据
-onLoad(() => {
-	loadCache()
-	getMyMenu()
-})
-//加载缓存
-const loadCache = () => {
-	//首先读取缓存
-	try {
-		//读取菜单列表
-		const menu_list_temp = uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST)
-		if (menu_list_temp) {
-			jw_menu_list.value = menu_list_temp[MENU_TYPES.JW]
-			life_menu_list.value = menu_list_temp[MENU_TYPES.LIFE]
-			my_menu_list.value = menu_list_temp[MENU_TYPES.MY]
-			recommend_menu_list.value = menu_list_temp[MENU_TYPES.RECOMMEND]
+	//跳转教务Login
+	const toJiaowuLogin = () => {
+		//已登录
+		if (jiaowuStore.isLogin) {
+			linkTo(ROUTE_PATH.JIAOWU_MY)
 		}
-	} catch { }
-}
-
-//账户背景
-const vipBg = computed(() => {
-	return theme.getColor("vipBg").value
-})
-//字体
-const vipTextColor = computed(() => {
-	return theme.getColor("vip").value
-})
-//导航栏背景
-// const navbarBg = computed(() => {
-// 	if (store.tmStore.dark)
-// 		return `rgba(0, 0, 0, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
-// 	else {
-// 		return `rgba(255, 255, 255, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
-// 	}
-// })
-// const pageScrollY = ref(0)
-// const num = 70
-// //页面滚动
-// onPageScroll((e) => {
-// 	throttle(() => {
-// 		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
-// 	}, 1000 / 120)()
-// })
-// //navbarHeight
-const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
-
-//下拉刷新是否完成
-const refreshComplete = ref<boolean>(true)
-// 页面刷新
-const refresh = async () => {
-	refreshComplete.value = false
-	//获取菜单
-	await getMyMenu()
-	//如果登录了
-	if (userStore.token) {
-		//刷新用户信息
-		await User.getInstance().then((res) => res.refreshUserInfo())
+		//未登录
+		else {
+			linkTo(ROUTE_PATH.COMPANY_SELECT)
+		}
 	}
-	refreshComplete.value = true
-}
+
+	const {
+		proxy
+	} : any = getCurrentInstance()
+	// 主题工具
+	import theme from "@/tmui/tool/theme/theme"
+	import { useUserStore } from "@/store/user";
+	import User from "@/common/database/user/User";
+	const userStore = useUserStore()
+
+	//菜单项
+	const jw_menu_list = ref<any>([])
+	const life_menu_list = ref<any>([])
+	const my_menu_list = ref<any>([])
+	const recommend_menu_list = ref<any>([])
 
 
-//我的部分的菜单
-const getMyMenu = async () => {
-	const data = await listMyMenu({
-		cid:jiaowuStore.jiaowuConfig.cid
+	onShow(() => {
+		getMyMenu()
 	})
-	//菜单类型
-	jw_menu_list.value = data[MENU_TYPES.JW]
-	life_menu_list.value = data[MENU_TYPES.LIFE]
-	my_menu_list.value = data[MENU_TYPES.MY]
-	recommend_menu_list.value = data[MENU_TYPES.RECOMMEND]
-}
 
-//跳转用户信息
-const toUserInfo = () => {
-	if (userStore.token) {
-		linkTo(ROUTE_PATH.DETAIL)
-	} else {
-		linkTo(ROUTE_PATH.LOGIN)
+	//加载数据
+	onLoad(() => {
+		loadCache()
+		getMyMenu()
+	})
+	//加载缓存
+	const loadCache = () => {
+		//首先读取缓存
+		try {
+			//读取菜单列表
+			const menu_list_temp = uni.getStorageSync(UNI_STORAGE.MENU_MY_LIST)
+			if (menu_list_temp) {
+				jw_menu_list.value = menu_list_temp[MENU_TYPES.JW]
+				life_menu_list.value = menu_list_temp[MENU_TYPES.LIFE]
+				my_menu_list.value = menu_list_temp[MENU_TYPES.MY]
+				recommend_menu_list.value = menu_list_temp[MENU_TYPES.RECOMMEND]
+			}
+		} catch { }
 	}
-}
 
-onLoad(() => {
-})
+	//账户背景
+	const vipBg = computed(() => {
+		return theme.getColor("vipBg").value
+	})
+	//字体
+	const vipTextColor = computed(() => {
+		return theme.getColor("vip").value
+	})
+	//导航栏背景
+	// const navbarBg = computed(() => {
+	// 	if (store.tmStore.dark)
+	// 		return `rgba(0, 0, 0, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
+	// 	else {
+	// 		return `rgba(255, 255, 255, ${pageScrollY.value / num > 1 ? 1 : pageScrollY.value / num})`
+	// 	}
+	// })
+	// const pageScrollY = ref(0)
+	// const num = 70
+	// //页面滚动
+	// onPageScroll((e) => {
+	// 	throttle(() => {
+	// 		pageScrollY.value = e.scrollTop >= num ? num : (e.scrollTop < 0 ? 0 : e.scrollTop)
+	// 	}, 1000 / 120)()
+	// })
+	// //navbarHeight
+	const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+
+	//下拉刷新是否完成
+	const refreshComplete = ref<boolean>(true)
+	// 页面刷新
+	const refresh = async () => {
+		refreshComplete.value = false
+		//获取菜单
+		await getMyMenu()
+		//如果登录了
+		if (userStore.token) {
+			//刷新用户信息
+			await User.getInstance().then((res) => res.refreshUserInfo())
+		}
+		refreshComplete.value = true
+	}
+
+
+	//我的部分的菜单
+	const getMyMenu = async () => {
+		const data = await listMyMenu({
+			cid: jiaowuStore.jiaowuConfig.cid
+		})
+		//菜单类型
+		jw_menu_list.value = data[MENU_TYPES.JW]
+		life_menu_list.value = data[MENU_TYPES.LIFE]
+		my_menu_list.value = data[MENU_TYPES.MY]
+		recommend_menu_list.value = data[MENU_TYPES.RECOMMEND]
+	}
+
+	//跳转用户信息
+	const toUserInfo = () => {
+		if (userStore.token) {
+			linkTo(ROUTE_PATH.DETAIL)
+		} else {
+			linkTo(ROUTE_PATH.LOGIN)
+		}
+	}
+
+	onLoad(() => {
+	})
 </script>
 
 <style scoped lang="scss">
-.index-navbar-box {
-	width: 750rpx;
+	.index-navbar-box {
+		width: 750rpx;
 
-	.index-navbar {
-		padding: 15rpx 0;
-	}
-}
-
-
-
-.user-info {
-	.user-avatar {
-		margin: 20rpx 40rpx;
-		width: 120rpx;
-	}
-
-	.user-info {
-		margin: 20rpx 0;
-	}
-
-	.user-action {
-		width: 100rpx;
-	}
-}
-
-.user-community {
-	margin: 20rpx 60rpx;
-}
-
-.user-account-login {
-	margin: 10rpx 30rpx;
-
-	.user-account-login-item {
-		margin: 10rpx;
-		padding: 20rpx 40rpx;
-
-		.user-account-item-action {
-			height: 50rpx;
-			padding: 0 20rpx;
-			align-self: center;
+		.index-navbar {
+			padding: 15rpx 0;
 		}
 	}
-}
+
+
+
+	.user-info {
+		.user-avatar {
+			margin: 20rpx 40rpx;
+			width: 120rpx;
+		}
+
+		.user-info {
+			margin: 20rpx 0;
+		}
+
+		.user-action {
+			width: 100rpx;
+		}
+	}
+
+	.user-community {
+		margin: 20rpx 60rpx;
+	}
+
+	.user-account-login {
+		margin: 10rpx 30rpx;
+
+		.user-account-login-item {
+			margin: 10rpx;
+			padding: 20rpx 40rpx;
+
+			.user-account-item-action {
+				height: 50rpx;
+				padding: 0 20rpx;
+				align-self: center;
+			}
+		}
+	}
 </style>
