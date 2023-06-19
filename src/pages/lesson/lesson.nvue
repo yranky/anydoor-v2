@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-14 15:33:43
+ * @LastEditTime: 2023-06-15 15:29:39
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -25,10 +25,10 @@
 						</template>
 						<template #default>
 							<view class="flex flex-center flex-row">
-								<tm-icon customicon name="tmicon-angle-left" :fontSize="30"></tm-icon>
+								<tm-icon customicon name="tmicon-angle-left" :fontSize="30" @click="preWeek"></tm-icon>
 								<anydoor-text class="flex-2" :text="'第' + currentShowWeeks + '周'" :lines="1" :fontSize="30"
 									style="margin:0 3rpx;text-align: right;"></anydoor-text>
-								<tm-icon customicon name="tmicon-angle-right" :fontSize="30"></tm-icon>
+								<tm-icon customicon name="tmicon-angle-right" :fontSize="30" @click="nextWeek"></tm-icon>
 							</view>
 						</template>
 						<template #right>
@@ -157,6 +157,21 @@ const maxWeeks = ref<number>(36)
 
 //当前的轮播索引
 const currentSwiperIndex = ref<number>(0)
+
+//上一周
+const preWeek = () => {
+	if (currentShowWeeks.value - 1 < 0) {
+		currentShowWeeks.value = maxWeeks.value - 1
+	} else currentShowWeeks.value = currentShowWeeks.value - 1
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
+}
+//下一周
+const nextWeek = () => {
+	if (currentShowWeeks.value + 1 > maxWeeks.value) {
+		currentShowWeeks.value = 0
+	} else currentShowWeeks.value = currentShowWeeks.value + 1
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
+}
 
 
 //更新客户曾

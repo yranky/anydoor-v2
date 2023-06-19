@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-15 00:27:57
+ * @LastEditTime: 2023-06-18 23:29:37
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -17,10 +17,8 @@ import {
 import init, { initUser, initLesson, initFromStorageSync } from "./init"
 import { OpenImg } from "./Open"
 import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
-import { getBatteryCapacity } from "@/uni_modules/anydoor-dialog"
 
 onLaunch(async function () {
-	getBatteryCapacity()
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
 	if (userAgent && userAgent.indexOf("anydoor") <= -1) {

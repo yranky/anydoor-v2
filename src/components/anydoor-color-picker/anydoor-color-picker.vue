@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import {
     computed,
+    inject,
     onMounted,
     ref
 } from "vue"
@@ -38,10 +39,11 @@ import colors from "@/common/database/Lesson/colors"
 import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
 import theme from "@/tmui/tool/theme/theme"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
-import { onUnmounted } from "vue"
 import { watch } from "vue"
-import { onBeforeMount } from "vue"
-import { color } from "echarts"
+import { Ref } from "vue"
+
+const setDisColorPickerBack = inject<Function>('setDisColorPickerBack')
+const disColorPickerBack = inject<Ref<boolean>>('disColorPickerBack')
 
 const props = defineProps({
     color: {
@@ -71,14 +73,6 @@ const primaryColor = computed(() => {
     return color.value
 })
 
-onBackPress(() => {
-    if (show.value === true) {
-        show.value = false
-        return true
-    }
-    return false
-})
-
 //键盘高度转换
 const keyboardHeightChange = (e: UniNamespace.OnKeyboardHeightChangeResult) => {
     keyboardHeight.value = uni.$tm.u.torpx(e.height || 0)
@@ -104,10 +98,21 @@ watch(show, () => {
     if (show.value === true) {
         defaultColor.value = props.color
         uni.onKeyboardHeightChange(keyboardHeightChange)
+        //阻止返回
+        setDisColorPickerBack && setDisColorPickerBack(true)
     } else {
         uni.offKeyboardHeightChange(keyboardHeightChange)
+        //允许返回
+        setDisColorPickerBack && setDisColorPickerBack(false)
     }
 })
+
+watch(() => disColorPickerBack, () => {
+    //判断是否为阻止返回
+    if (disColorPickerBack?.value === false) {
+        show.value = false
+    }
+}, { deep: true })
 
 //颜色值是否合法
 const colorRight = computed(() => {

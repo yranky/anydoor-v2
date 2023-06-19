@@ -15,7 +15,6 @@
 				<tm-navbar title="考试查询"></tm-navbar>
 			</template>
 			<template #content>
-				<tm-result :showBtn="false" subTitle="暂无数据"></tm-result>
 				<!-- <tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
 				<tm-card status="" title="概率论与数理统计" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
 				<tm-card status="" title="高等数学" content="这是一个基础卡片示例，非常简单且实用。这是一个基础卡片示例，非常简单且实用。"></tm-card>
@@ -31,22 +30,22 @@
 </template>
 
 <script lang="ts" setup>
-import tmApp from "@/tmui/components/tm-app/tm-app.vue"
-import tmResult from "@/tmui/components/tm-result/tm-result.vue"
-import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-import tmCard from "@/tmui/components/tm-card/tm-card.vue"
-import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-import { ref } from "vue"
+	import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+	import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+	import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+	import tmCard from "@/tmui/components/tm-card/tm-card.vue"
+	import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+	import { ref } from "vue"
 
-//下拉刷新是否完成
-const refreshComplete = ref<boolean>(true)
-// 页面刷新
-const refresh = async () => {
-	refreshComplete.value = false
-	setTimeout(() => {
-		refreshComplete.value = true
-	}, 100)
-}
+	//下拉刷新是否完成
+	const refreshComplete = ref<boolean>(true)
+	// 页面刷新
+	const refresh = async () => {
+		refreshComplete.value = false
+		setTimeout(() => {
+			refreshComplete.value = true
+		}, 100)
+	}
 </script>
 
 <style lang="scss" scoped></style>

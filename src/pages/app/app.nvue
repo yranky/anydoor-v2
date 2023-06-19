@@ -32,6 +32,7 @@
 			}" :fontSize="20">
 			</anydoor-text>
 		</view>
+		<anydoor-video></anydoor-video>
 	</tm-app>
 </template>
 
@@ -42,6 +43,7 @@ import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+import { getBatteryCapacity } from "@/uni_modules/anydoor-dialog"
 </script>
 
 <style lang="scss" scoped></style>

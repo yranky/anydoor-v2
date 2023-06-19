@@ -34,7 +34,6 @@
 				</view>
 			</template>
 			<template #content>
-
 				<!-- 轮播 -->
 				<view class="index-carousel-box round-5" style="margin: 35rpx;" v-if="swiperList.length > 0">
 					<tm-carousel rangKey="img" autoplay dotPosition="bottom" model="dot" :round="5" :width="680"
@@ -43,7 +42,6 @@
 				<!-- 全局提醒组件 -->
 				<tm-alert class=" round-5" :shadow="2" text :content="tipList" color="primary" :closable="false"
 					:height="80" :max-length="1" v-if="tipList.length > 0"></tm-alert>
-
 				<!-- 功能列表 -->
 				<tm-scrollx :width="750" :height="140" color="primary" transprent v-if="menuList.length > 0">
 					<tm-grid :col="menuList.length" :width="150 * menuList.length" transprent>
