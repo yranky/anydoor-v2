@@ -39,8 +39,10 @@ export enum ROUTE_PATH {
     LESSON_SETTING_COLOR = "/pages/lesson/color",
     //课程表背景
     LESSON_SETTING_BACKGROUND = "/pages/lesson/background",
+    //编辑课程
+    LESSON_ADD = "/pages/lesson/add",
     //已编辑课程
-    LESSON_SETTING_EDIT="/pages/lesson/edit",
+    LESSON_SETTING_EDIT = "/pages/lesson/editManage",
     //webview
     WEBVIEW = "/pages/webview/webview",
     // 学校选择

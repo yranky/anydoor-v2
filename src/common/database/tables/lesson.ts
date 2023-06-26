@@ -22,7 +22,9 @@ export enum LESSON_TABLES_NAME {
   //一些杂项信息
   RECORDS = "lesson_records",
   //时间信息
-  TIME = "lesson_time"
+  TIME = "lesson_time",
+  //背景信息
+  BACKGROUND = "lesson_background"
 }
 
 const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
@@ -104,6 +106,18 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
             'name' text DEFAULT NULL
           )
         `
+  },
+  [LESSON_TABLES_NAME.BACKGROUND]: {
+    init: `
+    CREATE TABLE if not exists '${LESSON_TABLES_NAME.BACKGROUND}' (
+      'id' INTEGER NOT NULL,
+      'path' text DEFAULT NULL,
+      'filename' text NULL,
+      'thumb' text NULL,
+      'url' text NULL,
+      'ext' text DEFAULT NULL
+    )
+    `
   }
 }
 

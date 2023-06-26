@@ -6,7 +6,7 @@
 			</template>
 			<template #content>
 				<list>
-					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete&&noticeList.length===0">
+					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete && noticeList.length === 0">
 						<view style="margin: 0 20rpx;">
 							<tm-skeleton-line :height="100"></tm-skeleton-line>
 						</view>
@@ -42,17 +42,14 @@ import { debounce } from "lodash"
 import anydoorLoadMore from "@/components/anydoor-loadmore/anydoor-loadmore.vue"
 import CODE from "@/common/define/code"
 import ANYDOOR_LOADMORE_STATUS from "@/components/anydoor-loadmore/IAnydoorLoadmore"
-import {noticeFilter, toNoticeDetail} from "@/common/utils/notice"
+import { noticeFilter, toNoticeDetail } from "@/common/utils/notice"
 import useJiaowuStore from "@/store/jiaowu"
-const {
-	proxy
-} = getCurrentInstance()
 // #ifdef APP-NVUE
 // const dom = uni.requireNativePlugin('dom')
 //page的高度
 // const pageHeight = ref(0)
 // #endif
-const jiaowuStore=useJiaowuStore()
+const jiaowuStore = useJiaowuStore()
 
 //首次加载完成
 const firstLoadComplete = ref<boolean>(false)

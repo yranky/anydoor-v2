@@ -4,13 +4,13 @@
  * @LastEditors: yranky douye@douye.top
  * @LastEditTime: 2023-03-09 21:24:13 
  * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
- * @Description: 编辑课程
+ * @Description: 已编辑课程
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="编辑课程"></tm-navbar>
+		<tm-navbar title="已编辑课程"></tm-navbar>
 		<view style="margin: 10rpx 20rpx;">
 			<anydoor-text text="校区" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 			<tm-radio-group v-model="campus">

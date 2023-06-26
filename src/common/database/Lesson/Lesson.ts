@@ -51,7 +51,8 @@ export default class Lesson {
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.RECORDS].init,
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.SEMESTER].init,
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.TIME].init,
-            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.EDIT].init
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.EDIT].init,
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.BACKGROUND].init
         ], ERROR_TARGET.LESSON_CLASS)
     }
 
@@ -145,8 +146,8 @@ export default class Lesson {
     }
 
     //更新课程颜色
-    async updateLessonNameColor(name:string, color:string, semester: string, company_id: string):Promise<boolean> {
-        const sqlStr=`update  ${LESSON_TABLES_NAME.NAME} set color='${color}' where name='${name}' and semester='${semester}' and company_id='${company_id}'`
+    async updateLessonNameColor(name: string, color: string, semester: string, company_id: string): Promise<boolean> {
+        const sqlStr = `update  ${LESSON_TABLES_NAME.NAME} set color='${color}' where name='${name}' and semester='${semester}' and company_id='${company_id}'`
         const res_update = await this.sql?.executeSql([sqlStr], ERROR_TARGET.LESSON_CLASS)
         if (res_update?.code !== SQLITE_STATUS_CODE.SUCCESS) {
             ToastModule.show({ text: "课程名称颜色更新失败!(数据错误)" })

@@ -63,7 +63,7 @@ export default class MProgram {
                 if (startResult.code === MPROGRAM_STATUS_CODE.ERROR) {
                     //更新信息
                     item = this.getInstalledItem(mpid)
-                } else {
+                } else if (startResult.code === MPROGRAM_STATUS_CODE.FAIL) {
                     //提示错误
                     ToastModule.show({ text: startResult.msg || `未知错误!(code:${startResult.code})` })
                     uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})

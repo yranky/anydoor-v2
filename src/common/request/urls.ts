@@ -164,6 +164,12 @@ const urls: Array<url> = [
     name: 'article_detail',
     url: BASE_URL + '/api/article/detail',
     token: false
+  },
+  //墙纸
+  {
+    name: 'wallpaper_list',
+    url: BASE_URL + '/api/wallpaper/list',
+    token: false
   }
 ]
 
