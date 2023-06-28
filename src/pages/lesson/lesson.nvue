@@ -33,7 +33,7 @@
 						</template>
 						<template #right>
 							<view class="flex flex-center flex-row pl-16 pr-16">
-								<view class=" pl-16 pr-16">
+								<view class=" pl-16 pr-16" @click="linkTo(ROUTE_PATH.LESSON_ADD)">
 									<tm-icon customicon name="tmicon-plus"></tm-icon>
 								</view>
 								<view class=" pl-16 pr-16" @click="linkTo(ROUTE_PATH.LESSON_SETTING)">
@@ -125,9 +125,10 @@ const colNum = ref<number>(8)
 const colItemWidth = computed<number>(() => {
 	return (750 / colNum.value)
 })
-//一个row的高度
+//row的数量
 const rowNum = ref<number>(10)
 
+//一个row的高度
 const rowItemHeight = ref<number>(150)
 
 const lessons = ref<IAnydoorLesson[]>([])
