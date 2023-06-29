@@ -12,6 +12,7 @@ import { useUserStore } from "./store/user"
 import { UNI_STORAGE } from "./common/database/UNI_STORAGE"
 import { isEmpty } from "lodash"
 import useDeviceStore from "./store/device"
+import { ILessonTempItemResult } from "./common/database/Lesson/ILesson"
 
 /*
  * @Author: yranky douye@douye.top
@@ -108,7 +109,7 @@ export async function initLesson() {
         const jiaowuStore = useJiaowuStore()
         //设置当前的周次
         LessonInstance.setCurrentWeek()
-        const data: any = await LessonInstance.getLessonList()
+        const data: ILessonTempItemResult[] = await LessonInstance.getLessonList()
         lessonStore.lessonList = data || []
         //初始化完成
         lessonStore.initing = false

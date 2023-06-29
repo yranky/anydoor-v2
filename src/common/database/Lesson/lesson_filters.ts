@@ -26,7 +26,7 @@ export function Filter_ISemester(data: any): ISemesterItem | ISemesterItem[] {
                 name: item.name,
                 tag: item.tag,
                 ext,
-                company_id:item.company_id
+                company_id: item.company_id
             }
         }) || []
     } else {
@@ -42,7 +42,7 @@ export function Filter_ISemester(data: any): ISemesterItem | ISemesterItem[] {
             name: data.name,
             tag: data.tag,
             ext,
-            company_id:data.company_id
+            company_id: data.company_id
         }
     }
 }
@@ -66,7 +66,7 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
                 color,
                 semester: item.semester,
                 ext,
-                company_id:item.company_id
+                company_id: item.company_id
             }
         }) || []
     } else {
@@ -84,7 +84,7 @@ export function Filter_ILessonName(data: any): ILessonNameItem | ILessonNameItem
             color,
             semester: data.semester,
             ext,
-            company_id:data.company_id
+            company_id: data.company_id
         }
     }
 }
@@ -96,9 +96,11 @@ export function Filter_ILessonTempResult(data: any): ILessonTempItemResult[] {
         return data.map((item) => {
             let weeks = []
             let time = [0, 1]
+            let weekday = []
             try {
                 weeks = JSON.parse(item.weeks)
                 time = JSON.parse(item.time)
+                weekday = JSON.parse(item.weekday)
                 //如果只有一节
                 if (time.length === 1) time = [time[0], time[0]]
             } catch (e) {
@@ -120,7 +122,7 @@ export function Filter_ILessonTempResult(data: any): ILessonTempItemResult[] {
                 position: item.position || '',
                 semester: item.semester || '',
                 color: item.color || '#4f52ff',
-                week: item.weekday || 0,
+                week: weekday,
                 weeks,
                 time,
                 lesson_id: item.lesson_id,
@@ -129,7 +131,7 @@ export function Filter_ILessonTempResult(data: any): ILessonTempItemResult[] {
                     temp: temp_ext,
                     name: name_ext
                 },
-                company_id:item.company_id
+                company_id: item.company_id
             }
         })
     }

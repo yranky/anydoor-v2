@@ -21,7 +21,7 @@ export default interface IAnydoorLesson {
     //学期
     semester: string,
     //星期(0-6)
-    week: number,
+    week: number[],
     //节次,两个1-2节传[1,2]
     time: number[],
     //周次(第几周，可以传任意多个)

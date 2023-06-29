@@ -247,7 +247,8 @@ const getCurrentWeekList = (week: number) => {
 //获取最新数据
 const updateData = async () => {
 	const LessonInstance = await Lesson.getInstance()
-	const data: any = await LessonInstance.getLessonList()
+	const data: ILessonTempItemResult[] = await LessonInstance.getLessonList()
+	console.log(data)
 	lessonStore.lessonList = data || []
 }
 

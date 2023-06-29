@@ -15,7 +15,7 @@ import databases, { DATA } from "../database"
 import { LESSON_TABLES_NAME } from "../tables/lesson"
 import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
 import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
-import { classnumsToArray, weeksToArray } from "./lesson_temp_utils"
+import { classnumsToArray, rangeToSequence, weeksToArray } from "./lesson_temp_utils"
 import ToastModule from "@/common/native/toast/ToastModule"
 import Encrypt from "@/common/encrypt/Encrypt"
 import useJiaowuStore from "@/store/jiaowu"
@@ -168,7 +168,7 @@ export default class Lesson {
     }
 
     //获取课程数据
-    async getLessonList(semesterTag?: string, cid?: string) {
+    async getLessonList(semesterTag?: string, cid?: string): Promise<ILessonTempItemResult[]> {
         return await this.getLessonTempStorage()
     }
 
@@ -205,10 +205,11 @@ export default class Lesson {
             const lesson: ILessonNameItem = (lessonNames.find((l_item) => l_item.name === item.name && l_item.semester === semester) || {}) as ILessonNameItem
             const classnums: number[][] = classnumsToArray(item.classnums)
             const weeks: number[] = weeksToArray(item.weeks)
+            const weekday: number[] = rangeToSequence(item.weekday)
             //插入数据了
             return classnums.map((classnum) => {
                 return `
-                insert into ${LESSON_TABLES_NAME.TEMP} (lesson_id,semester,weekday,weeks,teacher,position,time,ext,company_id) values('${lesson.id || 0}','${semester}','${item.weekday}','${JSON.stringify(weeks)}','${item.teacher || ''}','${item.room || ''}','${JSON.stringify(classnum)}','${encodeURIComponent(JSON.stringify(item.ext || { name: lesson.name }))}','${cid}')
+                insert into ${LESSON_TABLES_NAME.TEMP} (lesson_id,semester,weekday,weeks,teacher,position,time,ext,company_id) values('${lesson.id || 0}','${semester}','${JSON.stringify(weekday)}','${JSON.stringify(weeks)}','${item.teacher || ''}','${item.room || ''}','${JSON.stringify(classnum)}','${encodeURIComponent(JSON.stringify(item.ext || { name: lesson.name }))}','${cid}')
                 `
             })
         }))
@@ -343,13 +344,18 @@ export default class Lesson {
     }
 
     //获取今天的课程
-    getCurrentDayLesson() {
-        return this.getCurrentWeekLesson().filter(item => {
-            if (item.week == 0 || item.week == 7) {
+    getCurrentDayLesson(sort: boolean = true): ILessonTempItemResult[] {
+        const data: ILessonTempItemResult[] = this.getCurrentWeekLesson().filter(item => {
+            if (item.week.includes(0) || item.week.includes(7)) {
                 return dayjs().day() == 0 ? true : false
             }
-            return item.week && (item.week == dayjs().day())
+            return item.week && item.week.length && (item.week.includes(dayjs().day()))
         })
+        //是否排序
+        if (sort) data.sort((a: ILessonTempItemResult, b: ILessonTempItemResult) => {
+            return a.time[0] - b.time[0]
+        })
+        return data
     }
 
 

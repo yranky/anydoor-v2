@@ -7,7 +7,7 @@ export interface ISemesterItem {
         start_time?: number
         end_time?: number
     }
-    company_id:string
+    company_id: string
 }
 //课程名称
 export interface ILessonNameItem {
@@ -19,7 +19,7 @@ export interface ILessonNameItem {
     ext: {
 
     }
-    company_id:string
+    company_id: string
 }
 
 
@@ -46,7 +46,7 @@ export interface ILessonTempItemResult {
     //学期
     semester: string,
     //星期(0-6)
-    week: number,
+    week: number[],
     //节次,两个1-2节传[1,2]
     time: number[],
     //周次(第几周，可以传任意多个)

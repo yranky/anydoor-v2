@@ -82,6 +82,7 @@ const props = defineProps({
 		default: () => []
 	}
 })
+
 const {
 	numBase,
 	colNum,
@@ -104,7 +105,9 @@ const lessonData = computed((val: IAnydoorLesson[]): IAnydoorLesson[][] => {
 	const arr: IAnydoorLesson[][] = new Array(7).fill(0).map(() => [])
 	// 解析lessons
 	lessons.value.forEach((item: IAnydoorLesson) => {
-		if (arr[item.week == 7 ? 0 : item.week] instanceof Array) arr[item.week == 7 ? 0 : item.week].push(item)
+		item.week.forEach((weekday: number) => {
+			if (arr[weekday == 7 ? 0 : weekday] instanceof Array) arr[weekday == 7 ? 0 : weekday].push(item)
+		})
 	})
 	return arr
 })
