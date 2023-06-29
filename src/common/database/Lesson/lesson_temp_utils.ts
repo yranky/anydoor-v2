@@ -30,6 +30,7 @@ export function weeksToArray(weeks: string): number[] {
     return result
 }
 
+//将节次转换成数组
 export function classnumsToArray(classnums: string): number[][] {
     //先切割,，然后排序
     const tmp = classnums.split(",").map((item) => {
@@ -47,7 +48,65 @@ export function classnumsToArray(classnums: string): number[][] {
             // r.push(tmp[start] + (i - start === 1 ? '' : '->' + tmp[i - 1]))
             start = i
         }
-
     return result
 }
 
+
+
+// 将数字序列转换为范围
+// 示例
+// const sequence = [1, 2, 3, 4, 5, 9, 10, 89, 900, 901];
+// const range = "1-5, 9-10, 89, 900-901";
+
+// const rangeResult = sequenceToRange(sequence);
+// const sequenceResult = rangeToSequence(range);
+
+// console.log(rangeResult); // 输出：1-5,9-10,89,900-901
+// console.log(sequenceResult); // 输出：[1, 2, 3, 4, 5, 9, 10, 89, 900, 901]
+export function sequenceToRange(sequence: number[]): string {
+    sequence.sort((a, b) => a - b);
+
+    let rangeArr: string[] = [];
+    let start = sequence[0];
+    let prev = start;
+
+    for (let i = 1; i < sequence.length; i++) {
+        if (sequence[i] !== prev + 1) {
+            if (start === prev) {
+                rangeArr.push(start.toString());
+            } else {
+                rangeArr.push(`${start}-${prev}`);
+            }
+            start = sequence[i];
+        }
+        prev = sequence[i];
+    }
+
+    if (start === prev) {
+        rangeArr.push(start.toString());
+    } else {
+        rangeArr.push(`${start}-${prev}`);
+    }
+
+    return rangeArr.join(",");
+}
+
+// 将范围转换为数字序列
+export function rangeToSequence(range: string): number[] {
+    let sequence: number[] = [];
+
+    const rangeArr = range.split(",");
+    for (let i = 0; i < rangeArr.length; i++) {
+        let rangeItem = rangeArr[i].trim();
+        if (rangeItem.includes("-")) {
+            let [start, end] = rangeItem.split("-");
+            for (let j = parseInt(start); j <= parseInt(end); j++) {
+                sequence.push(j);
+            }
+        } else {
+            sequence.push(parseInt(rangeItem));
+        }
+    }
+
+    return sequence;
+}

@@ -5,7 +5,8 @@
     <tm-drawer ref="calendarView" :placement="placement" v-model:show="show" okText="确定" :height="600 + keyboardHeight"
         @cancel="itemCancel" @ok="itemSure">
         <template #title>
-            <tm-input v-if="props.showInput" placeholder="请输入自定义" :width="300"></tm-input>
+            <tm-input v-if="props.showInput && !(props.value instanceof Array)" placeholder="请输入自定义" :width="300"
+                v-model="inputText"></tm-input>
         </template>
         <tm-result :showBtn="false" v-if="!listItems || listItems.length === 0" title="暂无内容"
             :subTitle="props.showInput ? '请在上方输入框输入内容' : ' '"></tm-result>
@@ -62,7 +63,9 @@ const props = withDefaults(defineProps<{
     //显示输入框
     showInput: boolean,
     //文字居中
-    textCenter: boolean
+    textCenter: boolean,
+    //check
+    checkFun?: Function
 }>(), {
     value: '',
     styleConfig: CONFIG_TYPE.ONE,
@@ -81,11 +84,13 @@ const placement = ref<string>("bottom")
 
 const keyboardHeight = ref<number>(0)
 
+const inputText = ref<string>("")
+
+const value = ref<string | number | string[] | number[]>(props.value)
 
 
 //列表项
 const listItems = computed<IListArray[]>(() => {
-    console.log(props.list)
     if (!props.list || props.list.length === 0) return []
     //处理需要渲染的数据
     return props.list.map((item: Ilist) => {
@@ -100,31 +105,42 @@ const listItems = computed<IListArray[]>(() => {
     })
 })
 
-//选中的
-const checked = computed(() => {
-    if (isUndefined(props.value)) return []
-    if (typeof props.value === "string" || typeof props.value === "number") return [props.value]
-    else return props.value
+//输入框输入
+watch(inputText, (newVal: string | number) => {
+    // emits("update:value", newVal)
+    value.value = newVal
 })
 
-//选中事件
+
+//选中的
+const checked = computed(() => {
+    if (isUndefined(value.value)) return []
+    if (typeof value.value === "string" || typeof value.value === "number") return [value.value]
+    else return value.value
+})
+
+//点击选中事件
 const checkItem = (item: IListArray) => {
+    inputText.value = ""
     //判断有没有选中
     const index = checked.value.findIndex(checkedItem => checkedItem === item.value)
     //多选
-    if (props.value instanceof Array) {
+    if (value.value instanceof Array) {
         //之前未选中
         if (index < 0) {
-            emits("update:value", [...props.value, item.value])
+            value.value = [...value.value, item.value] as string[]
+            // emits("update:value", [...props.value, item.value])
         } else {
             //之前已选中
             const item = cloneDeep(checked.value)
             item.splice(index, 1)
-            emits("update:value", item)
+            // emits("update:value", item)
+            value.value = item as string[]
         }
     } else {
         //单选
-        emits("update:value", index < 0 ? item.value : "")
+        // emits("update:value", index < 0 ? item.value : "")
+        value.value = index < 0 ? item.value : ""
     }
 }
 
@@ -145,8 +161,13 @@ const primaryAColor = computed(() => {
 
 
 //确认修改
-const itemSure = () => {
-    emits("valueChange", props.value)
+const itemSure = async () => {
+    //处理值
+    const data = !props.checkFun || (props.checkFun && await props.checkFun(value.value))
+    if (data) {
+        emits("valueChange", value.value)
+        emits("update:value", value.value)
+    }
 }
 
 //取消修改 
@@ -176,6 +197,7 @@ watch(() => disItemPickerBack, () => {
 watch(show, () => {
     if (show.value === true) {
         defaultValue.value = props.value
+        value.value = props.value
         uni.onKeyboardHeightChange(keyboardHeightChange)
         //阻止返回
         setDisItemPickerBack && setDisItemPickerBack(true)
