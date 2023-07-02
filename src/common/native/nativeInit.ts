@@ -18,6 +18,7 @@
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+import MPHandler from "../MPHandler/MPHandler";
 import MProgram from "../database/mprogram/MProgram";
 import IResult from "./IResult";
 import BTongjiModule from "./baidu_tongji/BTongjiModule";
@@ -56,6 +57,8 @@ export default function nativeInit() {
     DialogModule.getInstance()
     //初始化Mprogram
     MProgram.getInstance()
+    //初始化小程序监听模块
+    MPHandler.getInstance()
 }
 
 //此函数用于调试用，使用此函数包裹，如果处于debug会打印出日志
