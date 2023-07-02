@@ -2,6 +2,8 @@ import qs from "querystringify"
 import { NAVIGATE_TYPE } from "@/common/define/navigateType"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { BASE_LEGO_URL } from "../request/urls"
+import ToastModule from "../native/toast/ToastModule"
+import paramParse, { IParamParse } from "./paramParse"
 
 //链接
 //菜单跳转
@@ -10,18 +12,22 @@ export function menuLink(item: any) {
 }
 //轮播图跳转
 export function swiperLink(item: any) {
-    console.log(item)
     menuLinkTo(item.link, item.params || [], item.link_type || '')
 }
 
 //菜单链接具体
 export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYPE) {
     //解析参数
-    const option: any = {}
+    let option: any = {}
     //解析参数
     for (let i = 0; i < params.length; i++) {
         option[params[i].key] = params[i].param
     }
+    //解析参数
+    const parseResult: IParamParse = await paramParse(option)
+    if (!parseResult.success) return
+    else option = parseResult.option
+
     //打开微应用
     if (type === NAVIGATE_TYPE.MPROGRAM) {
         uni.$anydoor.MProgram?.open(path)
@@ -32,10 +38,14 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
             ...option,
             url: BASE_LEGO_URL + path
         })
-    } else {
+    } else if (type === NAVIGATE_TYPE.WEBVIEW) {
         linkTo(ROUTE_PATH.WEBVIEW, {
             ...option,
             url: path
+        })
+    } else {
+        ToastModule.show({
+            text: '暂不支持!请尝试升级APP版本'
         })
     }
 }
