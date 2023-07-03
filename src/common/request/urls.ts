@@ -170,6 +170,12 @@ const urls: Array<url> = [
     name: 'wallpaper_list',
     url: BASE_URL + '/api/wallpaper/list',
     token: false
+  },
+  //获取openid
+  {
+    name: 'auth_openid',
+    url: BASE_URL + '/api/auth/openid',
+    token: true
   }
 ]
 

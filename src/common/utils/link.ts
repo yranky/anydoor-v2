@@ -36,12 +36,12 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
     } else if (type === NAVIGATE_TYPE.LEGO) {
         linkTo(ROUTE_PATH.WEBVIEW, {
             ...option,
-            url: BASE_LEGO_URL + path
+            url: option.url
         })
     } else if (type === NAVIGATE_TYPE.WEBVIEW) {
         linkTo(ROUTE_PATH.WEBVIEW, {
             ...option,
-            url: path
+            url: option.url
         })
     } else {
         ToastModule.show({
@@ -57,6 +57,7 @@ export async function linkTo(path: string, data: any = {}, external: any = {}, r
         ...external,
         data: JSON.stringify(data)
     }
+    console.log(options)
     const result: any = await navigateTo(path, options, replace)
     if (result.success === false) {
         if (result.errMsg.indexOf('fail can not redirectTo a tabbar page') > -1) {
