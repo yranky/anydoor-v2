@@ -40,8 +40,8 @@ export default async function paramParse(option: any): Promise<IParamParse> {
             //openid注入
             if (option[key] == '$$openid$$') {
                 //获取aid
-                const keyArr = key.split("__link__")
-                const aid = keyArr[2] || ""
+                const keyArr = extractParams(key)
+                const aid = keyArr[1] || ""
                 const data = await authOpenid({
                     aid: aid
                 })
@@ -56,9 +56,9 @@ export default async function paramParse(option: any): Promise<IParamParse> {
     //注入到页面的参数
     option['$$$linkParams$$$'] = {}
     for (let key in option) {
-        const item = key.split("__link__")
-        if (item.length >= 3) {
-            option['$$$linkParams$$$'][item[1]] = option[key]
+        const item = extractParams(key)
+        if (item.length > 0) {
+            option['$$$linkParams$$$'][item[0]] = option[key]
         }
     }
     //拼接参数
@@ -79,4 +79,16 @@ export default async function paramParse(option: any): Promise<IParamParse> {
 export interface IParamParse {
     success: boolean,
     option: any
+}
+
+/**
+ * @param {string} str
+ * @return {string[]} result
+ * @description: 提取[[]]中间的参数
+ */
+export function extractParams(str: string): string[] {
+    const pattern = /\[\[(.*?)\]\]/g
+    const matches = str.match(pattern) || []
+
+    return matches.map(match => match.substring(2, match.length - 2));
 }
