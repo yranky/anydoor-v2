@@ -11,7 +11,7 @@
 import url from './model/url'
 import { isUndefined, truncate } from 'lodash'
 
-const BASE_URL = 'http://192.168.124.9:10001'
+const BASE_URL = 'http://192.168.0.229:10001'
 //乐高平台地址
 export const BASE_LEGO_URL = 'http://192.168.124.9:9000/lowcode/editor/preview.html?id='
 // export const UCENTER_BASE_URL = 'http://test.anydoor.douyeblog.top:10000'
