@@ -15,7 +15,7 @@ export interface IAnydoorWebviewConfig {
     scheme?: boolean
     defaultAlert?: boolean,
     height?: number | string,
-    progress?:boolean
+    progress?: boolean
 }
 
 
@@ -44,7 +44,8 @@ export interface IAnydoorWebviewRef {
     send(data: string, callbackFn?: (res: IResult<string>) => void): void
     callHandler(data: ICallHandlerOption, callbackFn?: (res: IResult<string>) => void): void
     registerHandler(name: string, callbackFn?: (res: IResult<undefined>) => void): void
-    hideTitleBar():void
+    hideTitleBar(): void
+    postUrl(data: IPostUrlOption, callbackFn?: (res: IResult<undefined>) => void): void
 }
 
 export interface IAnydoorEventResult<T> {
@@ -180,4 +181,11 @@ export interface IOnImageClickResult {
 
 export interface IOnBackResult {
 
+}
+
+export interface IPostUrlOption {
+    url: string,
+    params: {
+        [key: string]: number | string
+    }
 }

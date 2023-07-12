@@ -54,7 +54,7 @@ import {
 } from "lodash"
 import { getHostnameByUrl, linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
-import { IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
+import { IAnydoorWebviewRef, IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { getFileNameFromDownload } from "@/common/utils/fileName"
@@ -67,7 +67,7 @@ const {
 	proxy
 } = getCurrentInstance() as any
 //webview原生控件
-const webview = ref(null)
+const webview = ref<IAnydoorWebviewRef>()
 //webview的配置
 const webviewConfig = ref<IWebviewItem>()
 
@@ -75,8 +75,19 @@ const webviewConfig = ref<IWebviewItem>()
 onLoad((e: any) => {
 	try {
 		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item || e.data)))
-		src.value = webviewConfig.value.url
-		navTitle.value = webviewConfig.value.title
+		nextTick(() => {
+			if (webviewConfig.value && webviewConfig.value.post) {
+				webview.value && webview.value.postUrl({
+					url: webviewConfig.value?.url,
+					params: webviewConfig.value?.params
+				}, (res) => {
+					console.log(res)
+				})
+			} else if (webviewConfig.value) {
+				src.value = webviewConfig.value.url
+				navTitle.value = webviewConfig.value.title
+			}
+		})
 	} catch { }
 })
 //加载webview的配置

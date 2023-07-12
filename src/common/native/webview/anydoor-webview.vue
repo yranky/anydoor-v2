@@ -30,7 +30,7 @@ import {
 } from "vue"
 import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
-import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
+import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, IPostUrlOption, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
 import { ICallback } from "@/common/webviewHandler/action/types"
 
 const info = reactive({
@@ -346,6 +346,11 @@ const getUserAgent = () => {
 const setUserAgent = (s: string) => {
 	return mWebview.value && mWebview.value.setUserAgent(s)
 }
+
+//post请求
+const postUrl = (data: IPostUrlOption) => {
+	return mWebview.value && mWebview.value.postUrl(data)
+}
 //end
 
 //页面显示
@@ -388,7 +393,8 @@ defineExpose({
 	registerHandler,
 	callHandler,
 	setUserAgent,
-	getUserAgent
+	getUserAgent,
+	postUrl
 })
 </script>
 <style scoped lang="scss">

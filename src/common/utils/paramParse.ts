@@ -61,12 +61,16 @@ export default async function paramParse(option: any): Promise<IParamParse> {
             option['$$$linkParams$$$'][item[0]] = option[key]
         }
     }
-    //拼接参数
-    if (option.url && option.url.indexOf("?") > -1) {
-        option.url = `${option.url}&${qs.stringify(option['$$$linkParams$$$'])}`
-    } else if (option.url && option.url.indexOf("?") <= -1) {
-        option.url = `${option.url}?${qs.stringify(option['$$$linkParams$$$'])}`
-    }
+    
+    //如果不是post请求
+    if (option['post'] != 1) {
+        //拼接参数
+        if (option.url && option.url.indexOf("?") > -1) {
+            option.url = `${option.url}&${qs.stringify(option['$$$linkParams$$$'])}`
+        } else if (option.url && option.url.indexOf("?") <= -1) {
+            option.url = `${option.url}?${qs.stringify(option['$$$linkParams$$$'])}`
+        }
+    } 
     console.log(option)
     return {
         success: true,
