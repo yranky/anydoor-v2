@@ -131,5 +131,5 @@ interface IUpdateDialogOption {
 }
 
 interface IUpdateDialogCallback {
-
+    type: 'cancel' | 'ok' | 'mask'
 }
