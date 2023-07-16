@@ -23,15 +23,15 @@ export default class Update {
             }
             //如果是普通安装包
             else {
-                uni.$anydoor_native.Dialog_Module.showMessageDialog({
-                    title: res.data.title,
-                    okText: '下载',
-                    cancelText: res.data.version_force === 1 ? undefined : '取消',
-                    cancelable: res.data.version_force === 1 ? false : true,
-                    content: res.data.version_name + '\n' + res.data.detail
+                uni.$anydoor_native.Dialog_Module.showUpdateDialog({
+                    isWifiOnly: false,
+                    downloadUrl: res.data.download_link,
+                    log: res.data.detail,
+                    versionCode: res.data.version_id,
+                    versionName: res.data.version_name,
+                    isIgnorable: res.data.version_force === 1 ? false : true
                 }, (dialogResult) => {
-                    if (dialogResult.data?.type === 'ok') {
-                    }
+
                 })
             }
         })
