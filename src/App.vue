@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-16 21:56:25
+ * @LastEditTime: 2023-07-16 22:17:08
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -22,11 +22,6 @@ onLaunch(async function () {
 	//获取wgt版本号
 	plus.runtime.getProperty(plus.runtime.appid ? plus.runtime.appid : '', (result: PlusRuntimeWidgetInfo) => {
 		getApp().globalData!['versionCode'] = result.versionCode
-
-		uni.showToast({
-			icon: 'none',
-			title: getApp().globalData!['versionCode']
-		})
 	})
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
