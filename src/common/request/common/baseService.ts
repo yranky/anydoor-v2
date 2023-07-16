@@ -22,18 +22,7 @@ const service = axios.create({
     //     return data
     //   }
     // }
-  ],
-  header: {
-    version: uni.getAppBaseInfo().appVersionCode,
-    // #ifdef APP-PLUS
-    //默认安卓(1为安卓，2为ios)
-    platform: uni.getSystemInfoSync().platform === 'ios' ? 2 : 1,
-    // #endif
-    // #ifdef MP
-    // @ts-ignore
-    platform: ''
-    // #endif
-  }
+  ]
 })
 
 export default service
