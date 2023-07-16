@@ -3,6 +3,9 @@ import ToastModule from "../native/toast/ToastModule"
 import { updateCheck } from "../service/update"
 
 export default class Update {
+    //是否正在升级
+    private updating: boolean = false
+
     private constructor() {
     }
 
@@ -16,15 +19,22 @@ export default class Update {
 
     //检查是否有更新
     check() {
+        //处于升级中...
+        if (this.updating) {
+            ToastModule.show({ text: '正检查更新中!' })
+            return
+        }
+        this.updating = true
         return new Promise((resolve, reject) => {
             //先请求接口，判断是否有更新
-            updateCheck({}).then(res => {
+            updateCheck({}).then(async res => {
                 resolve(res)
                 //如果没有更新
-                if (res.update !== 1) return
+                if (res.update !== 1) return (this.updating = false)
                 //如果是wgt包
                 if (res.data.wgt === 1) {
-                    this.doWgtUpdate(res.data.download_link, res.data.version_id, res.data.version_force)
+                    await this.doWgtUpdate(res.data.download_link, res.data.version_id, res.data.version_force)
+                    this.updating = false
                 }
                 //如果是普通安装包
                 else {
@@ -37,7 +47,10 @@ export default class Update {
                         isIgnorable: res.data.version_force === 1 ? false : true
                     }, (dialogResult) => {
                         //如果点击确定，则执行升级操作
-                        if (dialogResult.data?.type === "ok") this.doUpdate(res.data.download_link, res.data.version_id)
+                        if (dialogResult.data?.type === "ok") this.doUpdate(res.data.download_link, res.data.version_id).then(() => {
+                            this.updating = false
+                        })
+                        else this.updating = false
                     })
                 }
             }).catch((e) => {
@@ -48,6 +61,10 @@ export default class Update {
 
     //更新
     update() {
+        if (this.updating) {
+            ToastModule.show({ text: '正检查更新中!' })
+            return
+        }
         this.check()
     }
 
@@ -59,12 +76,21 @@ export default class Update {
      * @description: 执行APP资源包升级操作
      */
     async doWgtUpdate(download_link: string, version_id: number | string, force: boolean) {
-        //上面没有成功打开，进行下载
-        this.down(download_link, true, false).then(downloadRes => {
-            plus.runtime.install(downloadRes.savedFilePath, { force }, (res) => {
-                console.log(res)
-            }, (err) => {
-                ToastModule.show({ text: '更新资源加载失败!' })
+        return new Promise(resolve => {
+            //上面没有成功打开，进行下载
+            this.down(download_link, true, false).then(downloadRes => {
+                plus.runtime.install(downloadRes.savedFilePath, { force }, (res) => {
+                    console.log(res)
+                    //更新成功了!
+                    getApp().globalData!['versionCode'] = version_id
+
+                    resolve(res)
+                }, (err) => {
+                    ToastModule.show({ text: '更新资源加载失败!' })
+                    resolve(err)
+                })
+            }).catch((err) => {
+                resolve(err)
             })
         })
     }
@@ -83,6 +109,7 @@ export default class Update {
             try {
                 await this.openPath(item['path'])
                 //如果成功打开了，直接停止后面运行的
+                this.updating = false
                 return
             } catch { }
         }
@@ -92,6 +119,8 @@ export default class Update {
                 version: version_id,
                 path: downloadRes.savedFilePath
             })
+        }).finally(() => {
+            this.updating = false
         })
     }
 
