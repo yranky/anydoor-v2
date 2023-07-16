@@ -1,0 +1,76 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-06-13 23:55:20
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-06-17 14:43:21
+ * @FilePath: \anydoor-v2\src\pages\lesson\color.nvue
+ * @Description: 课程表颜色配置
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="课程表颜色配置"></tm-navbar>
+		<view style="margin: 10rpx 20rpx;">
+			<anydoorColorPickerGroup>
+				<anydoorColorPicker v-for="item in lessonNameList" :key="item.id" v-model:color="item.color"
+					@colorChange="colorChange($event, item)">
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :title="item.name">
+						<template #rightText>
+							<view class="lesson-color-item-color" :style="{
+								backgroundColor: item.color
+							}"></view>
+						</template>
+					</tm-cell>
+				</anydoorColorPicker>
+			</anydoorColorPickerGroup>
+		</view>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import { computed, onBeforeMount, ref } from "vue"
+import anydoorColorPicker from "@/components/anydoor-color-picker/anydoor-color-picker.vue"
+import Lesson from "@/common/database/Lesson/Lesson"
+import anydoorColorPickerGroup from "@/components/anydoor-color-picker/anydoor-color-picker-group.vue"
+
+interface ILessonNameItem {
+	id: string,
+	semester: string,
+	name: string,
+	company_id: string,
+	color: string
+}
+
+
+//课程名称列表
+const lessonNameList = ref<ILessonNameItem[]>([])
+
+//获取颜色列表
+const getLessonName = async () => {
+	const data = await uni.$anydoor.Lesson?.getLessonName()
+	lessonNameList.value = data?.data || []
+}
+
+//修改颜色
+const colorChange = async (color: string, item: ILessonNameItem) => {
+	uni.$anydoor_native.Dialog_Module.showWaitingDialog({ title: '' })
+	await uni.$anydoor.Lesson?.updateLessonNameColor(item.name, color, item.semester, item.company_id)
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({ title: '' })
+}
+
+onBeforeMount(() => {
+	getLessonName()
+})
+
+</script>
+<style lang="scss" scoped>
+.lesson-color-item-color {
+	width: 25rpx;
+	height: 25rpx;
+	margin: 0 20rpx;
+}
+</style>

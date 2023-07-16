@@ -41,5 +41,7 @@ export enum UNI_STORAGE {
     //首页文章
     ARTICLE_INDEX = "article_index",
     //设备id
-    UNI_DEVICE_ID = "uni_device_id"
+    UNI_DEVICE_ID = "uni_device_id",
+    //文章分类
+    ARTICLE_TYPE_LIST = "article_type_list"
 }

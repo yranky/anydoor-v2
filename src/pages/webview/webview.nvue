@@ -1,21 +1,28 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar ref="navBar" :title="navTitle"></tm-navbar>
+		<tm-navbar ref="navBar" :title="navTitle">
+			<template v-slot:right>
+				<view style="padding: 10rpx;" @click="openMenuSheet">
+					<tm-icon rotate :rotate-deg="90" name="tmicon-md-more" _class="mr-39 ml-20"></tm-icon>
+				</view>
+			</template>
+		</tm-navbar>
 		<view :style="{
-			position: showTitleBar ? '' : 'fixed',
-			top: showTitleBar ? '' : 0
+			position: 'fixed',
+			top: showTitleBar ? navBarHeight + 'px' : 0
 		}">
 			<anydoor-webview ref="webview" :src="src" :config="{
 				height: webviewHeight + 'px',
 				windowsAutomatically: true,
 				multipleWindow: true,
 				zoom: false,
-				cache: false,
-				progress:false
+				cache: 1,
+				progress: false
 			}" :webview-styles="webviewStyle" @onUrlLoadingPatern="interceptUrl" @onPageReady="pageReady"
-				@onNewWindow="onNewWindow" @onPageError="pageError" @onTitleUpdate="titleUpdate"
-				@onImagePress="onImagePress" @onImageClick="onImageClick" @onMessage="onMessage" @onNameMessage="onMessage"
-				@onHideTitleBar="hideTitleBar(true)" @onShowTitleBar="hideTitleBar(false)">
+				@onNewWindow="onNewWindow" @onPageStart="pageStart" @onTitleUpdate="titleUpdate" @onPageError="pageError"
+				@onImagePress="onImagePress" @onImageClick="onImageClick" @onHideTitleBar="hideTitleBar(true)"
+				@onShowTitleBar="hideTitleBar(false)" @onDownload="onDownload" @onScheme="onScheme"
+				@onHideTitleBarItem="hideTitleBarItem">
 			</anydoor-webview>
 		</view>
 	</tm-app>
@@ -29,6 +36,7 @@ import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 // import anydoorWebview from "@/components/anydoor-webview/anydoor-webview.vue"
 import anydoorWebview from "@/common/native/webview/anydoor-webview.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import {
 	computed,
 	getCurrentInstance,
@@ -41,85 +49,60 @@ import {
 	onLoad
 } from "@dcloudio/uni-app"
 import {
+	cloneDeep,
 	throttle
 } from "lodash"
-import { linkTo } from "@/common/utils/link"
+import { getHostnameByUrl, linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
-import { IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
+import { IAnydoorWebviewRef, IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { getFileNameFromDownload } from "@/common/utils/fileName"
+import fileSize from "@/common/utils/fileSize"
+import DownloadModule from "@/common/native/download/DownloadModule"
+import { onUnmounted } from "vue"
+import { MENU_ITEM, menuItemDetail } from "@/common/webviewHandler/action/IFun"
+import { webviewMenuHandler } from "@/common/webviewHandler/webTitleBar"
 const {
 	proxy
-} = getCurrentInstance()
-const dom = uni.requireNativePlugin("dom")
-//webview的高度
-const webviewHeight = ref(0)
-//webview的style样式
-const webviewStyle = reactive({
-	progress: {
-		color: theme.getColor("primary").value
-	}
-})
-const loadWebviewHeight = throttle(function () {
-	//加载高度
-	if (showTitleBar.value) {
-		dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
-			if (option && option.result) {
-				const navBarHeight = option.size.height
-				//如果没获取到
-				if (navBarHeight === 0) loadWebviewHeight()
-				else {
-					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight
-				}
-			}
-		})
-	} else {
-		//隐藏titleBar
-		webviewHeight.value = uni.getSystemInfoSync().windowHeight
-	}
-
-}, 200)
-
-//展示titlebar
-const showTitleBar = ref<boolean>(true)
-const hideTitleBar = (hide: boolean) => {
-	if (hide) {
-		showTitleBar.value = false
-	} else {
-		showTitleBar.value = true
-	}
-	loadWebviewHeight()
-}
-
-const webview = ref(null)
+} = getCurrentInstance() as any
+//webview原生控件
+const webview = ref<IAnydoorWebviewRef>()
 //webview的配置
 const webviewConfig = ref<IWebviewItem>()
-
-//messgae
-const onMessage = (e: IMessageResult) => {
-	// ToastModule.show({
-	// 	text: JSON.stringify(e)
-	// })
-	console.log(e)
-}
-
 
 //加载时调用
 onLoad((e: any) => {
 	try {
 		webviewConfig.value = IWebviewItemFilter(JSON.parse(decodeURIComponent(e.item || e.data)))
-		src.value = webviewConfig.value.url
-		navTitle.value = webviewConfig.value.title
+		nextTick(() => {
+			if (webviewConfig.value && webviewConfig.value.post) {
+				webview.value && webview.value.postUrl({
+					url: webviewConfig.value?.url,
+					params: webviewConfig.value?.params
+				}, (res) => {
+					console.log(res)
+				})
+			} else if (webviewConfig.value) {
+				src.value = webviewConfig.value.url
+				navTitle.value = webviewConfig.value.title
+			}
+		})
 	} catch { }
 })
-
+//加载webview的配置
+onReady(() => {
+	loadWebviewHeight()
+})
+//取消事件监听
+onUnmounted(() => {
+	// uni.offKeyboardHeightChange(listenKeyboard)
+})
 
 //拦截的url
 const interceptUrl = (e: IUrlLoadingPaternResult) => {
 	console.log(e)
 }
-//标题
-const navTitle = ref<string>("")
 
 //标题更新了
 const titleUpdate = (e: ITitleUpdateResult) => {
@@ -127,44 +110,114 @@ const titleUpdate = (e: ITitleUpdateResult) => {
 	//如果可以changeTitle
 	if (webviewConfig.value?.titleChange) navTitle.value = !/^https?\:\/\/.*/.test(e.title) ? e.title : ""
 }
+const menuItemTitle = ref<string[]>([])
+const menuItem = ref<MENU_ITEM[]>([])
+const hideItem = ref<MENU_ITEM[]>([])
+//页面加载异常
+const pageStart = (e: IPageReadyResult) => {
+	//复原
+	menuItem.value = [MENU_ITEM.FRESH, MENU_ITEM.CLOSE]
+	isPageError.value = false
+}
+//隐藏titleBarItem
+const hideTitleBarItem = (e: MENU_ITEM[]) => {
+	hideItem.value = e || []
+}
+// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
 //加载完成之后，定义拦截
 const pageReady = (e: IPageReadyResult) => {
-	// webview.value.send(JSON.stringify({
-	// 	code: 0,
-	// 	msg: "ok",
-	// 	data:{}
-	// }))
 
-	// webview.value.callHandler({
-	// 	name: "123",
-	// 	data: JSON.stringify({
-	// 		code: '111',
-	// 		msg: "9999"
-	// 	})
-	// }, (res) => {
-	// 	console.log(res)
-	// })
-	// console.log(e)
-
-	// webview.value.getUrl().then(url => {
-	// 	console.log(url);
-	// })
-	// webview.value.setInterceptPattern(["^((https|http|ftp|rtsp|mms)?:\/\/).*"])
 }
-//页面加载异常
-const pageError = (e: IPageErrorResult) => {
-	console.log(e)
+const isPageError = ref<boolean>(false)
+const pageError = () => {
+	isPageError.value = true
 }
 //打开新窗口
 const onNewWindow = (e: IOnNewWindowResult) => {
 	linkTo(ROUTE_PATH.WEBVIEW, { url: e.url })
 }
-//页面的链接
-const src = ref("")
-//加载webview的配置
-onReady(() => {
-	loadWebviewHeight()
-})
+//更新菜单项
+const updateMenuItem = () => {
+	//处理menuItem
+	menuItemTitle.value = []
+	menuItem.value = [];
+	// 获取所有的menuItem(页面没有出问题)
+	if (!isPageError.value) {
+		(Object.keys(menuItemDetail) as MENU_ITEM[]).map((item: MENU_ITEM) => {
+			if (hideItem.value.indexOf(menuItemDetail[item].id) <= -1) {
+				menuItemTitle.value.push(menuItemDetail[item].name)
+				menuItem.value.push(menuItemDetail[item].id)
+			}
+		})
+	} else {
+		//只保留刷新和关闭
+		menuItemTitle.value.push(menuItemDetail[MENU_ITEM.FRESH].name)
+		menuItem.value.push(MENU_ITEM.FRESH)
+		menuItemTitle.value.push(menuItemDetail[MENU_ITEM.CLOSE].name)
+		menuItem.value.push(MENU_ITEM.CLOSE)
+	}
+}
+
+// 打开操作菜单
+const openMenuSheet = () => {
+	updateMenuItem()
+	const menuItemIds = cloneDeep(menuItem.value)
+	webview.value && (webview.value as any).getUrl().then((res: string | undefined) => {
+		let hostname = getHostnameByUrl(res || "")
+		//去除掉应用的
+		if (hostname.endsWith("douyeblog.top") || hostname.endsWith("anydoor.top") || hostname.endsWith("douye.top")) {
+			hostname = ""
+		}
+		uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+			content: hostname ? `本页面由 ${hostname} 提供` : "",
+			items: cloneDeep(menuItemTitle.value)
+		}, (res) => {
+			if (res.data?.type === "ok") {
+				return webviewMenuHandler(menuItemIds[(res.data as any).which as number], webview.value)
+			}
+			return Promise.reject()
+		})
+	}).catch((e: any) => {
+		ToastModule.show({
+			text: '打开失败!' + e
+		})
+	})
+}
+
+//打开外部应用
+const onScheme = (e: IOnSchemeResult) => {
+	console.log(e)
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		okText: '打开',
+		cancelText: '取消',
+		cancelable: true,
+		content: '网页请求打开应用',
+		title: '提示'
+	}, (res) => {
+		if (res.data?.type === "ok") {
+			plus.runtime.openURL(e.url)
+		}
+	})
+}
+
+//下载
+const onDownload = (e: IDownloadResult) => {
+	const fileName: string = getFileNameFromDownload(decodeURIComponent(e.contentDisposition || ""), decodeURIComponent(e.url) || "")
+	const filesize: string = fileSize(e.contentLength)
+	uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+		items: ['下载', '下载并打开', '跳转外部下载', '取消'],
+		content: `${fileName}(${filesize})`
+	}, (res) => {
+		if (res.data?.type !== "ok") return
+		if (res.data?.which === 0) {
+			DownloadModule.getInstance().create(e.url)
+		} else if (res.data?.which === 1) {
+			DownloadModule.getInstance().create(e.url, true)
+		} else if (res.data?.which === 2) {
+			plus.runtime.openURL(e.url)
+		}
+	})
+}
 //图片点击
 const onImageClick = (e: IOnImageClickResult) => {
 	//如果为点击预览图片
@@ -214,6 +267,58 @@ const onImagePress = (e: IOnImagePressResult) => {
 		});
 	}
 }
+
+//页面的链接
+const src = ref("")
+//标题
+const navTitle = ref<string>("")
+//#region 界面高度相关
+const dom = uni.requireNativePlugin("dom")
+//webview的高度
+const webviewHeight = ref(0)
+//webview的style样式
+const webviewStyle = reactive({
+	progress: {
+		color: theme.getColor("primary").value
+	}
+})
+const navBarHeight = ref<number>(0)
+//键盘事件
+// const listenKeyboard = (res: { height: number }) => {
+// 	loadWebviewHeight(res.height)
+// }
+// uni.onKeyboardHeightChange(listenKeyboard)
+//加载webview的高度
+const loadWebviewHeight = throttle(function (keyboardHeight: number = 0) {
+	keyboardHeight = typeof keyboardHeight === "number" ? keyboardHeight : 0
+	//加载高度
+	if (showTitleBar.value) {
+		dom.getComponentRect(proxy.$refs.navBar, (option: any) => {
+			if (option && option.result) {
+				navBarHeight.value = option.size.height
+				//如果没获取到
+				if (navBarHeight.value === 0) loadWebviewHeight()
+				else {
+					webviewHeight.value = uni.getSystemInfoSync().windowHeight - navBarHeight.value - keyboardHeight
+				}
+			}
+		})
+	} else {
+		//隐藏titleBar
+		webviewHeight.value = uni.getSystemInfoSync().windowHeight - keyboardHeight
+	}
+}, 200)
+//展示titlebar
+const showTitleBar = ref<boolean>(true)
+const hideTitleBar = (hide: boolean) => {
+	if (hide) {
+		showTitleBar.value = false
+	} else {
+		showTitleBar.value = true
+	}
+	loadWebviewHeight()
+}
+//#endregion
 </script>
 
 <style lang="scss" scoped>

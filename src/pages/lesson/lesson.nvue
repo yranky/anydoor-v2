@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-14 10:03:21
+ * @LastEditTime: 2023-06-15 15:29:39
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -18,8 +18,32 @@
 			<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 				<template #navBar>
 					<!-- 课程表 -->
-					<tm-navbar :title="'第' + currentShowWeeks + '周'" transprent></tm-navbar>
-					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight">
+					<tm-navbar transprent hideBack hideHome :leftWidth="250">
+						<template #left>
+							<anydoor-text class="flex-2" text="2023年春季学期" :lines="1"
+								style="margin:0 16rpx;text-align: right;"></anydoor-text>
+						</template>
+						<template #default>
+							<view class="flex flex-center flex-row">
+								<tm-icon customicon name="tmicon-angle-left" :fontSize="30" @click="preWeek"></tm-icon>
+								<anydoor-text class="flex-2" :text="'第' + currentShowWeeks + '周'" :lines="1" :fontSize="30"
+									style="margin:0 3rpx;text-align: right;"></anydoor-text>
+								<tm-icon customicon name="tmicon-angle-right" :fontSize="30" @click="nextWeek"></tm-icon>
+							</view>
+						</template>
+						<template #right>
+							<view class="flex flex-center flex-row pl-16 pr-16">
+								<view class=" pl-16 pr-16" @click="linkTo(ROUTE_PATH.LESSON_ADD)">
+									<tm-icon customicon name="tmicon-plus"></tm-icon>
+								</view>
+								<view class=" pl-16 pr-16" @click="linkTo(ROUTE_PATH.LESSON_SETTING)">
+									<tm-icon customicon name="tmicon-cog"></tm-icon>
+								</view>
+							</view>
+						</template>
+					</tm-navbar>
+					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight"
+						:currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks">
 					</anydoorLessonDate>
 				</template>
 				<template #content>
@@ -45,6 +69,7 @@ import anydoorLessonView from "@/components/anydoor-lesson-view/anydoor-lesson-v
 import anydoorLessonDate from "@/components/anydoor-lesson-view/anydoor-lesson-date.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import tmMessage from "@/tmui/components/tm-message/tm-message.vue"
+import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import {
 	ref,
 	computed,
@@ -60,6 +85,10 @@ import { onLoad, onReady, onShow } from "@dcloudio/uni-app"
 import { useLessonStore } from "@/store/lesson"
 import { watch } from "vue"
 import useJiaowuStore from "@/store/jiaowu"
+import AnydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { cloneDeep } from "lodash"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 
 const store = useTmpiniaStore()
@@ -96,9 +125,10 @@ const colNum = ref<number>(8)
 const colItemWidth = computed<number>(() => {
 	return (750 / colNum.value)
 })
-//一个row的高度
+//row的数量
 const rowNum = ref<number>(10)
 
+//一个row的高度
 const rowItemHeight = ref<number>(150)
 
 const lessons = ref<IAnydoorLesson[]>([])
@@ -128,6 +158,21 @@ const maxWeeks = ref<number>(36)
 
 //当前的轮播索引
 const currentSwiperIndex = ref<number>(0)
+
+//上一周
+const preWeek = () => {
+	if (currentShowWeeks.value - 1 < 0) {
+		currentShowWeeks.value = maxWeeks.value - 1
+	} else currentShowWeeks.value = currentShowWeeks.value - 1
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
+}
+//下一周
+const nextWeek = () => {
+	if (currentShowWeeks.value + 1 > maxWeeks.value) {
+		currentShowWeeks.value = 0
+	} else currentShowWeeks.value = currentShowWeeks.value + 1
+	updateSwiper({ detail: { current: currentSwiperIndex.value } })
+}
 
 
 //更新客户曾
@@ -202,7 +247,8 @@ const getCurrentWeekList = (week: number) => {
 //获取最新数据
 const updateData = async () => {
 	const LessonInstance = await Lesson.getInstance()
-	const data: any = await LessonInstance.getLessonList()
+	const data: ILessonTempItemResult[] = await LessonInstance.getLessonList()
+	console.log(data)
 	lessonStore.lessonList = data || []
 }
 
@@ -212,7 +258,7 @@ onReady(() => {
 	watch(() => lessonStore.initing, (val) => {
 		if (val === true) {
 			uni.$anydoor_native.Dialog_Module.showWaitingDialog({
-				title:'加载中，请稍等'
+				title: '加载中，请稍等'
 			})
 		} else {
 			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
@@ -222,7 +268,6 @@ onReady(() => {
 
 onShow(async () => {
 	updateData()
-
 })
 
 

@@ -35,6 +35,14 @@ export enum ROUTE_PATH {
     LESSON = "/pages/lesson/lesson",
     //课程表设置
     LESSON_SETTING = "/pages/lesson/setting",
+    //课程表颜色设置
+    LESSON_SETTING_COLOR = "/pages/lesson/color",
+    //课程表背景
+    LESSON_SETTING_BACKGROUND = "/pages/lesson/background",
+    //编辑课程
+    LESSON_ADD = "/pages/lesson/add",
+    //已编辑课程
+    LESSON_SETTING_EDIT = "/pages/lesson/editManage",
     //webview
     WEBVIEW = "/pages/webview/webview",
     // 学校选择
@@ -45,4 +53,6 @@ export enum ROUTE_PATH {
     JIAOWU_MY = "/pages/jw/detail",
     //应用信息
     APP_DETAIL = "/pages/app/app",
+    //扫码结果
+    QRCODE_RESULT = "/pages/ext/qresult",
 }

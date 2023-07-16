@@ -10,10 +10,10 @@
     <!-- #endif -->
     <tm-drawer :disabbleScroll="true" :round="props.round" ref="drawer" :height="820" :closable="true"
       :overlayClick="aniover" @open="drawerOpen" @cancel="cancel" @ok="confirm" :show="showCity"
-      @update:show="closeDrawer" title="请选择地区" ok-text="确认">
+      @update:show="closeDrawer" title="请选择地区" ok-text="确认" :duration="props.duration">
       <tm-picker-view v-if="showCity" ref="picker" :height="590" @end="aniover = true" @start="aniover = false"
         :value="_colIndex" @update:modelValue="_colIndex = $event" @update:model-str="_colStr = $event"
-        :model-str="_colStr" :default-value="_colIndex" :columns="_data"></tm-picker-view>
+        :model-str="_colStr" :default-value="_colIndex" :columns="_data" :ok-color="props.color"></tm-picker-view>
       <tm-button label="确认选择" block :margin="[32, 12]" :color="props.color" :linear="props.linear"
         :linear-deep="props.linearDeep" @click="confirm" :round="props.btnRound"></tm-button>
       <view :style="{ height: win_bottom + 'px' }"></view>
@@ -139,7 +139,12 @@ const props = defineProps({
   disabled:{
     type:Boolean,
     default:false
-  }
+  },
+  //弹出的动画时间单位ms.
+  duration: {
+    type: Number,
+    default: 300,
+  },
 });
 const showCity = ref(true);
 const _cityData = computed(() => props.city);

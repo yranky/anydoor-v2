@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-12 15:01:11
+ * @LastEditTime: 2023-07-16 10:09:07
  * @FilePath: \anydoor-v2\src\common\request\common\baseService.ts
  * @Description: axios
  * 
@@ -23,6 +23,17 @@ const service = axios.create({
     //   }
     // }
   ],
+  header: {
+    version: uni.getAppBaseInfo().appVersionCode,
+    // #ifdef APP-PLUS
+    //默认安卓(1为安卓，2为ios)
+    platform: uni.getSystemInfoSync().platform === 'ios' ? 2 : 1,
+    // #endif
+    // #ifdef MP
+    // @ts-ignore
+    platform: ''
+    // #endif
+  }
 })
 
 export default service

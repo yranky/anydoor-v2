@@ -12,6 +12,8 @@ import { useUserStore } from "./store/user"
 import { UNI_STORAGE } from "./common/database/UNI_STORAGE"
 import { isEmpty } from "lodash"
 import useDeviceStore from "./store/device"
+import { ILessonTempItemResult } from "./common/database/Lesson/ILesson"
+import MPHandler from "./common/MPHandler/MPHandler"
 
 /*
  * @Author: yranky douye@douye.top
@@ -26,12 +28,6 @@ import useDeviceStore from "./store/device"
 export default async function init() {
     //初始化uni
     uni.$anydoor = {}
-    try {
-        //更新
-        Update.getInstance().update()
-    } catch {
-
-    }
     //初始化原生插件
     nativeInit()
     //初始化device_id
@@ -39,6 +35,15 @@ export default async function init() {
     try {
         await (await Device.getInstance()).initDeviceId()
     } catch { }
+
+    //新版本检测
+    try {
+        //更新
+        Update.getInstance().update()
+    } catch {
+
+    }
+
     //初始化用户
     try {
         const UserModule = await User.getInstance()
@@ -108,7 +113,7 @@ export async function initLesson() {
         const jiaowuStore = useJiaowuStore()
         //设置当前的周次
         LessonInstance.setCurrentWeek()
-        const data: any = await LessonInstance.getLessonList()
+        const data: ILessonTempItemResult[] = await LessonInstance.getLessonList()
         lessonStore.lessonList = data || []
         //初始化完成
         lessonStore.initing = false

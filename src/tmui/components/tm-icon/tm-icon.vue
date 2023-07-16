@@ -269,7 +269,6 @@ const iconComputed = computed(() => {
       let names = props.name.split("-");
       if (/^e[0-9|a-z|A-Z]{3}/.test(names[names.length - 1])) {
         let clasName = props.name.substring(0, props.name.lastIndexOf("-"));
-        console.log(clasName);
         return clasName;
       }
     } catch (e) {

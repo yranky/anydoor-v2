@@ -16,6 +16,8 @@ export default interface IDialogModuleNative {
     showRadioDialog(option: IRadioDialogDialogOption, callbackfn?: (result: IResult<IRadioDialogDialogCallback>) => void): void
     //多选
     showCheckboxDialog(option: ICheckboxDialogDialogOption, callbackfn?: (result: IResult<ICheckboxDialogDialogCallback>) => void): void
+    //更新器
+    showUpdateDialog(option: IUpdateDialogOption, callbackfn?: (result: IResult<IUpdateDialogCallback>) => void): void
 }
 
 interface IDialogInitOption {
@@ -67,7 +69,7 @@ interface IShowWaitingDialogOption {
 }
 
 interface IHideWaitingDialogDialogOption {
-    type: 'cancel' | 'ok' | 'mask'
+    // type: 'cancel' | 'ok' | 'mask'
 }
 
 
@@ -81,7 +83,7 @@ interface IShareMenuDialogDialogOption {
 
 interface IShareMenuDialogDialogCallback {
     type: 'cancel' | 'ok' | 'mask',
-    which?: string,
+    which?: number,
     label?: string
 }
 
@@ -111,4 +113,23 @@ interface ICheckboxDialogDialogCallback {
     type: 'cancel' | 'ok' | 'mask',
     which?: number[],
     label?: string[]
+}
+
+
+interface IUpdateDialogOption {
+    isWifiOnly?: boolean,
+    //下载链接
+    downloadUrl: string,
+    //是否可忽略
+    isIgnorable: boolean,
+    //版本号
+    versionCode: number,
+    //版本名称
+    versionName: string,
+    //版本日志
+    log: string
+}
+
+interface IUpdateDialogCallback {
+
 }

@@ -10,7 +10,9 @@ export enum SEND_FUN {
     //获取信息
     GET_SYSTEM_INFO = 'fun_get_system_info',
     //返回(非webview内网页返回)
-    PAGE_BACK = "fun_page_back"
+    PAGE_BACK = "fun_page_back",
+    //titleBarMenu隐藏某些菜单项
+    HIDE_TITLE_BAR_ITEM = "fun_hide_title_bar_item"
 }
 
 

@@ -1,0 +1,50 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-06-13 23:55:20
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-09 21:24:13 
+ * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @Description: 编辑课程
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="编辑课程"></tm-navbar>
+		<view style="margin: 10rpx 20rpx;">
+			<anydoor-text text="校区" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+			<tm-radio-group v-model="campus">
+				<tm-radio value="apple" label="苹果基础示例"></tm-radio>
+				<tm-radio value="banner" label="香蕉"></tm-radio>
+				<tm-radio value="test" label="测试项"></tm-radio>
+				<tm-radio value="test1" label="测试项1"></tm-radio>
+				<tm-radio value="test2" label="测试项2"></tm-radio>
+				<tm-radio value="other" label="其它水果"></tm-radio>
+			</tm-radio-group>
+			<anydoor-text text="课程" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="已编辑课程还原"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="一天课时">
+				<template v-slot:right>
+					<tm-stepper v-model="lessonNum" :defaultValue="20"></tm-stepper>
+				</template>
+			</tm-cell>
+			<anydoor-text text="样式" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程颜色"> </tm-cell>
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程表页面背景"> </tm-cell>
+		</view>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import tmStepper from "@/tmui/components/tm-stepper/tm-stepper.vue"
+import { ref } from "vue"
+import tmRadio from "@/tmui/components/tm-radio/tm-radio.vue"
+import tmRadioGroup from "@/tmui/components/tm-radio-group/tm-radio-group.vue"
+
+const lessonNum = ref(0)
+
+const campus = ref()
+</script>

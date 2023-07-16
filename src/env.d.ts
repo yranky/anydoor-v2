@@ -27,6 +27,7 @@ import IDialogModuleNative from "./common/native/dialog/IDialogModule"
 import DialogModule from "./common/native/dialog/DialogModule"
 import Update from "./common/update/Update"
 import IToolModeleNative from "./common/native/tool/IToolModeleNative"
+import MPHandler from "./common/MPHandler/MPHandler"
 
 declare module '*.vue' {
   import { DefineComponent } from 'vue'
@@ -48,7 +49,8 @@ declare global {
     DialogModule?: DialogModule,
     Device?: Device,
     User?: User,
-    Update?: Update
+    Update?: Update,
+    MPHandler?: MPHandler
   }
   interface $anydoor_native {
     SQLite_Module: any,

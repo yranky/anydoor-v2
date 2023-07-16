@@ -13,6 +13,8 @@ export default class Scan {
         Scan.scancode().then(res => {
             if (typeof res.content === "string" && res.content.startsWith("http")) {
                 linkTo(ROUTE_PATH.WEBVIEW, { url: res.content })
+            } else {
+                linkTo(ROUTE_PATH.QRCODE_RESULT, { result: res.content })
             }
         })
     }, 1000, { leading: true })
@@ -20,16 +22,19 @@ export default class Scan {
     static scancode(): Promise<IScancodeResult> {
         return new Promise(resolve => {
             Permission.request(PERMISSION_TYPE.CAMERA).then(() => {
-                // 允许从相机和相册扫码
+                // 允许从相机扫码
                 uni.scanCode({
+                    onlyFromCamera: true,
+                    scanType: ['qrCode'],
                     success: function (res) {
+                        console.log(res)
                         resolve({
                             type: res.scanType,
                             content: res.result
                         })
                     },
                     fail: function (res) {
-                        ToastModule.show({
+                        if (res.errMsg.indexOf('cancel') <= -1) ToastModule.show({
                             text: res.errMsg
                         })
                     }

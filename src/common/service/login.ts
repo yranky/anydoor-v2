@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:50:42
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 10:56:08
+ * @LastEditTime: 2023-07-15 15:58:40
  * @FilePath: \anydoor-v2\src\common\service\login.ts
  * @Description: login service
  * 
@@ -15,6 +15,7 @@ import { IUserRuleResult } from '../IForm/login/login'
 import ToastModule from '../native/toast/ToastModule'
 import User from '../database/user/User'
 import { UNI_STORAGE } from '../database/UNI_STORAGE'
+import useDeviceStore from '@/store/device'
 
 
 //获取用户验证规则
@@ -99,7 +100,46 @@ export async function refreshToken(): Promise<restful> {
 export async function loginCenter(formData: any): Promise<any> {
   const data: any = await post('login_center', formData)
   if (data.code !== CODE.SUCCESS) {
-    ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+    ToastModule.show({ text: data.msg + `(错误码:${data.code})` },data.code)
   }
   return data || {}
 }
+
+/**
+ * 
+ * @param formData 
+ * 第三方登录
+ * @returns 
+ */
+export async function union_login(formData: {
+  device_id?: string,
+  token: string,
+  type: "qq" | "weibo",
+  uid?: string
+}): Promise<any> {
+  let data: any = {}
+  try {
+    //注入设备id
+    if (!formData.device_id) {
+      formData.device_id = useDeviceStore().deviceId
+    }
+    data = await post('user_union_login', formData)
+    if (data.code !== CODE.SUCCESS) {
+      ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+    } else {
+      try {
+        await (await User.getInstance()).insertUserAccount(data.data.token, data.data.refresh_token);
+        await (await User.getInstance()).freshStoreUser()
+        await (await User.getInstance()).refreshUserInfo()
+      } catch (e: any) {
+        ToastModule.show({ text: '登录过程出现异常' + e })
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+  return data
+}
+
+
+

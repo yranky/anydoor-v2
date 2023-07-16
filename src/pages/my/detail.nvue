@@ -6,7 +6,8 @@
 			</template>
 			<template #content>
 				<view style="margin: 10rpx 20rpx;">
-					<tm-cell showAvatar :avatar="userStore.avatar" :margin="[0, 0]" :titleFontSize="35" title="头像">
+					<tm-cell showAvatar :avatar="userStore.avatar" :margin="[0, 0]" :titleFontSize="35" title="头像"
+						@click="toWebDetail">
 					</tm-cell>
 					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="用户名"
 						:rightText="userStore.username" rightIcon=""> </tm-cell>
@@ -32,10 +33,13 @@ import User from "@/common/database/user/User"
 import { ref } from "vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import dayjs from "dayjs"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import { UCENTER_BASE_URL } from "@/common/request/urls"
 const userStore = useUserStore()
 
 
-const birthDate = ref<string>(dayjs(userStore.birth+" 00:00:00").isValid()?dayjs(userStore.birth+" 00:00:00").format("YYYY-MM-DD"):dayjs().format('YYYY-MM-DD'))
+const birthDate = ref<string>(dayjs(userStore.birth + " 00:00:00").isValid() ? dayjs(userStore.birth + " 00:00:00").format("YYYY-MM-DD") : dayjs().format('YYYY-MM-DD'))
 
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
@@ -62,7 +66,15 @@ const updateNickname = () => {
 }
 
 //更新生日
-const updateBirth = (e:any) => {
+const updateBirth = (e: any) => {
 	console.log(e.detail.value)
+}
+
+//跳转到修改信息
+const toWebDetail = (e: any) => {
+	linkTo(ROUTE_PATH.WEBVIEW, {
+		url: UCENTER_BASE_URL + "/user/home",
+		title: "修改信息"
+	})
 }
 </script>

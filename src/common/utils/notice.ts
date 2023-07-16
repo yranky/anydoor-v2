@@ -13,6 +13,7 @@ export const toNoticeDetail = debounce((item: any): void => {
             title: item.title
         })
     } else {
+        console.log(item.url)
         linkTo(ROUTE_PATH.WEBVIEW, {
             url: item.url,
             title: item.title

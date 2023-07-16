@@ -3,7 +3,8 @@
 export enum NAVIGATE_TYPE {
   WEBVIEW = 'webview',
   PAGE = 'page',
-  MPROGRAM = 'mprogram'
+  MPROGRAM = 'mprogram',
+  LEGO = "lego"
 }
 
 export const navigate = {
@@ -18,6 +19,10 @@ export const navigate = {
   [NAVIGATE_TYPE.MPROGRAM]: {
     title: '微应用',
     value: NAVIGATE_TYPE.MPROGRAM
+  },
+  [NAVIGATE_TYPE.LEGO]: {
+    title: '乐高平台',
+    value: NAVIGATE_TYPE.LEGO
   }
 }
 

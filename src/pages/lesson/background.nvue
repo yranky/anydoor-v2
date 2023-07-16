@@ -1,0 +1,175 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-06-13 23:55:20
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-09 21:24:13 
+ * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @Description: 课程表背景
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="getFirstPage" @loadmore="getNextPage">
+			<template #navBar>
+				<tm-navbar title="课程表背景"></tm-navbar></template>
+			<template #content>
+				<view style="margin: 10rpx 20rpx;">
+					<anydoor-text text="当前" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+					<view :style="{
+						width: itemInfo.width + 'rpx',
+						height: itemInfo.height + 'rpx',
+						backgroundColor: color
+					}">
+						<image
+							src="https://img1.baidu.com/it/u=4049022245,514596079&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"
+							mode="aspectFill" />
+					</view>
+					<anydoor-text text="纯色背景" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+					<anydoorColorPickerGroup>
+						<anydoorColorPicker v-model:color="color">
+							<tm-button block label="选择颜色"></tm-button>
+						</anydoorColorPicker>
+					</anydoorColorPickerGroup>
+					<anydoor-text text="图片背景" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+					<view class="background-items">
+						<view class="background-item" :style="{
+							width: itemInfo.width + 'rpx',
+							height: itemInfo.height + 'rpx',
+							backgroundColor: 'rgba(0,0,0,.2)'
+						}">
+							<anydoorText text="自定义" color="whiteBg" />
+						</view>
+						<view class="background-item" :style="{
+							width: itemInfo.width + 'rpx',
+							height: itemInfo.height + 'rpx',
+							backgroundColor: color,
+							position: 'relative'
+						}" v-for="(item, index) in wallpaperList" :key="index">
+							<image :src="item.thumb" mode="aspectFill" />
+							<!-- 背景 -->
+							<view class="background-mask" :style="{
+								width: itemInfo.width + 'rpx',
+								height: itemInfo.height + 'rpx'
+							}">
+								<anydoorText text="点击下载" color="whiteBg" />
+							</view>
+						</view>
+					</view>
+				</view>
+			</template>
+		</anydoorPage>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import { onLoad, onReachBottom } from "@dcloudio/uni-app"
+import { computed, ref } from "vue"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import anydoorColorPicker from "@/components/anydoor-color-picker/anydoor-color-picker.vue"
+import anydoorColorPickerGroup from "@/components/anydoor-color-picker/anydoor-color-picker-group.vue"
+import { listWallpaper } from "@/common/service/wallpaper"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import { onMounted } from "vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+
+//宽高比
+const scale = ref<number>(3)
+
+//选中的颜色
+const color = ref<string>("#fff")
+
+//加载大小
+onLoad(() => {
+	const sysInfo = uni.getSystemInfoSync()
+	scale.value = sysInfo.windowHeight / sysInfo.windowWidth
+})
+
+//获取宽高
+const itemInfo = computed(() => {
+	return {
+		width: 196,
+		height: scale.value * 196
+	}
+})
+
+onLoad(() => {
+	//获取第一页
+	getFirstPage()
+})
+
+
+
+const currentPage = ref<number>(1)
+const pageSize = ref<number>(5)
+const wallpaperList = ref<any[]>([])
+const refreshComplete = ref<boolean>(true)
+//当前页
+const getFirstPage = async () => {
+	refreshComplete.value = false
+	try {
+		currentPage.value = 1
+		const data = await listWallpaper({
+			limit: pageSize.value,
+			currentPage: currentPage.value
+		})
+		if (data && data.length > 0) {
+			wallpaperList.value = data
+		}
+	} catch { }
+	refreshComplete.value = true
+}
+//下一页
+const getNextPage = async () => {
+	refreshComplete.value = false
+	try {
+		const data = await listWallpaper({
+			limit: pageSize.value,
+			currentPage: currentPage.value + 1
+		})
+		if (data && data.length > 0) {
+			wallpaperList.value = wallpaperList.value.concat(data)
+			currentPage.value = currentPage.value + 1
+		}
+	} catch { }
+	refreshComplete.value = true
+}
+
+</script>
+<style scoped lang="scss">
+.background-items {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	text-align: center;
+
+	.background-item {
+		margin: 20rpx;
+		text-align: center;
+		align-items: center;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		position: relative;
+
+		&:nth-child(1) {
+			margin: 20rpx 0;
+		}
+
+		&:nth-child(1) {
+			margin: 20rpx 0;
+		}
+
+		.background-mask {
+			position: absolute;
+			align-items: center;
+			justify-content: center;
+			display: flex;
+			background-color: rgba(0, 0, 0, .3);
+		}
+	}
+}
+</style>

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 10:11:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-19 10:29:41
+ * @LastEditTime: 2023-07-12 22:11:18
  * @FilePath: \anydoor-v2\src\common\define\IWebview.ts
  * @Description: webview的相关配置
  * 
@@ -26,11 +26,17 @@ export interface IWebviewItem {
     //点击预览图片(默认为不预览)
     clickPreviewImage?: boolean,
     //长按保存图片(默认为保存)
-    pressSaveImage?: boolean
+    pressSaveImage?: boolean,
+    //post请求
+    post: number | undefined | boolean,
+    //参数
+    params: {
+        [key: string]: number | string
+    }
 }
 
 
-export function IWebviewItemFilter(item: IWebviewItem): IWebviewItem {
+export function IWebviewItemFilter(item: any): IWebviewItem {
     return {
         url: item.url,
         title: item.title || "",
@@ -40,6 +46,8 @@ export function IWebviewItemFilter(item: IWebviewItem): IWebviewItem {
         open: item.open || false,
         refresh: item.refresh || true,
         clickPreviewImage: item.clickPreviewImage || false,
-        pressSaveImage: item.pressSaveImage || true
+        pressSaveImage: item.pressSaveImage || true,
+        post: item.post == 1 ? true : false,
+        params: item['$$$linkParams$$$'] || {}
     }
 }

@@ -4,23 +4,23 @@
 			<template #navBar>
 				<view ref="navBar">
 					<tm-navbar title="文章列表"></tm-navbar>
-					<tm-tabs :list="tabList" align="left" :width="750" :height="300" default-name="1" itemModel="line"
-						activeColor="primary" activeFontColor="primary" v-model:active-name="currentTab"></tm-tabs>
+					<tm-tabs :list="tabList" align="left" :width="750" :height="300" itemModel="line" activeColor="primary"
+						activeFontColor="primary" v-model:active-name="currentTab"></tm-tabs>
 				</view>
 			</template>
 			<template #content>
 				<list>
-					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete && currentArticleList.length===0">
+					<cell v-for="item in limit" :key="item" v-if="!firstLoadComplete && currentArticleList.length === 0">
 						<view style="margin: 0 20rpx;">
 							<tm-skeleton-line :height="100"></tm-skeleton-line>
 						</view>
 					</cell>
 					<cell v-for="item in currentArticleList" :key="item.id">
-						<anydoorNewsItem :title="item.title" :infoList="[item.date, item.author]" img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png">
+						<anydoorNewsItem :title="item.title" @click="toArticleDetail(item)"
+							:infoList="[item.date, item.author, ...((item.tag || '').split(',')).join(' ')]">
 						</anydoorNewsItem>
 					</cell>
 					<!-- <cell>
-						
 						<anydoorNewsItem title="南华大学党委副书记阳小华率队看望慰问挂职、交流干部"
 							img="https://uscnews.usc.edu.cn/__local/F/B3/35/FC57481AB5A898FA83FCB24C23D_11E84718_3E418.png"
 							:infoList="['2022-07-25', '南华大学新闻网', '文图/任辉', '3人浏览', '2人评论', '1人点赞']" titleColor="red">
@@ -41,7 +41,7 @@ import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
 import anydoorNewsItem from "@/components/anydoor-news-item/anydoor-news-item.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
-import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line"
+import tmSkeletonLine from "@/tmui/components/tm-skeleton-line/tm-skeleton-line.vue"
 import ANYDOOR_LOADMORE_STATUS from "@/components/anydoor-loadmore/IAnydoorLoadmore"
 import anydoorLoadMore from "@/components/anydoor-loadmore/anydoor-loadmore.vue"
 import {
@@ -61,77 +61,54 @@ import CODE from "@/common/define/code"
 import { listNotice } from "@/common/service/notice"
 import { diffTwoDays } from "@/common/utils/date"
 import useJiaowuStore from "@/store/jiaowu"
+import { listArticle, typeArticle } from "@/common/service/article"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import { articleFilter, toArticleDetail } from "@/common/utils/article"
+import { triggerRef } from "vue"
 const {
 	proxy
-} = getCurrentInstance()
-const jiaowuStore=useJiaowuStore()
+} = getCurrentInstance() as any
+const jiaowuStore = useJiaowuStore()
 
 //获取列表
-onLoad(()=>{
-	articleList.value.push([])
-	articleList.value.push([])
-	articleList.value.push([])
-	articleList.value.push([])
-	articleList.value.push([])
-	getArticleList(currentTab.value)
+onLoad(() => {
+	getArticleType()
+	// getArticleList(currentTab.value)
 })
 
 //首次加载完成
 const firstLoadComplete = ref<boolean>(false)
 //加载更多是否完成
 const loadmoreStatus = ref<number>(ANYDOOR_LOADMORE_STATUS.MORE)
-//当前所在的tab
-const currentTab = ref(0)
+//当前所在的tab的key
+const currentTab = ref<string | number>("")
 // tab列表
-const tabList = ref([{
-	key: "1",
-	title: "选项1"
-},
-{
-	key: "2",
-	title: "选项2"
-},
-{
-	key: "3",
-	title: "选项3"
-},
-{
-	key: "4",
-	title: "选项4"
-},
-])
+const tabList = ref<{ key: string | number, name: string }[]>([])
 
 //通知列表
-const articleList = ref<any>([])
+const articleList = ref<any>({})
 //当前页码
 const page = ref<number>(1)
 //当前一页限制个数，一页10个
 const limit = ref<number>(10)
 
 //获取通知列表
-const getArticleList = debounce(async (currentTabIndex:number,isRefresh?:boolean,morePage?: number): Promise<void> => {
+const getArticleList = debounce(async (currentTab: number | string, isRefresh?: boolean, morePage?: number): Promise<void> => {
 	try {
-		const data = await listNotice({
+		const data = await listArticle({
 			page: morePage !== undefined ? morePage : page.value,
 			limit: limit.value,
 			cid: jiaowuStore.jiaowuConfig.cid,
 			//分类
-			type:currentTabIndex
+			type: currentTab
 		})
 		if (data.code === CODE.SUCCESS) {
 			//如果是刷新，则清空
-			if(isRefresh) articleList.value[currentTab.value].splice(0,articleList.value[currentTab.value].length)
+			if (!(articleList.value[currentTab] instanceof Array)) articleList.value[currentTab] = []
+			if (isRefresh) articleList.value[currentTab].splice(0, articleList.value[currentTab].length)
 			data.data.forEach((item: any) => {
-				articleList.value[currentTab.value].push({
-					title: item.title,
-					id: item.nid,
-					date: diffTwoDays(item.start_time),
-					sort: item.sort,
-					author: item.author,
-					url: item.ext.url,
-					external: item.ext.external
-				})
-			});
+				articleList.value[currentTab].push(articleFilter(item))
+			})
 			//页数变化
 			if (morePage !== undefined && data.data.length !== 0) page.value = morePage
 			//没有更多了
@@ -149,18 +126,41 @@ const getArticleList = debounce(async (currentTabIndex:number,isRefresh?:boolean
 	refreshComplete.value = true
 }, 500)
 
-watch(()=>currentTab.value,(newVal:number)=>{
+//获取文章列表
+const getArticleType = debounce(async () => {
+	//加载缓存
+	tabList.value = uni.getStorageSync(UNI_STORAGE.ARTICLE_TYPE_LIST) || []
+	try {
+		const data = await typeArticle({
+			cid: jiaowuStore.jiaowuConfig.cid
+		})
+		if (data.code === CODE.SUCCESS) {
+			tabList.value = (data.data || []).map((item: any) => {
+				return {
+					key: item.tid,
+					title: item.name
+				}
+			})
+			currentTab.value = tabList.value[0] ? tabList.value[0].key : ""
+			getArticleList(currentTab.value)
+			//缓存
+			uni.setStorageSync(UNI_STORAGE.ARTICLE_TYPE_LIST, tabList.value)
+		}
+	} catch { }
+}, 500)
+
+watch(() => currentTab.value, (newVal: number | string) => {
 	//将page置为1
 	page.value = 1
-	firstLoadComplete.value=false
-	getArticleList(newVal,true)
+	firstLoadComplete.value = false
+	getArticleList(newVal, true)
 })
 
 //加载更多
 const loadmore = debounce(() => {
 	if (loadmoreStatus.value !== ANYDOOR_LOADMORE_STATUS.LOADING) {
 		loadmoreStatus.value = ANYDOOR_LOADMORE_STATUS.LOADING
-		getArticleList(currentTab.value,false,articleList.value[currentTab.value].length === 0 ? 1 : (page.value + 1))
+		getArticleList(currentTab.value, false, articleList.value[currentTab.value].length === 0 ? 1 : (page.value + 1))
 	}
 }, 300)
 //下拉刷新是否完成
@@ -178,9 +178,9 @@ const retryList = (isRefresh: boolean = false) => {
 }
 
 //获取当前的文章列表
-const currentArticleList=computed(()=>{
-	console.log(articleList.value[currentTab.value])
-	return articleList.value[currentTab.value] || []
+const currentArticleList = computed(() => {
+	if (!(articleList.value[currentTab.value] instanceof Array)) articleList.value[currentTab.value] = []
+	return articleList.value[currentTab.value]
 })
 </script>
 

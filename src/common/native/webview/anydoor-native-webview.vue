@@ -25,7 +25,7 @@ import {
     IAnydoorWebviewConfig, IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult,
     IPageAlertResult,
     IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult,
-    IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult
+    IPageStartResult, IPostUrlOption, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult
 } from "./IAnydoorWebview"
 
 
@@ -321,6 +321,14 @@ const registerHandler = (name: string): Promise<boolean | undefined> => {
     })
 }
 
+const postUrl = (data: IPostUrlOption): Promise<boolean> => {
+    return new Promise((resolve) => {
+        mWebview.value?.postUrl(data, (res) => {
+            resolve(res.success)
+        })
+    })
+}
+
 
 /**
      * 计算属性
@@ -363,6 +371,7 @@ defineExpose({
     stopLoading,
     send,
     callHandler,
-    registerHandler
+    registerHandler,
+    postUrl
 })
 </script>

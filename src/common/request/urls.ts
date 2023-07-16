@@ -2,16 +2,20 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 18:33:37
+ * @LastEditTime: 2023-06-07 10:12:01
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
 import url from './model/url'
-import { isUndefined } from 'lodash'
+import { isUndefined, truncate } from 'lodash'
 
-const BASE_URL = 'http://192.168.124.9:10001'
+const BASE_URL = 'http://192.168.0.229:10001'
+//乐高平台地址
+export const BASE_LEGO_URL = 'http://192.168.124.9:9000/lowcode/editor/preview.html?id='
+// export const UCENTER_BASE_URL = 'http://test.anydoor.douyeblog.top:10000'
+export const UCENTER_BASE_URL = 'https://login.douyeblog.top'
 
 // 链接
 const urls: Array<url> = [
@@ -25,6 +29,12 @@ const urls: Array<url> = [
   {
     name: 'user_login',
     url: BASE_URL + '/center/app_login',
+    token: false
+  },
+  //用户登录
+  {
+    name: 'user_union_login',
+    url: BASE_URL + '/center/app_login/union',
     token: false
   },
   //刷新令牌
@@ -125,11 +135,53 @@ const urls: Array<url> = [
     url: BASE_URL + '/api/user/info',
     token: true
   },
-  //用户信息
+  //扫码登录
+  {
+    name: 'user_scan_login',
+    url: BASE_URL + '/api/user/scan',
+    token: true
+  },
+  //登录中心
   {
     name: 'login_center',
     url: BASE_URL + '/api/auth/center',
     token: true
+  },
+  //文章列表
+  {
+    name: 'article_list',
+    url: BASE_URL + '/api/article/list',
+    token: false
+  },
+  //文章列表
+  {
+    name: 'article_type',
+    url: BASE_URL + '/api/article/type',
+    token: false
+  },
+  //文章详情
+  {
+    name: 'article_detail',
+    url: BASE_URL + '/api/article/detail',
+    token: false
+  },
+  //墙纸
+  {
+    name: 'wallpaper_list',
+    url: BASE_URL + '/api/wallpaper/list',
+    token: false
+  },
+  //获取openid
+  {
+    name: 'auth_openid',
+    url: BASE_URL + '/api/auth/openid',
+    token: true
+  },
+  //检查更新
+  {
+    name: 'update_check',
+    url: BASE_URL + '/api/update/check',
+    token:false
   }
 ]
 

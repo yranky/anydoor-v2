@@ -60,6 +60,11 @@
 					"type": "module",
 					"name": "anydoor_dialog",
 					"class": "com.top_anydoor.dialog.Index"
+				},
+				{
+					"type": "component",
+					"name": "anydoor-video",
+					"class": "com.top_anydoor.video.Index"
 				}
 			],
 			"integrateType": "aar",
@@ -75,7 +80,10 @@
 				}
 			},
 			"dependencies": [
-			    "com.kongzue.dialogx:DialogX:0.0.47"
+			    "com.kongzue.dialogx:DialogX:0.0.47",
+				"xyz.doikki.android.dkplayer:dkplayer-java:3.3.7",
+				"xyz.doikki.android.dkplayer:player-ijk:3.3.7",
+				"xyz.doikki.android.dkplayer:videocache:3.3.7"
 			]
 		}
 	}

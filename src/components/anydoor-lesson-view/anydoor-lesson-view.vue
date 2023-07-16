@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:14:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-15 18:20:14
+ * @LastEditTime: 2023-05-19 23:45:08
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\anydoor-lesson-view.vue
  * @Description: 课程表组件
  * 
@@ -19,7 +19,11 @@
 			width: colItemWidth + numBase,
 			height: (rowNum * rowItemHeight) + numBase
 		}">
-
+			<view v-for="(item, index) in rowNum" :style="{
+				height: rowItemHeight + numBase
+			}">
+				<AnydoorText :text="item + ''" style="text-align: center;" />
+			</view>
 		</view>
 		<!-- 课程信息 -->
 		<view v-for="(item, index) in lessonData" :key="index" class="lesson-col" :style="{
@@ -51,6 +55,7 @@ import {
 	toRefs
 } from 'vue'
 import IAnydoorLesson from './IAnydoorLesson'
+import AnydoorText from '../anydoor-text/anydoor-text.vue'
 const props = defineProps({
 	numBase: {
 		type: String,
@@ -77,6 +82,7 @@ const props = defineProps({
 		default: () => []
 	}
 })
+
 const {
 	numBase,
 	colNum,
@@ -99,9 +105,10 @@ const lessonData = computed((val: IAnydoorLesson[]): IAnydoorLesson[][] => {
 	const arr: IAnydoorLesson[][] = new Array(7).fill(0).map(() => [])
 	// 解析lessons
 	lessons.value.forEach((item: IAnydoorLesson) => {
-		if (arr[item.week] instanceof Array) arr[item.week].push(item)
+		item.week.forEach((weekday: number) => {
+			if (arr[weekday == 7 ? 0 : weekday] instanceof Array) arr[weekday == 7 ? 0 : weekday].push(item)
+		})
 	})
-	// console.log(arr)
 	return arr
 })
 </script>

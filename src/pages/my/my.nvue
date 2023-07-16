@@ -24,7 +24,7 @@
 				<view class="user-info flex flex-row" @click="toUserInfo">
 					<view class="user-avatar">
 						<!-- 120rpx margin 20rpx 40rpx -->
-						<tm-avatar :img="userStore.avatar" :round="15" :size="120"></tm-avatar>
+						<tm-avatar :img="userStore.avatar || '/static/logo/logo.png'" :round="15" :size="120"></tm-avatar>
 					</view>
 					<view class="user-info flex-1 flex flex-col">
 						<view class="user-info-username">
@@ -197,7 +197,8 @@ import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import {
 	onLoad,
-	onPageScroll
+	onPageScroll,
+	onShow
 } from "@dcloudio/uni-app"
 
 import { linkTo, menuLink } from "@/common/utils/link"
@@ -225,7 +226,7 @@ const toJiaowuLogin = () => {
 
 const {
 	proxy
-}:any = getCurrentInstance()
+}: any = getCurrentInstance()
 // 主题工具
 import theme from "@/tmui/tool/theme/theme"
 import { useUserStore } from "@/store/user";
@@ -238,6 +239,10 @@ const life_menu_list = ref<any>([])
 const my_menu_list = ref<any>([])
 const recommend_menu_list = ref<any>([])
 
+
+onShow(() => {
+	getMyMenu()
+})
 
 //加载数据
 onLoad(() => {
@@ -304,7 +309,9 @@ const refresh = async () => {
 
 //我的部分的菜单
 const getMyMenu = async () => {
-	const data = await listMyMenu({})
+	const data = await listMyMenu({
+		cid: jiaowuStore.jiaowuConfig.cid
+	})
 	//菜单类型
 	jw_menu_list.value = data[MENU_TYPES.JW]
 	life_menu_list.value = data[MENU_TYPES.LIFE]

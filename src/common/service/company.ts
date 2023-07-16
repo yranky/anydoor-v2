@@ -10,7 +10,7 @@ export async function listCompany(formData: any): Promise<restful<any>> {
     const data: any = await post('company_list', formData)
     let companys: any = []
     if (data.code !== CODE.SUCCESS) {
-        ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+        ToastModule.show({ text: data.msg + `(错误码:${data.code})` }, data.code)
     } else {
         companys = (data.data || []).map((item: any) => {
             const arr = pinyin(item.name, { pattern: 'first', toneType: 'none', type: 'array' })

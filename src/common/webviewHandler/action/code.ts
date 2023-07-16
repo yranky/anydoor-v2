@@ -6,7 +6,8 @@ export enum CODE {
     //数据传输时错误
     FAIL_ON_SEND = 300,
     //执行方法时错误
-    FAIL_ON_CALL=400
+    FAIL_ON_CALL = 400,
+    FAIL_NOT_SUPPROT = 500
 }
 
 
@@ -14,7 +15,8 @@ export const CODE_MSG: ICODE_MSG<CODE> = {
     [CODE.PARSE_ERROR]: '数据解析错误',
     [CODE.SUCCESS]: "ok",
     [CODE.FAIL_ON_SEND]: "数据传输时错误",
-    [CODE.FAIL_ON_CALL]:'执行时出错'
+    [CODE.FAIL_ON_CALL]: '执行时出错',
+    [CODE.FAIL_NOT_SUPPROT]: "不支持的API"
 }
 
 

@@ -1,0 +1,121 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-06-13 23:55:20
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-03-09 21:24:13 
+ * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @Description: 添加/编辑课程
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<tm-navbar title="添加课程"></tm-navbar>
+		<anydoor-item-picker-group>
+			<anydoor-item-picker :list="nameList" showInput v-model:value="formData.name">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程名称"
+					:rightText="formData.name ? formData.name : '请选择'"></tm-cell>
+			</anydoor-item-picker>
+			<anydoor-item-picker :list="timeList" v-model:value="formData.time" :style-config="CONFIG_TYPE.FIVE">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程节次" :rightText="showData.time"></tm-cell>
+			</anydoor-item-picker>
+			<anydoor-item-picker :list="weekList" v-model:value="formData.week" :style-config="CONFIG_TYPE.FIVE">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="星期" :rightText="showData.week"></tm-cell>
+			</anydoor-item-picker>
+			<anydoor-item-picker :list="teacherList" showInput v-model:value="formData.teacher">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="上课教师"
+					:rightText="formData.teacher ? formData.teacher : '请选择'"></tm-cell>
+			</anydoor-item-picker>
+			<anydoor-item-picker :list="weeksList" v-model:value="formData.weeks" :style-config="CONFIG_TYPE.SIX">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="周次" :rightText="showData.weeks"></tm-cell>
+			</anydoor-item-picker>
+			<anydoor-item-picker :list="positionList" showInput v-model:value="formData.position">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="教室"
+					:rightText="formData.position ? formData.position : '请选择'"></tm-cell>
+			</anydoor-item-picker>
+		</anydoor-item-picker-group>
+		<view style="margin:0 24rpx;">
+			<tm-button block label="保存"></tm-button>
+		</view>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import { ref } from "vue"
+import tmButton from "@/tmui/components/tm-button/tm-button.vue"
+import anydoorItemPickerGroup from "@/components/anydoor-item-picker/anydoor-item-picker-group.vue"
+import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-picker.vue"
+import { CONFIG_TYPE, IListArray } from "@/components/anydoor-item-picker/anydoor-item-picker"
+import { watch } from "vue"
+import { sequenceToRange } from "@/common/database/Lesson/lesson_temp_utils"
+import { reactive } from "vue"
+
+
+const formData = ref({
+	//课程名称
+	name: '',
+	//上课节次
+	time: [],
+	//上课星期
+	week: [],
+	//上课教师
+	teacher: '',
+	//周次
+	weeks: [],
+	//上课地点
+	position: ''
+})
+
+const showData = ref({
+	//节次
+	time: '',
+	//星期
+	week: '',
+	//周次
+	weeks: ''
+})
+
+watch(formData, () => {
+	// 节次
+	showData.value.time = formData.value.time.length > 0 ? sequenceToRange(formData.value.time) : "请选择"
+	//周次
+	showData.value.weeks = formData.value.weeks.length > 0 ? sequenceToRange(formData.value.weeks) : "请选择"
+	//星期
+	showData.value.week = formData.value.week.length > 0 ? (formData.value.week.map(item => {
+		return weekList.value.find(weekItem => weekItem.value === item)?.label
+	}).join(',') || '请选择') : '请选择'
+}, { immediate: true, deep: true })
+
+//课程列表
+const nameList = ref<string[]>([
+	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
+])
+
+//课程列表
+const timeList = ref<number[]>(new Array(10).fill(0).map((item, index) => {
+	return index + 1
+}))
+
+//星期列表
+const weekList = ref<IListArray[]>(['周日', '周一', '周二', '周三', '周四', '周五', '周六'].map((item, index) => {
+	return { label: item, value: index }
+}))
+
+//教师列表
+const teacherList = ref<string[]>([
+	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
+])
+
+//周次列表
+const weeksList = ref<number[]>(new Array(35).fill(0).map((item, index) => {
+	return index + 1
+}))
+
+//教室列表
+const positionList = ref<string[]>([
+	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
+])
+</script>

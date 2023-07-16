@@ -30,8 +30,8 @@ import {
 } from "vue"
 import getNETError from "@/common/network/error"
 import theme from "@/tmui/tool/theme/theme"
-import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
-import { ICallback } from "./anydoor-webview-bridge/types"
+import { IAnydoorWebviewRef, ICallHandlerOption, IDownloadResult, ILoadResourceResult, IMessageResult, INameMessageResult, IOnBackResult, IOnConsoleResult, IOnErrorResult, IOnImageClickResult, IOnImagePressResult, IOnLinkClickResult, IOnLinkPressResult, IOnNewWindowResult, IOnProgressResult, IOnSchemeResult, IPageAlertResult, IPageErrorResult, IPageHttpErrorResult, IPageReadyResult, IPageSSLErrorResult, IPageStartResult, IPostUrlOption, ISetCookieOption, IShouldOverrideUrlLoadingOption, ITitleUpdateResult, IUrlLoadingPaternResult } from "./IAnydoorWebview"
+import { ICallback } from "@/common/webviewHandler/action/types"
 
 const info = reactive({
 	error: {
@@ -69,7 +69,7 @@ import {
 	ACTION as NETErrorAction
 } from "@/common/network/NETError"
 import { onHide, onShow } from "@dcloudio/uni-app"
-import { IHandler } from "./anydoor-webview-bridge/IHandler"
+import { IHandler } from "@/common/webviewHandler/action/IHandler"
 
 //回调的值
 const messageData = ref<IMessageResult>()
@@ -123,7 +123,8 @@ const emits = defineEmits([
 	"onScheme",
 	"onError",
 	'onHideTitleBar',
-	"onShowTitleBar"
+	"onShowTitleBar",
+	"onHideTitleBarItem"
 ])
 /**
  * 回调
@@ -230,6 +231,7 @@ const onBack = (e: IOnBackResult) => {
 }
 //拦截scheme
 const onScheme = (e: IOnSchemeResult) => {
+	if (e.url.startsWith("anydoorbridge://")) return
 	emits("onScheme", e)
 }
 //插件try catch捕获的错误
@@ -293,6 +295,7 @@ const go = (step: string) => {
 }
 //重新加载当前页面
 const reload = () => {
+	info.error.show = false
 	return mWebview.value && mWebview.value.reload()
 }
 //加载url
@@ -343,6 +346,11 @@ const getUserAgent = () => {
 const setUserAgent = (s: string) => {
 	return mWebview.value && mWebview.value.setUserAgent(s)
 }
+
+//post请求
+const postUrl = (data: IPostUrlOption) => {
+	return mWebview.value && mWebview.value.postUrl(data)
+}
 //end
 
 //页面显示
@@ -385,7 +393,8 @@ defineExpose({
 	registerHandler,
 	callHandler,
 	setUserAgent,
-	getUserAgent
+	getUserAgent,
+	postUrl
 })
 </script>
 <style scoped lang="scss">

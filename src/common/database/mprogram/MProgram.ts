@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 15:49:25
+ * @LastEditTime: 2023-06-19 21:12:58
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -50,13 +50,24 @@ export default class MProgram {
         uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
         try {
             //先判断有没有安装
-            const item: any = this.getInstalledItem(mpid)
+            let item: IMProgramItem = this.getInstalledItem(mpid)
             //如果有id，先打开
-            if (item.unid) {
-                await this.start(item.unid, {
-                    ...item
+            if (item && item.unid) {
+                const startResult = await this.start(item.unid, {
+                    ...item,
+                    extraData: {
+                        enableBackground: false
+                    }
                 })
-                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                //说明要重新安装
+                if (startResult.code === MPROGRAM_STATUS_CODE.ERROR) {
+                    //更新信息
+                    item = this.getInstalledItem(mpid)
+                } else if (startResult.code === MPROGRAM_STATUS_CODE.FAIL) {
+                    //提示错误
+                    ToastModule.show({ text: startResult.msg || `未知错误!(code:${startResult.code})` })
+                    uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                }
             }
             //请求获取应用接口
             const requestData = await itemMprogram({
@@ -67,7 +78,9 @@ export default class MProgram {
                 //那就不需要更新,更新数据后直接结束流程
                 this.updateInfo({
                     ...item,
-                    enableBackground: requestData.data.enable_background == 1 ? true : false,
+                    extraData: {
+                        enableBackground: requestData.data.enable_background == 1 ? true : false,
+                    },
                     update_time: dayjs().format("YYYY-MM-DD HH:mm:ss")
                 })
                 uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
@@ -99,7 +112,9 @@ export default class MProgram {
             }
             const startData = await this.start(requestData.data.unid, {
                 //后台运行
-                enableBackground: requestData.data.enable_background == 1 ? true : false
+                extraData: {
+                    enableBackground: requestData.data.enable_background == 1 ? true : false
+                }
             })
             if (startData.code === MPROGRAM_STATUS_CODE.FAIL) {
                 ToastModule.show({
@@ -115,7 +130,9 @@ export default class MProgram {
                 wgt: requestData.data.download_link,
                 create_time: dayjs().format("YYYY-MM-DD HH:mm:ss"),
                 update_time: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-                enableBackground: requestData.data.enable_background == 1 ? true : false,
+                extraData: {
+                    enableBackground: requestData.data.enable_background == 1 ? true : false,
+                },
                 mp_vid: requestData.data.mp_vid,
                 ext: {}
             })
@@ -172,7 +189,7 @@ export default class MProgram {
     /**
      * 获取已安装的
      */
-    getInstalledItem(mpid: string | number) {
+    getInstalledItem(mpid: string | number): IMProgramItem {
         let installed: IMProgramItem[] = uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED) || []
         try {
             for (let i = 0; i < installed.length; i++) {
@@ -183,21 +200,47 @@ export default class MProgram {
         } catch (e) {
             console.log(e)
         }
+        return {
+            unid: "",
+            name: "",
+            icon: "",
+            wgt: "",
+            mpid: "",
+            create_time: "",
+            update_time: "",
+            mp_vid: "",
+            ext: "",
+            extraData: {}
+        }
+    }
 
+    //从数据库删除
+    removeInstalledItem(mpid: string | number) {
+        let installed: IMProgramItem[] = uni.getStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED) || []
+        try {
+            installed = installed.filter(item => item.mpid != mpid)
+            uni.setStorageSync(UNI_STORAGE.UNI_MPROGRAM_INSTALLED, installed)
+        } catch (e) {
+            console.log(e)
+        }
         return {}
     }
 
     //启动应用
-    start(appid: string, option: IMProgramOpenOption = {}): Promise<IMProgramStatusResult> {
+    start(appid: string, option: IMProgramItem = {}): Promise<IMProgramStatusResult> {
         return new Promise((resolve) => {
             uni.$anydoor_native.MP.openUniMP({
                 appid,
-                ...option
+                // ...option,
+                extraData: {
+                    enableBackground: false
+                }
             }, (e: any) => {
                 //如果是未安装的问题
                 if (e.code === -1001) {
+                    this.removeInstalledItem(option.mpid || "")
                     resolve({
-                        code: MPROGRAM_STATUS_CODE.FAIL,
+                        code: MPROGRAM_STATUS_CODE.ERROR,
                         msg: '请重试!'
                     })
                 }
@@ -267,7 +310,8 @@ export default class MProgram {
 
 export enum MPROGRAM_STATUS_CODE {
     SUCCESS = 200,
-    FAIL = 1
+    FAIL = 1,
+    ERROR = 2
 }
 
 export interface IMProgramStatusResult {
@@ -280,6 +324,19 @@ export enum MPROGRAM_SCENE {
     DEFAULT = "default"
 }
 
+
+export interface IMProgramItem {
+    mpid?: string | number,
+    unid?: string,
+    name?: string,
+    icon?: string,
+    wgt?: string,
+    create_time?: string,
+    update_time?: string,
+    mp_vid?: string | number,
+    ext?: any,
+    extraData?: IMProgramOpenOption
+}
 export interface IMProgramOpenOption {
     //打开的图标
     icon?: string

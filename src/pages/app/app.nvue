@@ -27,7 +27,7 @@
 		</view>
 		<!-- 版权声明 -->
 		<view style="margin: 20rpx 0 ;">
-			<anydoor-text text="2020 - present 任意门anydoor.top 版权所有" color="grey" :lines="1" :style="{
+			<anydoor-text text="2020 - present 任意门 anydoor.top 版权所有" color="grey" :lines="1" :style="{
 				textAlign: 'center'
 			}" :fontSize="20">
 			</anydoor-text>
@@ -42,6 +42,7 @@ import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
+import { getBatteryCapacity } from "@/uni_modules/anydoor-dialog"
 </script>
 
 <style lang="scss" scoped></style>

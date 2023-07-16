@@ -26,7 +26,7 @@ export async function listIndexMenu(formData: any): Promise<any> {
                 device: item.device,
                 icon_type: item.icon_type
             }
-        });
+        })
         //保存到缓存
         uni.setStorageSync(UNI_STORAGE.MENU_INDEX_LIST, listData)
     }
@@ -66,22 +66,23 @@ export async function listMyMenu(formData: any): Promise<any> {
             if (lists[MENU_TYPES.MY] === undefined) lists[MENU_TYPES.MY] = []
             if (lists[MENU_TYPES.RECOMMEND] === undefined) lists[MENU_TYPES.RECOMMEND] = []
             //教务
-            if ((item.type || []).indexOf(MENU_TYPES.JW)) {
+            if ((item.type || []).indexOf(MENU_TYPES.JW) > -1) {
                 lists[MENU_TYPES.JW].push(menu_item)
             }
             //生活
-            if ((item.type || []).indexOf(MENU_TYPES.LIFE)) {
+            if ((item.type || []).indexOf(MENU_TYPES.LIFE) > -1) {
                 lists[MENU_TYPES.LIFE].push(menu_item)
             }
             //我的 
-            if ((item.type || []).indexOf(MENU_TYPES.MY)) {
+            if ((item.type || []).indexOf(MENU_TYPES.MY) > -1) {
                 lists[MENU_TYPES.MY].push(menu_item)
             }
             //推荐 RECOMMEND
-            if ((item.type || []).indexOf(MENU_TYPES.RECOMMEND)) {
+            if ((item.type || []).indexOf(MENU_TYPES.RECOMMEND) > -1) {
                 lists[MENU_TYPES.RECOMMEND].push(menu_item)
             }
         });
+        console.log(data.data)
         //保存到缓存
         uni.setStorageSync(UNI_STORAGE.MENU_MY_LIST, lists)
     }

@@ -86,7 +86,7 @@ const props = defineProps({
 //行高
 const lineHeight = computed(() => {
 	if (props.lineHeight === undefined) {
-		return (props._fontSize ? props._fontSize * 1.3 : 42) + props.unit
+		return (props.fontSize ? props.fontSize * 1.3 : 42) + props.unit
 	} else {
 		return props.lineHeight + props.unit
 	}
@@ -129,7 +129,7 @@ const textColor = computed(() => {
 		return appTextColor.value
 	};
 	return 'rgba(34, 34, 34, 1.0)';
-});
+})
 </script>
 
 <style lang="scss" scoped></style>
