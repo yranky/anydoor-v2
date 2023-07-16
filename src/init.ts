@@ -28,12 +28,6 @@ import MPHandler from "./common/MPHandler/MPHandler"
 export default async function init() {
     //初始化uni
     uni.$anydoor = {}
-    try {
-        //更新
-        Update.getInstance().update()
-    } catch {
-
-    }
     //初始化原生插件
     nativeInit()
     //初始化device_id
@@ -41,6 +35,15 @@ export default async function init() {
     try {
         await (await Device.getInstance()).initDeviceId()
     } catch { }
+
+    //新版本检测
+    try {
+        //更新
+        Update.getInstance().update()
+    } catch {
+
+    }
+
     //初始化用户
     try {
         const UserModule = await User.getInstance()

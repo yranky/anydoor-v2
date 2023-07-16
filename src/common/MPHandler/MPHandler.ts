@@ -18,7 +18,11 @@ export default class MPHandler {
     //监听消息
     private listen() {
         uni.$anydoor_native.MP.onUniMPEventReceive((res: IOnUniMPEventReceiveResult<any>) => {
+            //教务登录信息
             if (res.event === EVENT_TYPE.LOGIN_JW) this.getJwInfo(res.fromAppid, res.event, res.data.uuid)
+            //账户信息
+
+            //token信息
         })
     }
 

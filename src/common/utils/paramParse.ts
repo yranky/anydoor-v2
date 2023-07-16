@@ -2,6 +2,7 @@ import useJiaowuStore from "@/store/jiaowu"
 import { useUserStore } from "@/store/user"
 import { authOpenid } from "../service/auth"
 import qs from "querystringify"
+import CODE from "../define/code"
 /**
  * 
  * @param option 
@@ -45,10 +46,15 @@ export default async function paramParse(option: any): Promise<IParamParse> {
                 const data = await authOpenid({
                     aid: aid
                 })
+                if (data.code === (8000 as CODE) || data.code === 8002 as CODE || data.code === 8003 as CODE) {
+                    throw ""
+                }
                 option[key] = data.data.openid
             }
         } catch {
             option[key] = ""
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            throw "error"
         }
     }
     uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
@@ -61,7 +67,7 @@ export default async function paramParse(option: any): Promise<IParamParse> {
             option['$$$linkParams$$$'][item[0]] = option[key]
         }
     }
-    
+
     //如果不是post请求
     if (option['post'] != 1) {
         //拼接参数
@@ -70,7 +76,7 @@ export default async function paramParse(option: any): Promise<IParamParse> {
         } else if (option.url && option.url.indexOf("?") <= -1) {
             option.url = `${option.url}?${qs.stringify(option['$$$linkParams$$$'])}`
         }
-    } 
+    }
     console.log(option)
     return {
         success: true,

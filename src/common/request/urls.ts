@@ -176,6 +176,12 @@ const urls: Array<url> = [
     name: 'auth_openid',
     url: BASE_URL + '/api/auth/openid',
     token: true
+  },
+  //检查更新
+  {
+    name: 'update_check',
+    url: BASE_URL + '/api/update/check',
+    token:false
   }
 ]
 

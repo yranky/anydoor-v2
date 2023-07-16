@@ -10,7 +10,7 @@ export const authOpenid = async function (params: any): Promise<restful> {
     if (data && data.code !== CODE.SUCCESS) {
         //显示错误
         if (data.code !== CODE.SUCCESS) {
-            ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+            ToastModule.show({ text: data.msg + `(错误码:${data.code})` }, data.code)
         }
     }
     return data

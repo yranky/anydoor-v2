@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:50:42
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 09:39:41
+ * @LastEditTime: 2023-07-15 15:58:40
  * @FilePath: \anydoor-v2\src\common\service\login.ts
  * @Description: login service
  * 
@@ -100,7 +100,7 @@ export async function refreshToken(): Promise<restful> {
 export async function loginCenter(formData: any): Promise<any> {
   const data: any = await post('login_center', formData)
   if (data.code !== CODE.SUCCESS) {
-    ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+    ToastModule.show({ text: data.msg + `(错误码:${data.code})` },data.code)
   }
   return data || {}
 }
