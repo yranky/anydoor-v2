@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-07-16 10:12:14
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-16 10:13:53
+ * @LastEditTime: 2023-07-17 20:39:30
  * @FilePath: \anydoor-v2\src\common\service\update.ts
  * @Description: 检查更新
  * 
@@ -15,9 +15,13 @@ import { post } from "@/common/request/http"
 
 //检查更新
 export async function updateCheck(formData: any): Promise<any> {
-    const data: any = await post('update_check', formData)
-    if (data.code !== CODE.SUCCESS) {
-        ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+    try {
+        const data: any = await post('update_check', formData)
+        if (data.code !== CODE.SUCCESS) {
+            ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+        }
+        return data
+    } catch (err) {
+        return Promise.reject(err)
     }
-    return data
 }

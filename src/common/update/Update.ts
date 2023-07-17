@@ -18,11 +18,11 @@ export default class Update {
     }
 
     //检查是否有更新
-    check() {
+    check(): Promise<any> {
         //处于升级中...
         if (this.updating) {
             ToastModule.show({ text: '正检查更新中!' })
-            return
+            return Promise.reject()
         }
         this.updating = true
         return new Promise((resolve, reject) => {
@@ -54,6 +54,7 @@ export default class Update {
                     })
                 }
             }).catch((e) => {
+                this.updating = false
                 reject(e)
             })
         })
@@ -75,7 +76,7 @@ export default class Update {
      * @return {*}
      * @description: 执行APP资源包升级操作
      */
-    async doWgtUpdate(download_link: string, version_id: number | string, force: boolean) {
+    async doWgtUpdate(download_link: string, version_id: number | string, force: boolean): Promise<any> {
         return new Promise(resolve => {
             //上面没有成功打开，进行下载
             this.down(download_link, true, false).then(downloadRes => {
@@ -101,7 +102,7 @@ export default class Update {
      * @return {*}
      * @description: 执行APP整包升级操作
      */
-    async doUpdate(download_link: string, version_id: number | string) {
+    async doUpdate(download_link: string, version_id: number | string): Promise<any> {
         //先判断缓存中是否有
         const item = uni.getStorageSync(UNI_STORAGE.UPDATE_INFO)
         if (item && item['version'] === version_id) {
