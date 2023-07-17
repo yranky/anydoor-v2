@@ -129,7 +129,7 @@ const login = async () => {
 	}
 
 	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
-		title:'正在登录,请稍等'
+		title: '正在登录,请稍等'
 	})
 	const data = await jwLogin({
 		username,
@@ -147,14 +147,15 @@ const login = async () => {
 		if (isSuccess === false) {
 			ToastModule.show({ text: "登录失败!" })
 		} else {
-			ToastModule.show({ text: "登录成功!" })
 			//刷新user
-			initUser()
+			await initUser()
 			//保存到uni storage
 			uni.setStorageSync(UNI_STORAGE.JW_SCHOOL_INFO, {
 				cid,
-				school_name:item.value.name
+				school_name: item.value.name
 			})
+			ToastModule.show({ text: "登录成功!" })
+
 			linkTo(ROUTE_PATH.MY, {}, {}, true);
 		}
 	}

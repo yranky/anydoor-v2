@@ -15,7 +15,7 @@ import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import tmSegtab from "@/tmui/components/tm-segtab/tm-segtab.vue"
 import anydoorDownloadItem from "@/components/anydoor-download-item/anydoor-download-item.vue"
 import { ref } from "vue"
-import { onLoad } from "@dcloudio/uni-app"
+import { onLoad, onReachBottom, onReady } from "@dcloudio/uni-app"
 import DownloadModule, { IDownloadTask } from "@/common/native/download/DownloadModule"
 import { onUnmounted } from "vue"
 import { IDownloadInfo } from "@/common/native/download/IDownloadModule"
@@ -123,7 +123,7 @@ function downloadItemFilter(item: IDownloadInfo) {
 }
 
 //onMounted
-onLoad(() => {
+onReady(() => {
 	// DownloadModule.getInstance().create("https://0a797c5bfa6d19ed73cbbe637f4e9440.rdt.tfogc.com:49156/dd.myapp.com/sjy.00007/sjy.00001/16891/apk/B938B0E0AF53AC9125FDEA6336F05C8E.apk?mkey=6431380e61c98182fb21b7fc0c8d9c2b&arrive_key=322412500699&fsname=com.tencent.tmgp.sgame_802010901.apk&cip=218.4.55.18&proto=https")
 	getTaskList()
 	DownloadModule.getInstance().listen(listen)
