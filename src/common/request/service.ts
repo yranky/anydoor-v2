@@ -20,6 +20,21 @@ service.interceptors.request.use((config) => {
   if (token) {
     config.header && (config.header.token = token)
   }
+  if (config.header) {
+    //基座版本
+    config.header['appVersion'] = uni.getAppBaseInfo().appVersionCode
+    // 应用版本
+    config.header['version'] = getApp().globalData!['versionCode']
+    // #ifdef APP-PLUS
+    //默认安卓(1为安卓，2为ios)
+    config.header['platform'] = uni.getSystemInfoSync().platform === 'ios' ? 2 : 1
+    // #endif
+    // #ifdef MP
+    config.header['platform'] = ''
+    // #endif
+  }
+
+
   // config.headers &&
   //   (config.headers['Content-Type'] = 'application/x-www-form-urlencoded')
   return config

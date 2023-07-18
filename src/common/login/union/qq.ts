@@ -12,10 +12,10 @@ export function qq() {
         uni.login({
             provider: 'qq',
             success: async function (loginRes) {
-                uni.showLoading()
+                uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
                 await union_login({ type: "qq", token: (loginRes.authResult as any).access_token })
                 linkBack()
-                uni.hideLoading()
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
                 resolve(loginRes)
             },
             fail: function (err: any) {

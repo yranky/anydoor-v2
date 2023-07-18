@@ -17,7 +17,7 @@ import { userScanLogin } from "../service/user"
 
 //登录
 export async function webLogin(data: { data: { type: ILoginType; code: string } }, mWebview?: IAnydoorWebviewRef): Promise<ILoginResult> {
-    uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+    uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
     const userStore = useUserStore()
     let success = false
     let isLogin = userStore.token ? true : false
@@ -42,7 +42,7 @@ export async function webLogin(data: { data: { type: ILoginType; code: string } 
             success = true
         }
     }
-    uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
     return {
         success,
         isLogin

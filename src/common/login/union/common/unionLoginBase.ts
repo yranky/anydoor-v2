@@ -5,9 +5,9 @@ import { GLOABAL_EVENT } from "@/common/define/IGlobalEvent"
 
 export default async function unionLoginBase(type: LOGIN_UNION_TYPE) {
     try {
-        uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
         uni.$once(GLOABAL_EVENT.APP_SHOW, () => {
-            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
         })
         // qq登录
         if (type === LOGIN_UNION_TYPE.QQ) {
@@ -16,5 +16,5 @@ export default async function unionLoginBase(type: LOGIN_UNION_TYPE) {
             await weibo()
         }
     } catch { }
-    uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 }

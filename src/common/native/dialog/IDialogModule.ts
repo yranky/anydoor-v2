@@ -10,6 +10,10 @@ export default interface IDialogModuleNative {
     showWaitingDialog(option: IShowWaitingDialogOption): void
     //隐藏加载框
     hideWaitingDialog(option: IHideWaitingDialogDialogOption): void
+    //显示加载框(同步)
+    showWaitingDialogSync(option: IShowWaitingDialogOption): IShowWaitingDialogSyncResult
+    //隐藏加载框(同步)
+    hideWaitingDialogSync(option: IHideWaitingDialogDialogOption): IHideWaitingDialogSyncResult
     //显示弹出选择框
     showShareMenuDialog(option: IShareMenuDialogDialogOption, callbackfn?: (result: IResult<IShareMenuDialogDialogCallback>) => void): void
     //显示单选弹出框
@@ -131,5 +135,19 @@ interface IUpdateDialogOption {
 }
 
 interface IUpdateDialogCallback {
+    type: 'cancel' | 'ok' | 'mask'
+}
+
+
+interface IDialogReultSync {
+    success: boolean
+    error?: string
+}
+
+interface IShowWaitingDialogSyncResult extends IDialogReultSync {
+
+}
+
+interface IHideWaitingDialogSyncResult extends IDialogReultSync {
 
 }

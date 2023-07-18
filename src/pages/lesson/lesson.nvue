@@ -257,11 +257,11 @@ onReady(() => {
 	//监听加载情况
 	watch(() => lessonStore.initing, (val) => {
 		if (val === true) {
-			uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+			uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({
 				title: '加载中，请稍等'
 			})
 		} else {
-			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 		}
 	}, { immediate: true })
 })

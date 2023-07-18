@@ -62,7 +62,7 @@ import { onLoad } from "@dcloudio/uni-app"
 
 import { getUserRule, login } from "@/common/service/login"
 import { IUserRuleResult, LoginForm } from "@/common/IForm/login/login"
-import { LOGIN_TYPE,LOGIN_UNION_TYPE } from "@/common/define/login"
+import { LOGIN_TYPE, LOGIN_UNION_TYPE } from "@/common/define/login"
 import ToastModule from "@/common/native/toast/ToastModule"
 import md5 from "md5"
 import useDeviceStore from "@/store/device"
@@ -136,7 +136,7 @@ const doLogin = (): void => {
 	//收起键盘
 	uni.hideKeyboard()
 
-	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({
 		title: '登录中...'
 	})
 
@@ -148,7 +148,7 @@ const doLogin = (): void => {
 	//先判空
 	if (form.value.user.trim() === '') {
 		ToastModule.show({ text: '请输入用户名/邮箱/手机号' })
-		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 		return;
 	}
 	//验证是不是用户名/邮箱
@@ -159,7 +159,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.mail.reg as string);
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.mail.msg as string })
-				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 				return;
 			}
 			//说明是邮箱登录
@@ -170,7 +170,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.username.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.username.msg as string })
-				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 				return;
 			}
 			//说明是用户名登录
@@ -184,7 +184,7 @@ const doLogin = (): void => {
 			const reg = new RegExp(formRule.value.phone.reg as string)
 			if (!reg.test(form.value.user.trim())) {
 				ToastModule.show({ text: formRule.value.phone.msg as string })
-				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -192,7 +192,7 @@ const doLogin = (): void => {
 		} else {
 			if (form.value.user.trim() === '') {
 				ToastModule.show({ text: '请输入手机号' })
-				uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 				return;
 			}
 			postData['type'] = LOGIN_TYPE.PHONE
@@ -205,14 +205,14 @@ const doLogin = (): void => {
 		const reg = new RegExp(formRule.value.password.reg as string)
 		if (!reg.test(form.value.password.trim())) {
 			ToastModule.show({ text: formRule.value.password.msg as string })
-			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
 	} else {
 		if (form.value.password.trim() === '') {
 			ToastModule.show({ text: '请输入密码' })
-			uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 			return;
 		}
 		postData['password'] = md5(form.value.password.trim())
@@ -224,7 +224,7 @@ const doLogin = (): void => {
 			linkBack()
 		}
 	}).finally(() => {
-		uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 	})
 }
 
@@ -236,7 +236,7 @@ const getUserRuleList = (): void => {
 }
 
 //第三方登录
-const loginByUnion = (type:LOGIN_UNION_TYPE) => {
+const loginByUnion = (type: LOGIN_UNION_TYPE) => {
 	unionLoginBase(type)
 }
 </script>
