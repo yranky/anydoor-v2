@@ -57,9 +57,9 @@ const getLessonName = async () => {
 
 //修改颜色
 const colorChange = async (color: string, item: ILessonNameItem) => {
-	uni.$anydoor_native.Dialog_Module.showWaitingDialog({ title: '' })
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '' })
 	await uni.$anydoor.Lesson?.updateLessonNameColor(item.name, color, item.semester, item.company_id)
-	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({ title: '' })
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({ title: '' })
 }
 
 onBeforeMount(() => {

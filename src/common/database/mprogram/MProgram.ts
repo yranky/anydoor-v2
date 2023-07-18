@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-19 21:12:58
+ * @LastEditTime: 2023-07-18 21:24:19
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -47,7 +47,7 @@ export default class MProgram {
 
     //打开微应用
     async open(mpid: string | number) {
-        uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
         try {
             //先判断有没有安装
             let item: IMProgramItem = this.getInstalledItem(mpid)
@@ -66,7 +66,7 @@ export default class MProgram {
                 } else if (startResult.code === MPROGRAM_STATUS_CODE.FAIL) {
                     //提示错误
                     ToastModule.show({ text: startResult.msg || `未知错误!(code:${startResult.code})` })
-                    uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
                 }
             }
             //请求获取应用接口
@@ -83,14 +83,14 @@ export default class MProgram {
                     },
                     update_time: dayjs().format("YYYY-MM-DD HH:mm:ss")
                 })
-                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
                 return
             }
             if (!requestData.data.download_link) {
                 ToastModule.show({
                     text: '无法加载此微应用:not found'
                 })
-                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
                 return
             }
             //需要更新,后台自动下载更新
@@ -100,7 +100,7 @@ export default class MProgram {
                 ToastModule.show({
                     text: '下载/更新微应用时发生错误!'
                 })
-                uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
                 return
             }
             const installApp = await this.install(requestData.data.unid, plus.io.convertLocalFileSystemURL(plus.io.convertAbsoluteFileSystem(downloadData.tempFilePath)))
@@ -136,9 +136,9 @@ export default class MProgram {
                 mp_vid: requestData.data.mp_vid,
                 ext: {}
             })
-            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
         } catch (e) {
-            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
         }
     }
 

@@ -67,7 +67,7 @@ import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { UCENTER_BASE_URL } from "@/common/request/urls"
 
 const store = useTmpiniaStore()
-const userStore=useUserStore()
+const userStore = useUserStore()
 
 //主题配置
 const themeConfig = reactive({
@@ -124,14 +124,14 @@ const clearCache = () => {
 
 //退出账号登录
 const logout = async () => {
-	uni.$anydoor_native.Dialog_Module.showWaitingDialog({})
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
 	try {
 		await (await User.getInstance()).logoutUserAccount()
-		ToastModule.show({text:'退出登录成功!'})
+		ToastModule.show({ text: '退出登录成功!' })
 	} catch (e) {
 		console.log(e)
 	}
-	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 }
 
 //跳转到修改信息

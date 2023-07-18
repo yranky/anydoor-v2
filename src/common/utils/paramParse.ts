@@ -12,7 +12,8 @@ export default async function paramParse(option: any): Promise<IParamParse> {
     const userStore = useUserStore()
     const jiaowuStore = useJiaowuStore()
     //解析
-    uni.$anydoor_native.Dialog_Module.showWaitingDialog({ title: '请稍等' })
+    uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '请稍等' })
+    // uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '请稍等' })
     for (let key in option) {
         //教务登录
         if (option[key] == '$$jiaowuLogin$$') {
@@ -53,11 +54,11 @@ export default async function paramParse(option: any): Promise<IParamParse> {
             }
         } catch {
             option[key] = ""
-            uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
             throw "error"
         }
     }
-    uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 
     //注入到页面的参数
     option['$$$linkParams$$$'] = {}

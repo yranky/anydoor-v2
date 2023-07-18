@@ -128,7 +128,7 @@ const login = async () => {
 		return
 	}
 
-	uni.$anydoor_native.Dialog_Module.showWaitingDialog({
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({
 		title: '正在登录,请稍等'
 	})
 	const data = await jwLogin({
@@ -159,7 +159,7 @@ const login = async () => {
 			linkTo(ROUTE_PATH.MY, {}, {}, true);
 		}
 	}
-	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
 }
 
 //去找
