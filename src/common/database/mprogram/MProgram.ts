@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-18 21:24:19
+ * @LastEditTime: 2023-07-19 21:37:13
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -47,7 +47,7 @@ export default class MProgram {
 
     //打开微应用
     async open(mpid: string | number) {
-        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
+        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '加载中...' })
         try {
             //先判断有没有安装
             let item: IMProgramItem = this.getInstalledItem(mpid)
@@ -160,6 +160,7 @@ export default class MProgram {
 
     //下载微应用
     async downloadMProgram(url: string) {
+        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '资源加载中...' })
         return new Promise((resolve: any, reject: any) => {
             const downloadTask = uni.downloadFile({
                 url: url,
@@ -176,11 +177,12 @@ export default class MProgram {
                 }
             })
 
-            // downloadTask.onProgressUpdate((res) => {
-            //     console.log('下载进度' + res.progress);
-            //     console.log('已经下载的数据长度' + res.totalBytesWritten);
-            //     console.log('预期需要下载的数据总长度' + res.totalBytesExpectedToWrite);
-            // });
+            downloadTask.onProgressUpdate((res) => {
+                uni.$anydoor_native.Dialog_Module.setWaitingDialogInfoSync({ title: '资源加载中...', percent: res.progress })
+                console.log('下载进度' + res.progress);
+                console.log('已经下载的数据长度' + res.totalBytesWritten);
+                console.log('预期需要下载的数据总长度' + res.totalBytesExpectedToWrite);
+            });
             // downloadTask.abort(); 
         })
 
