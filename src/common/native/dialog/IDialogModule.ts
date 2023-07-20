@@ -22,6 +22,8 @@ export default interface IDialogModuleNative {
     showCheckboxDialog(option: ICheckboxDialogDialogOption, callbackfn?: (result: IResult<ICheckboxDialogDialogCallback>) => void): void
     //更新器
     showUpdateDialog(option: IUpdateDialogOption, callbackfn?: (result: IResult<IUpdateDialogCallback>) => void): void
+    //设置主题
+    setDarkModeSync(dark: boolean): ISetDarkModeSyncResult
 }
 
 interface IDialogInitOption {
@@ -149,5 +151,9 @@ interface IShowWaitingDialogSyncResult extends IDialogReultSync {
 }
 
 interface IHideWaitingDialogSyncResult extends IDialogReultSync {
+
+}
+
+interface ISetDarkModeSyncResult extends IDialogReultSync {
 
 }

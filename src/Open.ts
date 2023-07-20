@@ -2,8 +2,8 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-05-13 18:23:49
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 18:52:32
- * @FilePath: \anydoor-v2\src\open.ts
+ * @LastEditTime: 2023-07-20 21:23:36
+ * @FilePath: \anydoor-v2\src\Open.ts
  * @Description: 开屏
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
@@ -13,7 +13,7 @@
 export function OpenImg() {
     //开屏广告
     const data: IOpenImg = {
-        src: '',
+        src: 'https://img2.baidu.com/it/u=3329909248,3799019568&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1689958800&t=d9f20462b1c43af386615aa7968c41b8',
         timer: 5,
         introduction: '1',
         introductionText: '',
@@ -30,8 +30,12 @@ export function OpenImg() {
         'fade-in',
         500
     );
+
     //是否成功
     let startSuccess: boolean = false;
+    //执行js
+    w.evalJS(`setELs('${JSON.stringify(data)}')`)
+    startSuccess = true;
     //超时时长
     let startTimerFail: number = 2;
     //倒计时
@@ -39,6 +43,8 @@ export function OpenImg() {
         if (startTimerFail <= 0) {
             if (!startSuccess) {
                 plus.webview.close(w);
+            } else {
+                clearTimeout(startTimerInt);
             }
             clearTimeout(startTimerInt);
         }

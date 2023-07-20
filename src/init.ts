@@ -36,14 +36,6 @@ export default async function init() {
         await (await Device.getInstance()).initDeviceId()
     } catch { }
 
-    //新版本检测
-    try {
-        //更新
-        Update.getInstance().update()
-    } catch {
-
-    }
-
     //初始化用户
     try {
         const UserModule = await User.getInstance()
@@ -53,6 +45,14 @@ export default async function init() {
     try {
         const ThemeInstance = await Theme.getInstance()
     } catch { }
+
+    //新版本检测
+    try {
+        //更新
+        Update.getInstance().update()
+    } catch {
+
+    }
 }
 
 //初始化用户信息等
