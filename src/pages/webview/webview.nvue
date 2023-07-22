@@ -63,6 +63,8 @@ import DownloadModule from "@/common/native/download/DownloadModule"
 import { onUnmounted } from "vue"
 import { MENU_ITEM, menuItemDetail } from "@/common/webviewHandler/action/IFun"
 import { webviewMenuHandler } from "@/common/webviewHandler/webTitleBar"
+import { watch } from "vue"
+import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
 const {
 	proxy
 } = getCurrentInstance() as any
@@ -70,6 +72,12 @@ const {
 const webview = ref<IAnydoorWebviewRef>()
 //webview的配置
 const webviewConfig = ref<IWebviewItem>()
+
+const tmStore = useTmpiniaStore()
+
+watch(() => tmStore.$state.tmStore.dark, (dark: boolean) => {
+	webview.value && webview.value.setDark(dark)
+})
 
 //加载时调用
 onLoad((e: any) => {
@@ -93,6 +101,8 @@ onLoad((e: any) => {
 //加载webview的配置
 onReady(() => {
 	loadWebviewHeight()
+	//设置暗黑模式
+	webview.value && webview.value.setDark(tmStore.$state.tmStore.dark)
 })
 //取消事件监听
 onUnmounted(() => {
@@ -187,11 +197,19 @@ const openMenuSheet = () => {
 //打开外部应用
 const onScheme = (e: IOnSchemeResult) => {
 	console.log(e)
+	let name: string = "应用"
+	const result = uni.$anydoor_native.Tool_Module.getAppNameFromSchemaSync({ schema: e.url })
+	if (result.success && result.data && result.data.length) {
+		name = result.data.map(item => item.name).join(" | ")
+		//如果成功了没数据，说明应用未安装
+	} else if (result.success) {
+		return
+	}
 	uni.$anydoor_native.Dialog_Module.showMessageDialog({
 		okText: '打开',
 		cancelText: '取消',
 		cancelable: true,
-		content: '网页请求打开应用',
+		content: '网页请求打开 ' + name,
 		title: '提示'
 	}, (res) => {
 		if (res.data?.type === "ok") {
