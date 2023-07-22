@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-22 20:47:26
+ * @LastEditTime: 2023-07-22 20:54:58
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -18,6 +18,7 @@ import {
 import init, { initUser, initLesson, initFromStorageSync } from "./init"
 import { OpenImg } from "./Open"
 import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
+import { onErrorCaptured } from "vue"
 
 onLaunch(async function () {
 	//获取wgt版本号
@@ -68,6 +69,7 @@ onShow(() => {
 
 //发生错误!
 onError((err: string) => {
+	console.log(err)
 	try {
 		//上报错误
 		uni.$anydoor_native.Tool_Module.postErrorSync({
@@ -81,6 +83,25 @@ onError((err: string) => {
 		uni.$anydoor_native.Bugly_Module.pushDataSync({
 			key: "web error",
 			value: err + ''
+		})
+	} catch { }
+})
+
+onErrorCaptured((err: Error) => {
+	console.log(err)
+	try {
+		//上报错误
+		uni.$anydoor_native.Tool_Module.postErrorSync({
+			content: `${err.name}-${err.message}-${err.cause}-${err.stack}`
+		})
+		//toast出来
+		uni.$anydoor_native.Toast_Module.showSync({
+			text: `${err.name}-${err.message}-${err.cause}-${err.stack}`
+		})
+		//打标记
+		uni.$anydoor_native.Bugly_Module.pushDataSync({
+			key: err.name,
+			value: `${err.name}-${err.message}-${err.cause}-${err.stack}`
 		})
 	} catch { }
 })
