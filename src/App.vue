@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-22 18:37:47
+ * @LastEditTime: 2023-07-22 20:47:26
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -18,7 +18,6 @@ import {
 import init, { initUser, initLesson, initFromStorageSync } from "./init"
 import { OpenImg } from "./Open"
 import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
-import BuglyModule from "./common/native/bugly/BuglyModule"
 
 onLaunch(async function () {
 	//获取wgt版本号
@@ -50,12 +49,6 @@ onLaunch(async function () {
 
 	//初始化课程
 	await initLesson()
-
-
-	console.log(uni.$anydoor_native.Bugly_Module.pushDataSync({
-		key: "error",
-		value: "测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
-	}))
 })
 onShow(() => {
 	const args = plus.runtime.arguments;
@@ -76,14 +69,18 @@ onShow(() => {
 //发生错误!
 onError((err: string) => {
 	try {
+		//上报错误
+		uni.$anydoor_native.Tool_Module.postErrorSync({
+			content: err + ''
+		})
 		//toast出来
 		uni.$anydoor_native.Toast_Module.showSync({
-			text: err
+			text: err + ''
 		})
 		//打标记
 		uni.$anydoor_native.Bugly_Module.pushDataSync({
-			key: "error",
-			value: err
+			key: "web error",
+			value: err + ''
 		})
 	} catch { }
 })
