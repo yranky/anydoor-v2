@@ -288,6 +288,7 @@ const getTitle = (): Promise<string | undefined> => {
 const getUrl = (): Promise<string | undefined> => {
     return new Promise((resolve) => {
         mWebview.value?.getUrl((res) => {
+            console.log(res)
             resolve(res.data)
         })
     })

@@ -1,7 +1,7 @@
 import IResult from "../IResult"
 
 export default interface IDialogModuleNative {
-    init(option: IDialogInitOption): void;
+    initSync(option: IDialogInitOption): void;
     //显示普通对话框(alert)
     showMessageDialog(option: IShowMessageDialogOption, callbackfn?: (result: IResult<IMessageDialogCallback>) => void): void
     //显示输入对话框

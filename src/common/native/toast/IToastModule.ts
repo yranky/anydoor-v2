@@ -13,7 +13,9 @@ export interface IToastShowOption {
 export default interface IToastModuleNative {
     //显示通知
     show(option: IToastShowOption, callbackfn?: (result: IResult<undefined>) => void): void
+    showSync(option: IToastShowOption): IResult<undefined>
     hide(callbackfn?: (result: IResult<undefined>) => void): void
+    hideSync(): IResult<undefined>
 }
 
 export enum TOAST_POSITION {

@@ -15,37 +15,83 @@ export interface IAnydoorWebviewConfig {
     scheme?: boolean
     defaultAlert?: boolean,
     height?: number | string,
-    progress?: boolean
+    progress?: boolean,
+    //禁用https加载http资源
+    setBlockNetworkImage?: boolean
 }
 
 
 export interface IAnydoorWebviewRef {
-    setUserAgent(userAgent: string, callbackFn?: (res: IResult<undefined>) => void): void
     getUserAgent(callbackFn?: (res: IResult<string>) => void): void
+    getUserAgentSync(): IResult<string>
+
+    setUserAgent(userAgent: string, callbackFn?: (res: IResult<undefined>) => void): void
+    setUserAgentSync(userAgent: string): IResult<undefined>
+
     shouldOverrideUrlLoading(option: IShouldOverrideUrlLoadingOption, callbackFn?: (res: IResult<undefined>) => void): void
+    shouldOverrideUrlLoadingSync(option: IShouldOverrideUrlLoadingOption): IResult<undefined>
+
     getCookie(url: string, callbackFn?: (res: IResult<string>) => void): void
+    getCookieSync(url: string): IResult<string>
+
     setCookie(option: ISetCookieOption, callbackFn?: (res: IResult<undefined>) => void): void
+    setCookieSync(option: ISetCookieOption): IResult<undefined>
+
     removeAllCookie(callbackFn?: (res: IResult<undefined>) => void): void
+    removeAllCookieSync(): IResult<undefined>
+
     removeCookie(url: string, callbackFn?: (res: IResult<undefined>) => void): void
+    removeCookieSync(url: string): IResult<undefined>
+
     removeAllStorage(callbackFn?: (res: IResult<undefined>) => void): void
+    removeAllStorageSync(): IResult<undefined>
+
     setDark(open: boolean, callbackFn?: (res: IResult<undefined>) => void): void
+    setDarkSync(open: boolean): IResult<undefined>
+
     canBack(callbackFn?: (res: IResult<boolean>) => void): void
+    canBackSync(): IResult<boolean>
+
     back(callbackFn?: (res: IResult<undefined>) => void): void
+    backSync(): IResult<undefined>
+
     forward(callbackFn?: (res: IResult<undefined>) => void): void
+    forwardSync(): IResult<undefined>
+
     go(index: number, callbackFn?: (res: IResult<undefined>) => void): void
+    goSync(index: number): IResult<undefined>
+
     reload(callbackFn?: (res: IResult<undefined>) => void): void
+    reloadSync(): IResult<undefined>
+
     loadUrl(url: string, callbackFn?: (res: IResult<undefined>) => void): void
+    loadUrlSync(url: string): IResult<undefined>
+
     clear(disk: boolean, callbackFn?: (res: IResult<undefined>) => void): void
+    clearSync(disk: boolean): IResult<undefined>
+
     clearAll(disk: boolean, callbackFn?: (res: IResult<undefined>) => void): void
+    clearAllSync(disk: boolean): IResult<undefined>
+
     clearHistory(callbackFn?: (res: IResult<undefined>) => void): void
+    clearHistorySync(): IResult<undefined>
+
     getTitle(callbackFn?: (res: IResult<string>) => void): void
+    getTitleSync(): IResult<string>
+
     getUrl(callbackFn?: (res: IResult<string>) => void): void
+    getUrlSync(): IResult<string>
+
     stopLoading(callbackFn?: (res: IResult<undefined>) => void): void
+    stopLoadingSync(): IResult<undefined>
+
     send(data: string, callbackFn?: (res: IResult<string>) => void): void
     callHandler(data: ICallHandlerOption, callbackFn?: (res: IResult<string>) => void): void
     registerHandler(name: string, callbackFn?: (res: IResult<undefined>) => void): void
     hideTitleBar(): void
+
     postUrl(data: IPostUrlOption, callbackFn?: (res: IResult<undefined>) => void): void
+    postUrlSync(data: IPostUrlOption): IResult<undefined>
 }
 
 export interface IAnydoorEventResult<T> {
