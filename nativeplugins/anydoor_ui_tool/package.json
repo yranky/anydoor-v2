@@ -6,65 +6,65 @@
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
 		"android": {
-			"hooksClass": "com.top_anydoor.Hook",
+			"hooksClass": "anydoor.main.Hook",
 			"plugins": [{
 					"type": "module",
 					"name": "anydoor_toast",
-					"class": "com.top_anydoor.toast.Index"
+					"class": "anydoor.main.toast.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-webview",
-					"class": "com.top_anydoor.webview.Index"
+					"class": "anydoor.main.webview.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_tool",
-					"class": "com.top_anydoor.tool.Index"
+					"class": "anydoor.main.tool.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-lottie",
-					"class": "com.top_anydoor.lottie.Index"
+					"class": "anydoor.main.lottie.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_bugly",
-					"class": "com.top_anydoor.bugly.Index"
+					"class": "anydoor.main.bugly.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_baidu_tongji",
-					"class": "com.top_anydoor.baidu_tongji.Index"
+					"class": "anydoor.main.baidu_tongji.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_download",
-					"class": "com.top_anydoor.download.Index"
+					"class": "anydoor.main.download.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-scroll",
-					"class": "com.top_anydoor.scroll.Index"
+					"class": "anydoor.main.scroll.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_sqlite",
-					"class": "com.top_anydoor.sqlite.Index"
+					"class": "anydoor.main.sqlite.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_sqlite_encrypt",
-					"class": "com.top_anydoor.sqlcipher.Index"
+					"class": "anydoor.main.sqlcipher.Index"
 				}, {
 					"type": "module",
 					"name": "anydoor_dialog",
-					"class": "com.top_anydoor.dialog.Index"
+					"class": "anydoor.main.dialog.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-video",
-					"class": "com.top_anydoor.video.Index"
+					"class": "anydoor.main.video.Index"
 				}
 			],
 			"integrateType": "aar",

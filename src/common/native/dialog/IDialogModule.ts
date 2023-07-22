@@ -1,7 +1,7 @@
 import IResult from "../IResult"
 
 export default interface IDialogModuleNative {
-    init(option: IDialogInitOption): void;
+    initSync(option: IDialogInitOption): void;
     //显示普通对话框(alert)
     showMessageDialog(option: IShowMessageDialogOption, callbackfn?: (result: IResult<IMessageDialogCallback>) => void): void
     //显示输入对话框
@@ -24,6 +24,8 @@ export default interface IDialogModuleNative {
     showCheckboxDialog(option: ICheckboxDialogDialogOption, callbackfn?: (result: IResult<ICheckboxDialogDialogCallback>) => void): void
     //更新器
     showUpdateDialog(option: IUpdateDialogOption, callbackfn?: (result: IResult<IUpdateDialogCallback>) => void): void
+    //设置主题
+    setDarkModeSync(dark: boolean): ISetDarkModeSyncResult
 }
 
 interface IDialogInitOption {
@@ -154,12 +156,14 @@ interface IHideWaitingDialogSyncResult extends IDialogReultSync {
 
 }
 
-
 interface ISetWaitingDialogInfoOption {
     title?: string
     percent?: number
 }
 
 interface ISetWaitingDialogInfoSyncResult extends IDialogReultSync {
+
+}
+interface ISetDarkModeSyncResult extends IDialogReultSync {
 
 }

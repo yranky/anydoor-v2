@@ -116,6 +116,9 @@ export default class Theme {
     async changeTheme(dark: boolean = false) {
         const store = useTmpiniaStore()
         store.setTmVuetifyDark(dark)
+        //更改dialog的主题
+        uni.$anydoor_native.Dialog_Module.setDarkModeSync(dark)
+
         //不是跟随系统
         if (this.follow_system === false) {
             //存储到数据库

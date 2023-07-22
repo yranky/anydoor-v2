@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-15 15:29:39
+ * @LastEditTime: 2023-07-22 20:56:39
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -90,7 +90,6 @@ import { cloneDeep } from "lodash"
 import { linkTo } from "@/common/utils/link"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
-
 const store = useTmpiniaStore()
 
 const lessonStore = useLessonStore()
