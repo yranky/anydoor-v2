@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-04-02 13:31:21
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-04-09 13:08:39
+ * @LastEditTime: 2023-07-23 21:42:18
  * @FilePath: \anydoor-v2\src\common\service\jw.ts
  * @Description: 教务
  * 
@@ -23,15 +23,20 @@ export async function jwConfig(formData: any): Promise<any> {
 
 //登录
 export async function jwLogin(formData: any): Promise<any> {
-    const data: any = await post('jw_login', formData)
+    try {
+        const data: any = await post('jw_login', formData)
 
-    let jwConfig = {}
-    if (data.code !== CODE.SUCCESS) {
-        ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
-    } else {
-        jwConfig = data.data
+        let jwConfig = {}
+        if (data.code !== CODE.SUCCESS) {
+            ToastModule.show({ text: data.msg + `(错误码:${data.code})` })
+        } else {
+            jwConfig = data.data
+        }
+        return jwConfig
+    } catch (e: any) {
+        ToastModule.show({ text: "服务器错误!" + e.statusCode })
     }
-    return jwConfig
+    return {}
 }
 
 // 获取plan

@@ -203,6 +203,8 @@ watch(show, () => {
         setDisItemPickerBack && setDisItemPickerBack(true)
     } else {
         uni.offKeyboardHeightChange(keyboardHeightChange)
+        //收起键盘
+        uni.hideKeyboard()
         //允许返回
         setDisItemPickerBack && setDisItemPickerBack(false)
     }

@@ -2,8 +2,8 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-09 21:24:13 
- * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @LastEditTime: 2023-07-23 20:57:30
+ * @FilePath: \anydoor-v2\src\pages\lesson\add.nvue
  * @Description: 添加/编辑课程
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
@@ -22,7 +22,7 @@
 			<anydoor-item-picker :list="weekList" v-model:value="formData.week" :style-config="CONFIG_TYPE.FIVE">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="星期" :rightText="showData.week"></tm-cell>
 			</anydoor-item-picker>
-			<anydoor-item-picker :list="teacherList" showInput v-model:value="formData.teacher">
+			<anydoor-item-picker :list="teacherList" showInput v-model:value="formData.teacher" :style-config="CONFIG_TYPE.ONE">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="上课教师"
 					:rightText="formData.teacher ? formData.teacher : '请选择'"></tm-cell>
 			</anydoor-item-picker>
@@ -51,7 +51,11 @@ import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-pic
 import { CONFIG_TYPE, IListArray } from "@/components/anydoor-item-picker/anydoor-item-picker"
 import { watch } from "vue"
 import { sequenceToRange } from "@/common/database/Lesson/lesson_temp_utils"
-import { reactive } from "vue"
+import { useLessonStore } from "@/store/lesson"
+import { computed } from "vue"
+import { isEmpty } from "lodash"
+//课程STORE
+const lessonStore = useLessonStore()
 
 
 const formData = ref({
@@ -90,9 +94,14 @@ watch(formData, () => {
 }, { immediate: true, deep: true })
 
 //课程列表
-const nameList = ref<string[]>([
-	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
-])
+// const nameList = ref<string[]>([
+// 	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
+// ])
+const nameList = computed<string[]>(() => {
+	return [...new Set(lessonStore.lessonList.map(item => {
+		return item.name
+	}))]
+})
 
 //课程列表
 const timeList = ref<number[]>(new Array(10).fill(0).map((item, index) => {
@@ -105,9 +114,11 @@ const weekList = ref<IListArray[]>(['周日', '周一', '周二', '周三', '周
 }))
 
 //教师列表
-const teacherList = ref<string[]>([
-	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
-])
+const teacherList = computed<string[]>(() => {
+	return [...new Set(lessonStore.lessonList.map(item => {
+		return item.teacher
+	}).filter(item => !isEmpty(item)))]
+})
 
 //周次列表
 const weeksList = ref<number[]>(new Array(35).fill(0).map((item, index) => {
@@ -115,7 +126,9 @@ const weeksList = ref<number[]>(new Array(35).fill(0).map((item, index) => {
 }))
 
 //教室列表
-const positionList = ref<string[]>([
-	"张三", '李四', '王五', '哈哈哈：哈哈哈哈哈哈哈哈哈'
-])
+const positionList = computed<string[]>(() => {
+	return [...new Set(lessonStore.lessonList.map(item => {
+		return item.position
+	}).filter(item => !isEmpty(item)))]
+})
 </script>

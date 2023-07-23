@@ -95,6 +95,11 @@ service.interceptors.response.use(
     return Promise.resolve(res)
   },
   (error) => {
+    try {
+      uni.$anydoor_native.Tool_Module.postErrorSync({
+        content: '接口报错!' + JSON.stringify(error)
+      })
+    } catch { }
     return Promise.reject(error)
   }
 )
