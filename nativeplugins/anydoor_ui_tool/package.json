@@ -80,6 +80,7 @@
 				}
 			},
 			"dependencies": [
+				"com.airbnb.android:lottie:5.2.0",
 			    "com.kongzue.dialogx:DialogX:0.0.48",
 				"xyz.doikki.android.dkplayer:dkplayer-java:3.3.7",
 				"xyz.doikki.android.dkplayer:player-ijk:3.3.7",
