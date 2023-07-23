@@ -11,10 +11,13 @@
 		<!-- 版本信息 -->
 		<view style="margin: 0 10rpx;">
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="应用版本" :right-text="appVersion" right-icon=""
-				:rightTextSize="28">
+				:rightTextSize="28" @click="doShowDev">
 			</tm-cell>
 
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="版本更新" @click="checkUpdate"> </tm-cell>
+
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="强制更新资源" @click="checkUpdate(1)" v-if="showDev <= 0">
+			</tm-cell>
 		</view>
 		<!-- 联系信息 -->
 		<view style="margin: 0 10rpx;">
@@ -51,10 +54,16 @@ import { computed } from "vue"
 
 const appVersion = computed(() => plus.runtime.version + '-' + getApp().globalData!['versionCode'])
 
-const checkUpdate = () => {
-	Update.getInstance().check().then((res: any) => {
+//检查更新
+const checkUpdate = (force: number = 0) => {
+	Update.getInstance().check(force).then((res: any) => {
 		if (res.update !== 1 || res.data.wgt === 1) ToastModule.show({ text: '当前应用已是最新版本' })
 	})
+}
+//展示dev
+const showDev = ref<number>(5)
+const doShowDev = () => {
+	if (showDev.value > 0) showDev.value--
 }
 </script>
 
