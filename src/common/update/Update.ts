@@ -18,7 +18,7 @@ export default class Update {
     }
 
     //检查是否有更新
-    check(): Promise<any> {
+    check(force: number = 0): Promise<any> {
         //处于升级中...
         if (this.updating) {
             ToastModule.show({ text: '正检查更新中!' })
@@ -26,8 +26,8 @@ export default class Update {
         }
         this.updating = true
         return new Promise((resolve, reject) => {
-            //先请求接口，判断是否有更新
-            updateCheck({}).then(async res => {
+            //先请求接口，判断是否有更新(force只是强制检查wgt更新)
+            updateCheck({ force }).then(async res => {
                 resolve(res)
                 //如果没有更新
                 if (res.update !== 1) return (this.updating = false)

@@ -36,7 +36,13 @@ import dayjs from "dayjs"
 import { linkTo } from "@/common/utils/link"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 import { UCENTER_BASE_URL } from "@/common/request/urls"
+import { onShow } from "@dcloudio/uni-app"
 const userStore = useUserStore()
+
+//刷新
+onShow(() => {
+	refresh()
+})
 
 
 const birthDate = ref<string>(dayjs(userStore.birth + " 00:00:00").isValid() ? dayjs(userStore.birth + " 00:00:00").format("YYYY-MM-DD") : dayjs().format('YYYY-MM-DD'))
