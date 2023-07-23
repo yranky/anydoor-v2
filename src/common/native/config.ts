@@ -1,8 +1,10 @@
+import useDeviceStore from "@/store/device"
+
 /*
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:06:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-17 12:43:13
+ * @LastEditTime: 2023-07-23 10:21:22
  * @FilePath: \anydoor-v2\src\common\native\config.ts
  * @Description: 
  * 
@@ -12,17 +14,21 @@ export default {
     global: {
         debug: false
     },
-    bugly: {
-        appId: '6c3a24368a',
-        deviceId: '',
-        appVersion: '3.2.2',
-        deviceModel: '11'
+    bugly: () => {
+        const deviceStore = useDeviceStore()
+        return {
+            deviceId: deviceStore.deviceId,
+            appVersion: getApp().globalData ? getApp().globalData!['versionName'] : plus.runtime.version,
+            deviceModel: uni.getSystemInfoSync().deviceModel
+        }
     },
     toast: {
 
     },
-    baidu_tongji: {
-        appVersion: '1.0'
+    baidu_tongji: () => {
+        return {
+            appVersion: getApp().globalData ? getApp().globalData!['versionName'] : plus.runtime.version,
+        }
     },
     download: {
 

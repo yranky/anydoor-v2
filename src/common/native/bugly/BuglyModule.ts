@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-04 20:28:26
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-18 16:56:38
+ * @LastEditTime: 2023-07-23 10:19:55
  * @FilePath: \anydoor-v2\src\common\native\bugly\BuglyModule.ts
  * @Description: 初始化
  * 
@@ -18,9 +18,9 @@ export default class BuglyModule {
     private constructor() {
         //初始化
         uni.$anydoor_native.Bugly_Module && uni.$anydoor_native.Bugly_Module.init({
-            deviceId: config.bugly.deviceId,
-            appVersion: config.bugly.appVersion,
-            deviceModel: config.bugly.deviceModel,
+            deviceId: config.bugly().deviceId,
+            appVersion: config.bugly().appVersion,
+            deviceModel: config.bugly().deviceModel,
             debug: config.global.debug
         }, debugTool((res) => {
             if (!res.success) {

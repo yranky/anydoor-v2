@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-22 20:54:58
+ * @LastEditTime: 2023-07-23 10:17:41
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -21,7 +21,7 @@ import { GLOABAL_EVENT } from "./common/define/IGlobalEvent"
 import { onErrorCaptured } from "vue"
 
 onLaunch(async function () {
-	//获取wgt版本号
+	//获取wgt版本号 请勿调换顺序
 	plus.runtime.getProperty(plus.runtime.appid ? plus.runtime.appid : '', (result: PlusRuntimeWidgetInfo) => {
 		getApp().globalData!['versionCode'] = result.versionCode
 		getApp().globalData!['versionName'] = result.version
