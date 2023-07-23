@@ -10,8 +10,10 @@
 		</view>
 		<!-- 版本信息 -->
 		<view style="margin: 0 10rpx;">
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="应用版本" right-text="2.0.0" right-icon="" :rightTextSize="28">
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="应用版本" :right-text="appVersion" right-icon=""
+				:rightTextSize="28">
 			</tm-cell>
+
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="版本更新" @click="checkUpdate"> </tm-cell>
 		</view>
 		<!-- 联系信息 -->
@@ -44,8 +46,10 @@ import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import tmDivider from "@/tmui/components/tm-divider/tm-divider.vue"
 import Update from "@/common/update/Update"
 import ToastModule from "@/common/native/toast/ToastModule"
+import { ref } from "vue"
+import { computed } from "vue"
 
-
+const appVersion = computed(() => plus.runtime.version + '-' + getApp().globalData!['versionCode'])
 
 const checkUpdate = () => {
 	Update.getInstance().check().then((res: any) => {

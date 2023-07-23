@@ -67,7 +67,7 @@ export const menuItemDetail: IMENU_ITEM_DETAIL = {
         id: MENU_ITEM.SHARE
     },
     [MENU_ITEM.COPY]: {
-        name: "复制",
+        name: "复制链接",
         id: MENU_ITEM.COPY
     }
 }

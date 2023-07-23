@@ -24,6 +24,7 @@ onLaunch(async function () {
 	//获取wgt版本号
 	plus.runtime.getProperty(plus.runtime.appid ? plus.runtime.appid : '', (result: PlusRuntimeWidgetInfo) => {
 		getApp().globalData!['versionCode'] = result.versionCode
+		getApp().globalData!['versionName'] = result.version
 	})
 	//修改userAgent
 	let userAgent: Array<string> | string = plus.navigator.getUserAgent()
