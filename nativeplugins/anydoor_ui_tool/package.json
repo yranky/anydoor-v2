@@ -6,65 +6,70 @@
 	"_dp_type": "nativeplugin",
 	"_dp_nativeplugin": {
 		"android": {
-			"hooksClass": "anydoor.main.Hook",
+			"hooksClass": "com.anydoor.main.Hook",
 			"plugins": [{
 					"type": "module",
 					"name": "anydoor_toast",
-					"class": "anydoor.main.toast.Index"
+					"class": "com.anydoor.main.toast.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-webview",
-					"class": "anydoor.main.webview.Index"
+					"class": "com.anydoor.main.webview.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_tool",
-					"class": "anydoor.main.tool.Index"
+					"class": "com.anydoor.main.tool.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-lottie",
-					"class": "anydoor.main.lottie.Index"
+					"class": "com.anydoor.main.lottie.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_bugly",
-					"class": "anydoor.main.bugly.Index"
+					"class": "com.anydoor.main.bugly.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_baidu_tongji",
-					"class": "anydoor.main.baidu_tongji.Index"
+					"class": "com.anydoor.main.baidu_tongji.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_download",
-					"class": "anydoor.main.download.Index"
+					"class": "com.anydoor.main.download.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-native-scroll",
-					"class": "anydoor.main.scroll.Index"
+					"class": "com.anydoor.main.scroll.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_sqlite",
-					"class": "anydoor.main.sqlite.Index"
+					"class": "com.anydoor.main.sqlite.Index"
 				},
 				{
 					"type": "module",
 					"name": "anydoor_sqlite_encrypt",
-					"class": "anydoor.main.sqlcipher.Index"
+					"class": "com.anydoor.main.sqlcipher.Index"
 				}, {
 					"type": "module",
 					"name": "anydoor_dialog",
-					"class": "anydoor.main.dialog.Index"
+					"class": "com.anydoor.main.dialog.Index"
 				},
 				{
 					"type": "component",
 					"name": "anydoor-video",
-					"class": "anydoor.main.video.Index"
+					"class": "com.anydoor.main.video.Index"
+				},
+				{
+					"type": "module",
+					"name": "anydoor_video_module",
+					"class": "com.anydoor.main.video.VideoModule"
 				}
 			],
 			"integrateType": "aar",
