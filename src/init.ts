@@ -13,7 +13,6 @@ import { UNI_STORAGE } from "./common/database/UNI_STORAGE"
 import { isEmpty } from "lodash"
 import useDeviceStore from "./store/device"
 import { ILessonTempItemResult } from "./common/database/Lesson/ILesson"
-import MPHandler from "./common/MPHandler/MPHandler"
 
 /*
  * @Author: yranky douye@douye.top

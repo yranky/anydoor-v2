@@ -151,7 +151,7 @@ import { listIndexMenu } from "@/common/service/menu"
 import { listTip } from "@/common/service/tip"
 import { linkTo, menuLink, swiperLink } from "@/common/utils/link"
 
-import { AnydoorVideoComponent } from "anydoor-cmn"
+import { AnydoorVideoComponent } from "@usc-anydoor/anydoor-cmn"
 
 
 const {
