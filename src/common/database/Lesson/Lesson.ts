@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 15:14:14
+ * @LastEditTime: 2023-07-30 15:24:28
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -459,7 +459,7 @@ export default class Lesson {
             const res = await this.sql?.executeSql([sql], ERROR_TARGET.LESSON_CLASS)
             if (res?.code === SQLITE_STATUS_CODE.FAIL) throw new Error("失败!" + res.msg)
             //更新缓存表
-            this.doUpdateLesson(semester, JSON.parse(decodeURIComponent(record!.data[0].result)).datalist)
+            await this.doUpdateLesson(semester, JSON.parse(decodeURIComponent(record!.data[0].result)).datalist)
             return true
         } catch (e) {
             ToastModule.show({

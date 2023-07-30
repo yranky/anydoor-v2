@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 15:07:59
+ * @LastEditTime: 2023-07-30 15:27:16
  * @FilePath: \anydoor-v2\src\pages\lesson\add.nvue
  * @Description: 添加/编辑课程
  * 
@@ -56,8 +56,8 @@ import { useLessonStore } from "@/store/lesson"
 import { computed } from "vue"
 import { isEmpty } from "lodash"
 import Lesson from "@/common/database/Lesson/Lesson"
-import { ILessonItemsResult } from "@/common/database/Lesson/ILesson"
 import ToastModule from "@/common/native/toast/ToastModule"
+import { linkBack } from "@/common/utils/link"
 //课程STORE
 const lessonStore = useLessonStore()
 
@@ -67,9 +67,19 @@ const addLesson = async () => {
 	else if (isEmpty(formData.value.classnums)) ToastModule.show({ text: '请选择节次' })
 	else if (isEmpty(formData.value.weekday)) ToastModule.show({ text: '请选择星期' })
 	else if (isEmpty(formData.value.weeks)) ToastModule.show({ text: '请选择周次' })
-	else (await Lesson.getInstance()).addLesson(formData.value).then(res => {
-		console.log(res)
-	})
+	else {
+		uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '添加中，请稍等' });
+		(await Lesson.getInstance()).addLesson(formData.value).then(res => {
+			if (res) {
+				ToastModule.show({ text: '添加成功!' })
+				linkBack()
+			}
+		}).catch(e => {
+			ToastModule.show({ text: e })
+		}).finally(() => {
+			uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+		})
+	}
 }
 
 
