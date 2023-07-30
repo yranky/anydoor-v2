@@ -4,7 +4,7 @@ import useDeviceStore from "@/store/device"
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:06:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-23 10:21:22
+ * @LastEditTime: 2023-07-30 21:30:45
  * @FilePath: \anydoor-v2\src\common\native\config.ts
  * @Description: 
  * 
@@ -12,7 +12,7 @@ import useDeviceStore from "@/store/device"
  */
 export default {
     global: {
-        debug: false
+        debug: process.env.NODE_ENV === "development" ? true : false
     },
     bugly: () => {
         const deviceStore = useDeviceStore()
