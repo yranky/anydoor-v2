@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-23 20:57:30
+ * @LastEditTime: 2023-07-30 15:07:59
  * @FilePath: \anydoor-v2\src\pages\lesson\add.nvue
  * @Description: 添加/编辑课程
  * 
@@ -16,26 +16,27 @@
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程名称"
 					:rightText="formData.name ? formData.name : '请选择'"></tm-cell>
 			</anydoor-item-picker>
-			<anydoor-item-picker :list="timeList" v-model:value="formData.time" :style-config="CONFIG_TYPE.FIVE">
-				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程节次" :rightText="showData.time"></tm-cell>
+			<anydoor-item-picker :list="classnumsList" v-model:value="formData.classnums" :style-config="CONFIG_TYPE.FIVE">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程节次" :rightText="showData.classnums"></tm-cell>
 			</anydoor-item-picker>
-			<anydoor-item-picker :list="weekList" v-model:value="formData.week" :style-config="CONFIG_TYPE.FIVE">
-				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="星期" :rightText="showData.week"></tm-cell>
+			<anydoor-item-picker :list="weekdayList" v-model:value="formData.weekday" :style-config="CONFIG_TYPE.FIVE">
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="星期" :rightText="showData.weekday"></tm-cell>
 			</anydoor-item-picker>
-			<anydoor-item-picker :list="teacherList" showInput v-model:value="formData.teacher" :style-config="CONFIG_TYPE.ONE">
+			<anydoor-item-picker :list="teacherList" showInput v-model:value="formData.teacher"
+				:style-config="CONFIG_TYPE.ONE">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="上课教师"
 					:rightText="formData.teacher ? formData.teacher : '请选择'"></tm-cell>
 			</anydoor-item-picker>
 			<anydoor-item-picker :list="weeksList" v-model:value="formData.weeks" :style-config="CONFIG_TYPE.SIX">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="周次" :rightText="showData.weeks"></tm-cell>
 			</anydoor-item-picker>
-			<anydoor-item-picker :list="positionList" showInput v-model:value="formData.position">
+			<anydoor-item-picker :list="roomList" showInput v-model:value="formData.room">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="教室"
-					:rightText="formData.position ? formData.position : '请选择'"></tm-cell>
+					:rightText="formData.room ? formData.room : '请选择'"></tm-cell>
 			</anydoor-item-picker>
 		</anydoor-item-picker-group>
 		<view style="margin:0 24rpx;">
-			<tm-button block label="保存"></tm-button>
+			<tm-button block label="保存" @click="addLesson"></tm-button>
 		</view>
 	</tm-app>
 </template>
@@ -54,42 +55,58 @@ import { sequenceToRange } from "@/common/database/Lesson/lesson_temp_utils"
 import { useLessonStore } from "@/store/lesson"
 import { computed } from "vue"
 import { isEmpty } from "lodash"
+import Lesson from "@/common/database/Lesson/Lesson"
+import { ILessonItemsResult } from "@/common/database/Lesson/ILesson"
+import ToastModule from "@/common/native/toast/ToastModule"
 //课程STORE
 const lessonStore = useLessonStore()
+
+
+const addLesson = async () => {
+	if (isEmpty(formData.value.name)) ToastModule.show({ text: '请输入课程名称' })
+	else if (isEmpty(formData.value.classnums)) ToastModule.show({ text: '请选择节次' })
+	else if (isEmpty(formData.value.weekday)) ToastModule.show({ text: '请选择星期' })
+	else if (isEmpty(formData.value.weeks)) ToastModule.show({ text: '请选择周次' })
+	else (await Lesson.getInstance()).addLesson(formData.value).then(res => {
+		console.log(res)
+	})
+}
+
+
 
 
 const formData = ref({
 	//课程名称
 	name: '',
 	//上课节次
-	time: [],
+	classnums: [],
 	//上课星期
-	week: [],
+	weekday: [],
 	//上课教师
 	teacher: '',
 	//周次
 	weeks: [],
 	//上课地点
-	position: ''
+	room: ''
 })
 
 const showData = ref({
 	//节次
-	time: '',
+	classnums: '',
 	//星期
-	week: '',
+	weekday: '',
 	//周次
 	weeks: ''
 })
 
 watch(formData, () => {
 	// 节次
-	showData.value.time = formData.value.time.length > 0 ? sequenceToRange(formData.value.time) : "请选择"
+	showData.value.classnums = formData.value.classnums.length > 0 ? sequenceToRange(formData.value.classnums) : "请选择"
 	//周次
 	showData.value.weeks = formData.value.weeks.length > 0 ? sequenceToRange(formData.value.weeks) : "请选择"
 	//星期
-	showData.value.week = formData.value.week.length > 0 ? (formData.value.week.map(item => {
-		return weekList.value.find(weekItem => weekItem.value === item)?.label
+	showData.value.weekday = formData.value.weekday.length > 0 ? (formData.value.weekday.map(item => {
+		return weekdayList.value.find(weekItem => weekItem.value === item)?.label
 	}).join(',') || '请选择') : '请选择'
 }, { immediate: true, deep: true })
 
@@ -104,12 +121,12 @@ const nameList = computed<string[]>(() => {
 })
 
 //课程列表
-const timeList = ref<number[]>(new Array(10).fill(0).map((item, index) => {
+const classnumsList = ref<number[]>(new Array(10).fill(0).map((item, index) => {
 	return index + 1
 }))
 
 //星期列表
-const weekList = ref<IListArray[]>(['周日', '周一', '周二', '周三', '周四', '周五', '周六'].map((item, index) => {
+const weekdayList = ref<IListArray[]>(['周日', '周一', '周二', '周三', '周四', '周五', '周六'].map((item, index) => {
 	return { label: item, value: index }
 }))
 
@@ -126,7 +143,7 @@ const weeksList = ref<number[]>(new Array(35).fill(0).map((item, index) => {
 }))
 
 //教室列表
-const positionList = computed<string[]>(() => {
+const roomList = computed<string[]>(() => {
 	return [...new Set(lessonStore.lessonList.map(item => {
 		return item.position
 	}).filter(item => !isEmpty(item)))]

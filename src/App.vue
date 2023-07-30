@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-23 22:05:02
+ * @LastEditTime: 2023-07-30 10:10:12
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -39,7 +39,7 @@ onLaunch(async function () {
 		//从storage初始化
 		initFromStorageSync()
 		//打开开屏图
-		OpenImg()
+		// OpenImg()
 		//初始化
 		await init()
 		// const instance = await User.getInstance()

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:42:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 22:45:36
+ * @LastEditTime: 2023-07-30 14:50:39
  * @FilePath: \anydoor-v2\src\common\database\tables\lesson.ts
  * @Description: 
  * 
@@ -65,6 +65,7 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
             'id' INTEGER  NOT NULL primary key autoincrement,
             'lesson_id' INTEGER  NOT NULL,
             'action' text NOT NULL,
+            'company_id' text  NOT NULL,
             'ext' text,
             'semester' text NOT NULL
           )
@@ -102,6 +103,7 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
             't_index' INTEGER NOT NULL,
             'start_time' INTEGER NOT NULL,
             'end_time' INTEGER NOT NULL,
+            'company_id' text  NOT NULL,
             'ext' text,
             'name' text DEFAULT NULL
           )
