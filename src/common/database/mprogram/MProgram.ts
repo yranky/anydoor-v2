@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-19 21:37:13
+ * @LastEditTime: 2023-07-30 21:26:40
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -46,45 +46,56 @@ export default class MProgram {
     }
 
     //打开微应用
-    async open(mpid: string | number) {
+    async open(mpid: string | number, extraData: any = {}) {
         uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '加载中...' })
         try {
             //先判断有没有安装
             let item: IMProgramItem = this.getInstalledItem(mpid)
-            //如果有id，先打开
-            if (item && item.unid) {
-                const startResult = await this.start(item.unid, {
-                    ...item,
-                    extraData: {
-                        enableBackground: false
-                    }
-                })
-                //说明要重新安装
-                if (startResult.code === MPROGRAM_STATUS_CODE.ERROR) {
-                    //更新信息
-                    item = this.getInstalledItem(mpid)
-                } else if (startResult.code === MPROGRAM_STATUS_CODE.FAIL) {
-                    //提示错误
-                    ToastModule.show({ text: startResult.msg || `未知错误!(code:${startResult.code})` })
-                    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
-                }
-            }
             //请求获取应用接口
-            const requestData = await itemMprogram({
-                id: mpid
-            })
-            //请求的数据,先判断是否版本相同
-            if (item.mp_vid === requestData.data.mp_vid) {
-                //那就不需要更新,更新数据后直接结束流程
-                this.updateInfo({
-                    ...item,
-                    extraData: {
-                        enableBackground: requestData.data.enable_background == 1 ? true : false,
-                    },
-                    update_time: dayjs().format("YYYY-MM-DD HH:mm:ss")
+            let requestData: any = { data: {} }
+            try {
+                requestData = await itemMprogram({
+                    id: mpid
                 })
-                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
-                return
+            } catch { }
+            //调试模式，每次都自动下载
+            if (!extraData.debug) {
+                //如果版本不需要更新或者不是强制更新
+                if (item.mp_vid === requestData.data.mp_vid || !requestData.data.force) {
+                    //如果有id，先打开
+                    if (item && item.unid) {
+                        const startResult = await this.start(item.unid, {
+                            ...item,
+                            extraData: {
+                                enableBackground: false,
+                                //传递过去的数据
+                                ...extraData
+                            }
+                        })
+                        //说明要重新安装
+                        if (startResult.code === MPROGRAM_STATUS_CODE.ERROR) {
+                            //更新信息
+                            item = this.getInstalledItem(mpid)
+                        } else if (startResult.code === MPROGRAM_STATUS_CODE.FAIL) {
+                            //提示错误
+                            ToastModule.show({ text: startResult.msg || `未知错误!(code:${startResult.code})` })
+                            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+                        }
+                    }
+                }
+                //请求的数据,先判断是否版本相同
+                if (item.mp_vid === requestData.data.mp_vid) {
+                    //那就不需要更新,更新数据后直接结束流程
+                    this.updateInfo({
+                        ...item,
+                        extraData: {
+                            enableBackground: requestData.data.enable_background == 1 ? true : false
+                        },
+                        update_time: dayjs().format("YYYY-MM-DD HH:mm:ss")
+                    })
+                    uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+                    return
+                }
             }
             if (!requestData.data.download_link) {
                 ToastModule.show({
@@ -113,7 +124,9 @@ export default class MProgram {
             const startData = await this.start(requestData.data.unid, {
                 //后台运行
                 extraData: {
-                    enableBackground: requestData.data.enable_background == 1 ? true : false
+                    enableBackground: requestData.data.enable_background == 1 ? true : false,
+                    //传递过去的数据
+                    ...extraData
                 }
             })
             if (startData.code === MPROGRAM_STATUS_CODE.FAIL) {
