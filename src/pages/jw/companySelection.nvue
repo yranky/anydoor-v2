@@ -33,6 +33,7 @@ import tmInput from "@/tmui/components/tm-input/tm-input.vue"
 import { computed } from "vue"
 import { linkTo } from "@/common/utils/link";
 import { ROUTE_PATH } from "@/router/ROUTE_PATH";
+import useConfigStore from "@/store/config";
 
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
@@ -76,7 +77,11 @@ const getCompanyList = async () => {
 
 //后面的
 const companyListFilter = computed(() => {
-	return companyList.value.reduce((acc: any, cur: any) => {
+	let items = companyList.value
+	if (!useConfigStore().debug) {
+		items = (companyList.value || []).filter((item: any) => item.name !== '测试')
+	}
+	return items.reduce((acc: any, cur: any) => {
 		// 如果不存在这个键，则设置它赋值 [] 空数组
 		if (!acc[cur.index]) {
 			acc[cur.index] = [];

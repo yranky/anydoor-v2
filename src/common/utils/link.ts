@@ -1,10 +1,10 @@
 import qs from "querystringify"
 import { NAVIGATE_TYPE } from "@/common/define/navigateType"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
-import { BASE_LEGO_URL } from "../request/urls"
 import ToastModule from "../native/toast/ToastModule"
 import paramParse, { IParamParse } from "./paramParse"
-import config from "@/common/native/config";
+import useConfigStore from "@/store/config"
+
 
 //链接
 //菜单跳转
@@ -31,9 +31,10 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
 
     //打开微应用
     if (type === NAVIGATE_TYPE.MPROGRAM) {
+        const configStore = useConfigStore()
         uni.$anydoor.MProgram?.open(path, {
             ...option,
-            debug: config.global.debug
+            debug: configStore.debug
         })
     } else if (type === NAVIGATE_TYPE.PAGE) {
         linkTo(path, option, option)
