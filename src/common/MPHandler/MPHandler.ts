@@ -1,47 +1,10 @@
-import useJiaowuStore from "@/store/jiaowu"
-import { EVENT_TYPE, IOnUniMPEventReceiveResult } from "./IMPHandler"
+import { getAnydoorHostMPInstance } from "@usc-anydoor/anydoor-mpc"
 
-export default class MPHandler {
-    //构造函数
-    private constructor() { }
 
-    public static getInstance() {
-        //如果没有就重新加载
-        if (uni.$anydoor.MPHandler === undefined) {
-            uni.$anydoor.MPHandler = new MPHandler()
+export function initAnydoorHostMPInstance() {
+    getAnydoorHostMPInstance().addHandler({
+        "jiaowu": async function (event: string, fromApp: string, data: any) {
+            return { '哈哈哈': 123 }
         }
-        //开启监听
-        uni.$anydoor.MPHandler.listen()
-        return uni.$anydoor.MPHandler
-    }
-
-    //监听消息
-    private listen() {
-        uni.$anydoor_native.MP.onUniMPEventReceive((res: IOnUniMPEventReceiveResult<any>) => {
-            //教务登录信息
-            if (res.event === EVENT_TYPE.LOGIN_JW) this.getJwInfo(res.fromAppid, res.event, res.data.uuid)
-            //账户信息
-
-            //token信息
-        })
-    }
-
-    //获取教务信息
-    private getJwInfo(fromAppId: string, event: EVENT_TYPE, uuid: string) {
-        const jiaowuStore = useJiaowuStore()
-        //是否登录
-        const isLogin = jiaowuStore.isLogin
-        //账户
-        const account = jiaowuStore.jiaowuAccount
-        //id
-        const config = jiaowuStore.jiaowuConfig
-        uni.$anydoor_native.MP.sendUniMPEvent(fromAppId, event, {
-            uuid: uuid,
-            data: {
-                isLogin,
-                account,
-                config
-            }
-        })
-    }
+    })
 }

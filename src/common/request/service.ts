@@ -6,6 +6,7 @@ import User from '../database/user/User'
 import ToastModule from '../native/toast/ToastModule'
 import { linkTo } from '../utils/link'
 import { ROUTE_PATH } from '@/router/ROUTE_PATH'
+import { getDeviceType } from '../utils/DEVICE_TYPE'
 
 function getTokenByLocal() {
   let token = null
@@ -32,6 +33,8 @@ service.interceptors.request.use((config) => {
     // #ifdef MP
     config.header['platform'] = ''
     // #endif
+    //添加设备类型
+    config.header['device'] = getDeviceType()
   }
 
 
@@ -95,6 +98,11 @@ service.interceptors.response.use(
     return Promise.resolve(res)
   },
   (error) => {
+    try {
+      uni.$anydoor_native.Tool_Module.postErrorSync({
+        content: '接口报错!' + JSON.stringify(error)
+      })
+    } catch { }
     return Promise.reject(error)
   }
 )

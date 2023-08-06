@@ -12,7 +12,8 @@
 							<!-- <anydoor-text text="用户中心" :fontSize="30" bold :lines="1" lineHeight="42"></anydoor-text> -->
 						</view>
 						<view class="navbar-action flex flex-center flex-row pl-16 pr-16">
-							<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"></tm-icon>
+							<tm-icon :font-size="32" name="tmicon-cog-fill" _class="pl-16 pr-16"
+								@click="linkTo(ROUTE_PATH.SETTING)"></tm-icon>
 						</view>
 					</view>
 				</view>

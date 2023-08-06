@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-14 15:37:55
+ * @LastEditTime: 2023-07-30 15:24:28
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -13,9 +13,9 @@ import ERROR_TARGET from "../../errorHandler/ERROR_TARGET"
 import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
 import databases, { DATA } from "../database"
 import { LESSON_TABLES_NAME } from "../tables/lesson"
-import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem } from "./ILesson"
+import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem, LESSON_EDIT_TYPE } from "./ILesson"
 import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
-import { classnumsToArray, rangeToSequence, weeksToArray } from "./lesson_temp_utils"
+import { classnumsToArray, rangeToSequence, sequenceToRange, weeksToArray } from "./lesson_temp_utils"
 import ToastModule from "@/common/native/toast/ToastModule"
 import Encrypt from "@/common/encrypt/Encrypt"
 import useJiaowuStore from "@/store/jiaowu"
@@ -183,10 +183,15 @@ export default class Lesson {
     }
 
     //获取最新的记录
-    async getLatestRecord(cid: string) {
-        return await this.sql?.selectSql(
+    async getLatestRecord(cid: string, semester?: string) {
+        if (!semester) return await this.sql?.selectSql(
             `
             select * from ${LESSON_TABLES_NAME.RECORDS} where company_id='${cid}' order by create_time desc limit 0,1
+            `
+            , ERROR_TARGET.LESSON_CLASS)
+        else return await this.sql?.selectSql(
+            `
+            select * from ${LESSON_TABLES_NAME.RECORDS} where company_id='${cid}' and semester='${semester}' order by create_time desc limit 0,1
             `
             , ERROR_TARGET.LESSON_CLASS)
     }
@@ -284,23 +289,25 @@ export default class Lesson {
                     semester_current = (semester_current_origin || {}).value || ""
                 }
 
-                //#endregion
-                //更新课程名称信息
-                //#region 课程名称
-                const lesson_name_origin = data.data.datalist
-                const lesson_name: ILessonNameItem[] = Array.from(new Set((lesson_name_origin || []).map((item: any) => item.name))).map((item) => ({
-                    name: item,
-                    semester: semester_current
-                })) as ILessonNameItem[]
-                const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name, semester_current, store.jiaowuConfig.cid)
-                //更新课程名称信息
-                //#endregion
-                //#region 更新temp信息
-                await this.updateLessonTempStorage(data.data.datalist || [], lesson_name_result, semester_current, store.jiaowuConfig.cid)
-                //#endregion
-
-                //#region 更新record
+                //#region 先更新record
                 await this.updateRecord(store.jiaowuConfig.cid, semester_current, data.data || {})
+
+                //#endregion
+                // //更新课程名称信息
+                // //#region 课程名称
+                // const lesson_name_origin = data.data.datalist
+                // const lesson_name: ILessonNameItem[] = Array.from(new Set((lesson_name_origin || []).map((item: any) => item.name))).map((item) => ({
+                //     name: item,
+                //     semester: semester_current
+                // })) as ILessonNameItem[]
+                // const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name, semester_current, store.jiaowuConfig.cid)
+                // //更新课程名称信息
+                // //#endregion
+                // //#region 更新temp信息
+                // await this.updateLessonTempStorage(data.data.datalist || [], lesson_name_result, semester_current, store.jiaowuConfig.cid)
+                // //#endregion
+                await this.doUpdateLesson(semester_current, data.data.datalist)
+
                 //#endregion
                 return true
             } else {
@@ -311,6 +318,60 @@ export default class Lesson {
             ToastModule.show({ text: '（教务课程）数据更新失败' + e })
         }
         return false
+    }
+
+    //更新课程信息(不请求接口)
+    async doUpdateLesson(semester: string, rawData?: any) {
+        const jiaowuStore = useJiaowuStore()
+        let data = []
+        if (!rawData) {
+            //从数据库查找最新的
+            const record = await this.getLatestRecord(jiaowuStore.jiaowuConfig.cid, semester)
+            data = JSON.parse(decodeURIComponent(record!.data[0].result))
+        }
+        //查询编辑的
+        const list: any = await this.getEditList(rawData || data.datalist, semester)
+
+        //更新课程名称信息
+        //#region 课程名称
+        const lesson_name_origin = list
+        const lesson_name: ILessonNameItem[] = Array.from(new Set((lesson_name_origin || []).map((item: any) => item.name))).map((item) => ({
+            name: item,
+            semester: semester
+        })) as ILessonNameItem[]
+        const lesson_name_result: ILessonNameItem[] = await this.updateLessonName(lesson_name, semester, jiaowuStore.jiaowuConfig.cid)
+        //更新课程名称信息
+        //#endregion
+        //#region 更新temp信息
+        await this.updateLessonTempStorage(list || [], lesson_name_result, semester, jiaowuStore.jiaowuConfig.cid)
+        //#endregion
+    }
+    //获取编辑的数据 rawData(原始数据) 
+    async getEditList(rawData: any, semester: string) {
+        const jiaowuStore = useJiaowuStore()
+        // 查询数据库
+        const data = await this.sql?.selectSql(
+            `
+            select * from ${LESSON_TABLES_NAME.EDIT} where company_id='${jiaowuStore.jiaowuConfig.cid}' and semester='${semester}'
+            `
+            , ERROR_TARGET.LESSON_CLASS)
+        const list = rawData
+        //遍历数据
+        data?.data.forEach((item: any) => {
+            const ext: any = JSON.parse(decodeURIComponent(item.ext))
+
+            console.log(ext.add)
+            //添加,则直接添加
+            if (item.action === LESSON_EDIT_TYPE.ADD) {
+                list.push(ext.add)
+            }
+            //编辑
+
+            //删除
+
+
+        })
+        return list
     }
 
     //计算并设置当前的周次
@@ -356,6 +417,56 @@ export default class Lesson {
             return a.time[0] - b.time[0]
         })
         return data
+    }
+
+    //添加课程
+    async addLesson(formData: any): Promise<boolean> {
+        try {
+            const jiaowuStore = useJiaowuStore()
+            const record = await this.getLatestRecord(jiaowuStore.jiaowuConfig.cid)
+            const semester = record!.data[0].semester
+            //参数优化
+            const item: ILessonItemsResult = {
+                //课程名称
+                name: formData.name.trim(),
+                //上课节次
+                classnums: sequenceToRange(formData.classnums),
+                //上课星期
+                weekday: sequenceToRange(formData.weekday),
+                //上课教师
+                teacher: formData.teacher.trim(),
+                //周次
+                weeks: sequenceToRange(formData.weeks),
+                //上课地点
+                room: formData.room.trim()
+            }
+            console.log(item)
+            // 获取课程id
+            const lessonsName = await this.updateLessonName([{
+                name: formData.name,
+                semester
+            }] as ILessonNameItem[], semester, jiaowuStore.jiaowuConfig.cid)
+            const lessonId = lessonsName.find(item => item.semester === semester && item.name === formData.name)?.id
+            if (!lessonId) throw new Error("课程新增失败了!")
+
+            const ext = {
+                add: item
+            }
+            //插入表
+            const sql = `
+            insert into ${LESSON_TABLES_NAME.EDIT} (lesson_id,action,semester,ext,company_id) values ('${lessonId}','${LESSON_EDIT_TYPE.ADD}','${semester}','${encodeURIComponent(JSON.stringify(ext))}','${jiaowuStore.jiaowuConfig.cid}')
+            `
+            const res = await this.sql?.executeSql([sql], ERROR_TARGET.LESSON_CLASS)
+            if (res?.code === SQLITE_STATUS_CODE.FAIL) throw new Error("失败!" + res.msg)
+            //更新缓存表
+            await this.doUpdateLesson(semester, JSON.parse(decodeURIComponent(record!.data[0].result)).datalist)
+            return true
+        } catch (e) {
+            ToastModule.show({
+                text: '保存失败' + e
+            })
+        }
+        return false
     }
 
 

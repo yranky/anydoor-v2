@@ -62,3 +62,10 @@ export interface ILessonTempItemResult {
         name: any
     }
 }
+
+//类型
+export enum LESSON_EDIT_TYPE {
+    ADD = "add",
+    EDIT = "edit",
+    REMOVE = "remove"
+}

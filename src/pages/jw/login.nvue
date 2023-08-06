@@ -137,7 +137,6 @@ const login = async () => {
 		save,
 		cid
 	})
-	console.log(data.stuInfo)
 	if (data.stuInfo !== undefined) {
 		const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
 			...jwConfigObj.value,

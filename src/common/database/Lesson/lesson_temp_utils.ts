@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-13 22:40:56
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-13 23:08:37
+ * @LastEditTime: 2023-07-30 15:17:28
  * @FilePath: \anydoor-v2\src\common\database\Lesson\lesson_temp_utils.ts
  * @Description: 字符串转时间数组
  * 
@@ -32,10 +32,11 @@ export function weeksToArray(weeks: string): number[] {
 
 //将节次转换成数组
 export function classnumsToArray(classnums: string): number[][] {
-    //先切割,，然后排序
-    const tmp = classnums.split(",").map((item) => {
-        return parseInt(item)
-    }).sort((a: number, b: number) => a - b)
+    //先切割,然后排序
+    // const tmp = classnums.split(",").map((item) => {
+    //     return parseInt(item)
+    // }).sort((a: number, b: number) => a - b)
+    const tmp = rangeToSequence(classnums).sort((a: number, b: number) => a - b)
     //转化为数组范围
     const result: number[][] = []
     // let r = []
@@ -64,6 +65,7 @@ export function classnumsToArray(classnums: string): number[][] {
 // console.log(rangeResult); // 输出：1-5,9-10,89,900-901
 // console.log(sequenceResult); // 输出：[1, 2, 3, 4, 5, 9, 10, 89, 900, 901]
 export function sequenceToRange(sequence: number[]): string {
+    if (sequence.length === 0) return ""
     sequence.sort((a, b) => a - b);
 
     let rangeArr: string[] = [];
