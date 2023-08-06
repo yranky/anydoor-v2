@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-02-12 21:18:25
+ * @LastEditTime: 2023-08-06 20:36:02
  * @FilePath: \anydoor-v2\src\theme\index.ts
  * @Description: 主题文件
  * 
@@ -20,5 +20,6 @@ export const theme = {
 	"primary3": "#597ffa",
 	"primary4": "#4dfa78",
 	"vip": "#edc387",
-	"vipBg": "#2b3840"
+	"vipBg": "#2b3840",
+	'redFont':'#ff2414'
 }
