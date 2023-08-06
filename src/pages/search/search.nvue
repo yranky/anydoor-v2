@@ -8,30 +8,32 @@
 						<view class="index-input" style="width: 550rpx;">
 							<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
 								backgroundColor: store.tmStore.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.03)'
-							}" :focus="true" @focus="inputFocus = true" @blur="inputFocus = false" class=" round-5"></tm-input>
+							}" :focus="true" @focus="inputFocus = true" @blur="inputFocus = false" class=" round-5" @confirm="doSearch"
+								@search="doSearch" v-model="keyword" placeholder="搜索模块" confirmType="search"></tm-input>
 						</view>
-						<view class="flex flex-center" style="width: 100rpx;">
+						<view class="flex flex-center" style="width: 100rpx;" @click="doSearch()">
 							<anydoor-text text="搜索" :color="inputFocus ? 'primary' : 'grey'"></anydoor-text>
 						</view>
 					</view>
 				</template>
 			</tm-navbar>
 			<!-- 搜索记录 -->
-			<tm-sheet :padding="[0, 0]" :margin="[10, 15]" class=" round-5">
+			<tm-sheet :padding="[0, 0]" :margin="[0, 15, 20, 15]" class=" round-5" v-if="keywordHistoryList.length > 0">
 				<anydoor-label labelText="历史记录" :rectSize="0" rectColor="primary" :actionFontSize="27">
 					<template v-slot:action>
-						<tm-icon name="tmicon-delete-fill" color="grey" :fontSize="30"></tm-icon>
+						<tm-icon name="tmicon-delete-fill" color="grey" :fontSize="30" @click="clearHistory"></tm-icon>
 					</template>
 				</anydoor-label>
 				<view class="search-history flex flex-wrap flex-row">
 					<tm-sheet _class="search-history-item flex flex-nowrap flex-row" class=" round-3" color="primary" text
-						:margin="[0, 0]" :padding="[0, 0]">
-						<view class="flex-1">
-							<anydoor-text margin="0 20rpx" :lines="1" text="历史记录一" :fontSize="25" lineHeight="30"
+						:margin="[10, 0]" :padding="[0, 0]" v-for="(item, index) in keywordHistoryList" :key="index">
+						<view class="flex-1" @click="doSearch(item.keyword)">
+							<anydoor-text margin="0 20rpx" :lines="1" :text="item.keyword" :fontSize="25" lineHeight="30"
 								color="primary">
 							</anydoor-text>
 						</view>
-						<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"></tm-icon>
+						<tm-icon _class="mr-n2" name="tmicon-times" color="primary" :fontSize="20"
+							@click="removeHistory(item.keyword)"></tm-icon>
 					</tm-sheet>
 				</view>
 			</tm-sheet>
@@ -95,11 +97,104 @@ import {
 	onHide,
 	onReady
 } from "@dcloudio/uni-app"
+import ToastModule from "@/common/native/toast/ToastModule"
+import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 
 //store
 const store = useTmpiniaStore()
 //聚焦
 const inputFocus = ref(true)
+
+//搜索关键词
+const keyword = ref<string>('')
+
+
+//搜索关键词历史
+interface IKeywordHistory {
+	keyword: string,
+	time: number
+}
+const keywordHistory = ref<IKeywordHistory[]>([])
+//搜索关键词历史
+const keywordHistoryList = computed(() => {
+	return keywordHistory.value.map(item => {
+		return {
+			keyword: item.keyword,
+			time: item.time
+		}
+	})
+})
+
+//搜索
+const doSearch = (word?: string) => {
+	const value = typeof word === "string" ? word.trim() : keyword.value.trim()
+	if (value === "") ToastModule.show({ text: '请输入关键词' })
+	else {
+		//执行搜索操作
+		setStorageHistory(value)
+		//搜索关键词
+		linkTo(ROUTE_PATH.SEARCH_LIST, {
+			keyword: value
+		}, {}, false, {
+			animationType: "fade-in"
+		})
+	}
+}
+
+//加载历史
+const loadKeywordHistory = () => {
+	keywordHistory.value = uni.getStorageSync(UNI_STORAGE.SEARCH_KEYWORD_HISTORY) || []
+}
+//设置历史
+const setStorageHistory = (keyword: string) => {
+	//要先去掉已经有的
+	keywordHistory.value = keywordHistory.value.filter(item => item.keyword !== keyword)
+	//再向前插入
+	keywordHistory.value.unshift({
+		keyword,
+		time: new Date().getTime()
+	})
+	//报错
+	uni.setStorageSync(UNI_STORAGE.SEARCH_KEYWORD_HISTORY, keywordHistory.value)
+	//自动重新加载
+	loadKeywordHistory()
+}
+//移除一个
+const removeHistory = (keyword: string) => {
+	keywordHistory.value = keywordHistory.value.filter(item => item.keyword !== keyword)
+	uni.setStorageSync(UNI_STORAGE.SEARCH_KEYWORD_HISTORY, keywordHistory.value)
+	//自动重新加载
+	loadKeywordHistory()
+
+}
+//清空历史
+const clearHistory = () => {
+	//先提示
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		okText: '确定',
+		cancelable: true,
+		cancelText: '取消',
+		title: '提示',
+		content: '确定清空吗?'
+	}, (res) => {
+		//执行清空操作
+		if (res.data?.type === "ok") {
+			uni.setStorageSync(UNI_STORAGE.SEARCH_KEYWORD_HISTORY, [])
+			//自动重新加载
+			loadKeywordHistory()
+		}
+	})
+}
+
+
+//每次显示都从storage里面加载
+onShow(() => {
+	//每次都从历史加载
+	loadKeywordHistory()
+})
+
 </script>
 
 <style lang="scss" scoped>

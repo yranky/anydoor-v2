@@ -55,4 +55,6 @@ export enum ROUTE_PATH {
     APP_DETAIL = "/pages/app/app",
     //扫码结果
     QRCODE_RESULT = "/pages/ext/qresult",
+    //搜索列表
+    SEARCH_LIST = "/pages/search/searchList",
 }

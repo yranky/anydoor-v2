@@ -55,30 +55,38 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
     }
 }
 
-
-export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false) {
-    //配置项
+/**
+ * @param {string} path 路径
+ * @param {any} data 传递给页面的数据，用data包裹
+ * @param {any} external 传递给页面的数据，不用data包裹的
+ * @param {boolean} replace 是否替换
+ * @return {*}
+ * @description: 跳转
+ */
+export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false, linkOption: any = {}): Promise<any> {
     const options: any = {
         ...external,
         data: JSON.stringify(data)
     }
     console.log(options)
-    const result: any = await navigateTo(path, options, replace)
+    const result: any = await navigateTo(path, options, replace, linkOption)
     if (result.success === false) {
         if (result.errMsg.indexOf('fail can not redirectTo a tabbar page') > -1) {
             uni.switchTab({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`
             })
         }
     }
 }
 //跳转
-function navigateTo(path: string, options: any = {}, replace: boolean = false) {
+function navigateTo(path: string, options: any = {}, replace: boolean = false, linkOption: any = {}) {
     return new Promise((resolve) => {
         if (!replace) {
             uni.navigateTo({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`,
-                fail: (err) => {
+                fail: (err: { errMsg: any }) => {
                     resolve({
                         success: false,
                         errMsg: err.errMsg
@@ -93,8 +101,9 @@ function navigateTo(path: string, options: any = {}, replace: boolean = false) {
         } else {
             //跳转
             uni.redirectTo({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`,
-                fail: (err) => {
+                fail: (err: { errMsg: any }) => {
                     resolve({
                         success: false,
                         errMsg: err.errMsg
@@ -111,16 +120,17 @@ function navigateTo(path: string, options: any = {}, replace: boolean = false) {
 }
 
 //返回
-export async function linkBack(de: number = 1) {
+export async function linkBack(de: number = 1, linkOption: any = {}) {
     return new Promise(resolve => {
         uni.navigateBack({
+            ...linkOption,
             delta: de,
             success: () => {
                 resolve({
                     success: true
                 })
             },
-            fail: (err) => {
+            fail: (err: { errMsg: any }) => {
                 resolve({
                     success: false,
                     errMsg: err.errMsg

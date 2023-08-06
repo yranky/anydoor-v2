@@ -228,7 +228,17 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/search/searchList",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "搜索列表",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+    ],
 	"subPackages": [],
 	"preloadRule": [],
 	"globalStyle": {
