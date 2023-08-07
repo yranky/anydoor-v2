@@ -141,12 +141,19 @@ export async function linkBack(de: number = 1, linkOption: any = {}) {
 }
 
 //参数转换获取
-export function linkOptionsParse(options: any) {
+export function linkOptionsParse(options: any): {
+    [key: string | number | symbol]: any,
+    data: any
+} {
     try {
         const data = JSON.parse(decodeURIComponent(options.data))
         options['data'] = data || {}
     } catch {
-        options['data'] = {}
+        if (options instanceof Object) options['data'] = {}
+        else {
+            options = {}
+            options['data'] = {}
+        }
     }
     return options
 }

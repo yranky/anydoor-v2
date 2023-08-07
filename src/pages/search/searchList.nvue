@@ -3,6 +3,8 @@
 		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
 				<tm-navbar title="搜索"></tm-navbar>
+				<tm-tabs :list="tabList" align="left" :width="750" :height="300" itemModel="line" activeColor="primary"
+					activeFontColor="primary" v-model:active-name="currentTab" :default-name="currentTab"></tm-tabs>
 			</template>
 			<template #content>
 
@@ -14,16 +16,38 @@
 <script lang="ts" setup>
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
-import anydoorPage from "@/components/anydoor-page/anydoor-page"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import tmTabs from "@/tmui/components/tm-tabs/tm-tabs.vue"
 import { ref } from "vue"
 import { onLoad } from "@dcloudio/uni-app"
+import { linkOptionsParse } from "@/common/utils/link"
 
+//加载获取参数
 onLoad((options) => {
-	console.log(options)
+	keyword.value = linkOptionsParse(options).data.keyword || ''
+	console.log(keyword.value)
 })
 
 //搜索关键词
 const keyword = ref<string>("")
+
+//tab列表
+const tabList = ref<{ key: string | number, title: string }[]>([{
+	key: 'modules',
+	title: '模块'
+}, {
+	key: 'article',
+	title: '文章'
+}, {
+	key: 'notice',
+	title: '通知'
+}, {
+	key: 'more',
+	title: '更多'
+}])
+
+//当前所在的tab的key
+const currentTab = ref<string | number>("modules")
 
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
