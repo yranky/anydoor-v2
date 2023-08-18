@@ -22,7 +22,8 @@
 		<!-- 联系信息 -->
 		<view style="margin: 0 10rpx;">
 			<tm-divider align="left" label=""></tm-divider>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="官网" :rightTextSize="28" right-text="anydoor.top">
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="官网" :rightTextSize="28" right-text="anydoor.top"
+				@click="toWebIndex">
 			</tm-cell>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="联系邮箱" right-text="douye@douye.top" right-icon=""
 				:rightTextSize="28">
@@ -79,6 +80,15 @@ const doShowDev = () => {
 		checkDebug.value = 5
 	}
 }
+
+
+//打开官网页面
+const toWebIndex = () => {
+	// #ifdef APP-PLUS
+	plus.runtime.openURL('http://anydoor.top')
+	// #endif
+}
+
 </script>
 
 <style lang="scss" scoped></style>

@@ -2,8 +2,8 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-09 21:24:13 
- * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @LastEditTime: 2023-08-13 11:28:42
+ * @FilePath: \anydoor-v2\src\pages\lesson\background.nvue
  * @Description: 课程表背景
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
@@ -113,7 +113,7 @@ const getFirstPage = async () => {
 		currentPage.value = 1
 		const data = await listWallpaper({
 			limit: pageSize.value,
-			currentPage: currentPage.value
+			page: currentPage.value
 		})
 		if (data && data.length > 0) {
 			wallpaperList.value = data
@@ -127,7 +127,7 @@ const getNextPage = async () => {
 	try {
 		const data = await listWallpaper({
 			limit: pageSize.value,
-			currentPage: currentPage.value + 1
+			page: currentPage.value + 1
 		})
 		if (data && data.length > 0) {
 			wallpaperList.value = wallpaperList.value.concat(data)

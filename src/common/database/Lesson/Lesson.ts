@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 15:24:28
+ * @LastEditTime: 2023-08-13 10:53:59
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -307,6 +307,10 @@ export default class Lesson {
                 // await this.updateLessonTempStorage(data.data.datalist || [], lesson_name_result, semester_current, store.jiaowuConfig.cid)
                 // //#endregion
                 await this.doUpdateLesson(semester_current, data.data.datalist)
+
+                //当前学期
+                const lessonStore = useLessonStore()
+                lessonStore.semester = semester_current
 
                 //#endregion
                 return true
