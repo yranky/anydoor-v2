@@ -43,6 +43,8 @@ export enum ROUTE_PATH {
     LESSON_ADD = "/pages/lesson/add",
     //已编辑课程
     LESSON_SETTING_EDIT = "/pages/lesson/editManage",
+    //已编辑课程详情
+    LESSON_SETTING_EDIT_DETAIL = "/pages/lesson/editDetail",
     //webview
     WEBVIEW = "/pages/webview/webview",
     // 学校选择

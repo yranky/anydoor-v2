@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-13 10:53:59
+ * @LastEditTime: 2023-08-19 20:54:15
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -473,5 +473,40 @@ export default class Lesson {
         return false
     }
 
+    //学期，不传学期，则设置为当前学期
+    async getEdit(semester?: string) {
+        const jiaowuStore = useJiaowuStore()
+        if (!semester) {
+            const record = await this.getLatestRecord(jiaowuStore.jiaowuConfig.cid)
+            semester = record!.data[0].semester
+        }
+        //查询
+        const data = await this.sql?.selectSql(
+            `select * from ${LESSON_TABLES_NAME.EDIT} where company_id='${jiaowuStore.jiaowuConfig.cid}' and semester='${semester}'`
+            , ERROR_TARGET.LESSON_CLASS)
+        return data?.data || []
+    }
+
+    //删除记录
+    async removeEdit(semester: string, id?: string) {
+        uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '删除中,请稍等...' })
+        try {
+            const sql = `
+            delete from ${LESSON_TABLES_NAME.EDIT} where id ='${id}'
+            `
+            const result = await this.sql?.executeSql([sql], ERROR_TARGET.LESSON_CLASS)
+
+            const currentSemester = useLessonStore().semester
+            //如果是同一个学期就需要刷新
+            if (currentSemester === semester) {
+                await this.doUpdateLesson(semester)
+            }
+
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+            return result?.code === SQLITE_STATUS_CODE.SUCCESS
+        } catch { }
+        uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+        return false
+    }
 
 }
