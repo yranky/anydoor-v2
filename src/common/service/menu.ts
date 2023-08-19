@@ -3,6 +3,7 @@ import ToastModule from "@/common/native/toast/ToastModule"
 import { post } from "@/common/request/http"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { MENU_TYPES } from "@/common/define/menuType"
+import { isVersionMatch } from "../utils/isVersionMatch"
 
 //首页菜单列表
 export async function listIndexMenu(formData: any): Promise<any> {
@@ -81,7 +82,13 @@ export async function listMyMenu(formData: any): Promise<any> {
             if ((item.type || []).indexOf(MENU_TYPES.RECOMMEND) > -1) {
                 lists[MENU_TYPES.RECOMMEND].push(menu_item)
             }
-        });
+        })
+
+        //filter
+        for (let key in lists) {
+            lists[key] = lists[key].filter((item: any) => isVersionMatch(getApp().globalData!['versionCode'], item.version))
+        }
+
         console.log(data.data)
         //保存到缓存
         uni.setStorageSync(UNI_STORAGE.MENU_MY_LIST, lists)
