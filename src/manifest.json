@@ -132,10 +132,11 @@
             "splashscreen" : {
                 "androidStyle" : "default",
                 "android" : {
-                    "hdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
-                    "xhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png",
-                    "xxhdpi" : "F:\\backups\\任意门\\任意门开屏图\\2.0\\starter\\9png\\starter.9.png"
-                }
+                    "hdpi" : "F:/backups/任意门/任意门开屏图/2.0/starter/2023/01/.9png/1080 1882.9.png",
+                    "xhdpi" : "F:/backups/任意门/任意门开屏图/2.0/starter/2023/01/.9png/1080 1882.9.png",
+                    "xxhdpi" : "F:/backups/任意门/任意门开屏图/2.0/starter/2023/01/.9png/1080 1882.9.png"
+                },
+                "useOriginalMsgbox" : true
             }
         },
         "uniStatistics" : {
