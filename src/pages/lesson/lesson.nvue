@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 18:15:55
+ * @LastEditTime: 2023-08-20 19:10:44
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -299,8 +299,14 @@ onReady(() => {
 })
 
 onShow(async () => {
-	updateData()
-	updateSemester()
+	if (jiaowuStore.isLogin) {
+		await updateData()
+		await updateSemester()
+		//判断是否为空，如果为空，则刷新
+		if (lessonStore.lessonList.length === 0) await refresh()
+	} else {
+		linkTo(ROUTE_PATH.COMPANY_SELECT, {}, {}, true)
+	}
 })
 
 
