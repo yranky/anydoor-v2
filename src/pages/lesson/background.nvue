@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-13 11:28:42
+ * @LastEditTime: 2023-08-20 11:01:53
  * @FilePath: \anydoor-v2\src\pages\lesson\background.nvue
  * @Description: 课程表背景
  * 
@@ -51,7 +51,7 @@
 							<view class="background-mask" :style="{
 								width: itemInfo.width + 'rpx',
 								height: itemInfo.height + 'rpx'
-							}">
+							}" @click="download(item)">
 								<anydoorText text="点击下载" color="whiteBg" />
 							</view>
 						</view>
@@ -74,6 +74,7 @@ import { listWallpaper } from "@/common/service/wallpaper"
 import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import { onMounted } from "vue"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import Lesson from "@/common/database/Lesson/Lesson"
 
 //宽高比
 const scale = ref<number>(3)
@@ -98,8 +99,19 @@ const itemInfo = computed(() => {
 onLoad(() => {
 	//获取第一页
 	getFirstPage()
+	//获取下载的列表
+	getBackgroundList()
 })
 
+//下载
+const download = async (item: any) => {
+	(await Lesson.getInstance()).downloadBackground(item.id, item.thumb, item.url)
+}
+
+const getBackgroundList = async () => {
+	const data =await (await Lesson.getInstance()).getBackgroundList()
+	console.log(data)
+}
 
 
 const currentPage = ref<number>(1)
