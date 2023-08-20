@@ -3,6 +3,9 @@ import { useUserStore } from "@/store/user"
 import { authOpenid } from "../service/auth"
 import qs from "querystringify"
 import CODE from "../define/code"
+import { linkTo } from "./link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import ToastModule from "../native/toast/ToastModule"
 /**
  * 
  * @param option 
@@ -14,11 +17,15 @@ export default async function paramParse(option: any): Promise<IParamParse> {
     //解析
     uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '请稍等' })
     // uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '请稍等' })
+    console.log(option)
     for (let key in option) {
         //教务登录
         if (option[key] == '$$jiaowuLogin$$') {
             if (!jiaowuStore.isLogin) {
                 //跳转登录
+                linkTo(ROUTE_PATH.COMPANY_SELECT)
+                uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+                ToastModule.show({ text: '请先登录教务系统！' })
                 return {
                     success: false,
                     option: {}
@@ -27,6 +34,8 @@ export default async function paramParse(option: any): Promise<IParamParse> {
         }
         //账户登录
         if (option[key] == '$$login$$') {
+            linkTo(ROUTE_PATH.LOGIN)
+            uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
             if (!userStore.token) {
                 return {
                     success: false,
