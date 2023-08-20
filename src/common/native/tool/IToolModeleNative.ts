@@ -5,6 +5,7 @@ export default interface IToolModeleNative {
     clearWebviewCacheSync(option: {}): IResult<undefined>
     postErrorSync(option: { content: string }): IResult<undefined>
     getAppNameFromSchemaSync(option: IGetAppNameFromSchema): IResult<IGetAppNameFromSchemaResultItem[]>
+    onThemeChange(option: {}, callbackfn?: (result: IResult<boolean>) => void): void
 }
 
 interface IGetAppNameFromSchema {

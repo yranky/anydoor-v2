@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-19 20:54:52
+ * @LastEditTime: 2023-08-20 07:42:35
  * @FilePath: \anydoor-v2\src\pages\lesson\editManage.nvue
  * @Description: 已编辑课程
  * 
@@ -10,7 +10,7 @@
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="已编辑课程">
+		<tm-navbar title="已编辑课程" :right-width="300">
 			<template #right>
 				<anydoor-item-picker-group>
 					<anydoor-item-picker :list="semesterList" v-model:value="semesterSelect.value">
