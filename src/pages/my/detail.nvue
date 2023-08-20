@@ -9,7 +9,7 @@
 					<tm-cell showAvatar :avatar="userStore.avatar" :margin="[0, 0]" :titleFontSize="35" title="头像"
 						@click="toWebDetail">
 					</tm-cell>
-					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="用户名"
+					<!-- <tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="用户名"
 						:rightText="userStore.username" rightIcon=""> </tm-cell>
 					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="昵称"
 						:rightText="userStore.nickname" @click="updateNickname"> </tm-cell>
@@ -17,7 +17,15 @@
 						<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="生日"
 							:rightText="userStore.birth">
 						</tm-cell>
-					</picker>
+					</picker> -->
+
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="用户名"
+						:rightText="userStore.username" rightIcon=""> </tm-cell>
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="昵称"
+						:rightText="userStore.nickname" @click="toWebDetail"> </tm-cell>
+					<tm-cell :margin="[0, 0]" :titleFontSize="32" :rightTextSize="32" title="生日"
+						:rightText="userStore.birth" @click="toWebDetail">
+					</tm-cell>
 				</view>
 			</template>
 		</anydoorPage>
@@ -79,7 +87,7 @@ const updateBirth = (e: any) => {
 //跳转到修改信息
 const toWebDetail = (e: any) => {
 	linkTo(ROUTE_PATH.WEBVIEW, {
-		url: UCENTER_BASE_URL + "/user/home",
+		url: UCENTER_BASE_URL + "/user/account",
 		title: "修改信息"
 	})
 }

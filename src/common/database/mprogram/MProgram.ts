@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 21:26:40
+ * @LastEditTime: 2023-08-12 20:07:27
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -182,6 +182,7 @@ export default class MProgram {
                         resolve(res)
                     } else {
                         ToastModule.show({ text: '微应用加载失败!' })
+                        reject()
                     }
                 },
                 fail: () => {

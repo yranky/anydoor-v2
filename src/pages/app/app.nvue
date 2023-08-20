@@ -22,7 +22,8 @@
 		<!-- 联系信息 -->
 		<view style="margin: 0 10rpx;">
 			<tm-divider align="left" label=""></tm-divider>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="官网" :rightTextSize="28" right-text="anydoor.top">
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="官网" :rightTextSize="28" right-text="anydoor.top"
+				@click="toWebIndex">
 			</tm-cell>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="联系邮箱" right-text="douye@douye.top" right-icon=""
 				:rightTextSize="28">
@@ -51,6 +52,8 @@ import Update from "@/common/update/Update"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { ref } from "vue"
 import { computed } from "vue"
+import config from "@/common/native/config"
+import useConfigStore from "@/store/config"
 
 const appVersion = computed(() => plus.runtime.version + '-' + getApp().globalData!['versionCode'])
 
@@ -62,9 +65,30 @@ const checkUpdate = (force: number = 0) => {
 }
 //展示dev
 const showDev = ref<number>(5)
+const checkDebug = ref<number>(5)
 const doShowDev = () => {
+	//调试模式
 	if (showDev.value > 0) showDev.value--
+	if (checkDebug.value > 0) {
+		checkDebug.value--
+	} else {
+		//修改调试模式
+		const configStore = useConfigStore()
+		configStore.debug = !configStore.debug
+		if (configStore.debug) ToastModule.show({ text: '当前处于调试模式!' })
+		else ToastModule.show({ text: '已关闭调试模式!' })
+		checkDebug.value = 5
+	}
 }
+
+
+//打开官网页面
+const toWebIndex = () => {
+	// #ifdef APP-PLUS
+	plus.runtime.openURL('http://anydoor.top')
+	// #endif
+}
+
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,0 +1,91 @@
+<!--
+ * @Author: yranky douye@douye.top
+ * @Date: 2023-08-19 19:50:33
+ * @LastEditors: yranky douye@douye.top
+ * @LastEditTime: 2023-08-19 20:48:20
+ * @FilePath: \anydoor-v2\src\pages\lesson\editDetail.nvue
+ * @Description: 修改详情
+ * 
+ * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
+-->
+<template>
+    <tm-app ref="app" color="whiteBg">
+        <tm-navbar title="已编辑课程">
+            <template #right>
+                <anydoor-text class="flex-2" text="删除记录" :lines="1" style="margin:0 39rpx;text-align: right;"
+                    @click="removeEdit" v-if="id && semester"></anydoor-text>
+            </template>
+        </tm-navbar>
+        <view style="margin: 10rpx 20rpx;" v-for="(item, index) in options" :key="index">
+            <!-- <anydoor-text text="新增" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text> -->
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程名称" :right-text="item.name" rightIcon=""></tm-cell>
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程节次" :right-text="item.classnums" rightIcon=""></tm-cell>
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="星期" :right-text="item.weekday" rightIcon=""></tm-cell>
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="上课教师" :right-text="item.teacher" rightIcon=""></tm-cell>
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="周次" :right-text="item.weeks" rightIcon=""></tm-cell>
+            <tm-cell :margin="[0, 0]" :titleFontSize="32" title="教室" :right-text="item.room" rightIcon=""></tm-cell>
+        </view>
+    </tm-app>
+</template>
+
+<script lang="ts" setup>
+import { LESSON_EDIT_TYPE } from "@/common/database/Lesson/ILesson"
+import { linkBack, linkOptionsParse } from "@/common/utils/link"
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { onLoad } from "@dcloudio/uni-app"
+import { ref } from "vue"
+import Lesson from "@/common/database/Lesson/Lesson"
+import ToastModule from "@/common/native/toast/ToastModule"
+
+const options = ref<any[]>([])
+const id = ref("")
+const semester = ref("")
+
+onLoad((option) => {
+    const detail = linkOptionsParse(option)
+    try {
+        id.value = detail.data.detail.id
+        semester.value = detail.data.semester
+    } catch { }
+    parse(detail.data)
+})
+
+//解析数据
+const parse = (detail: any) => {
+    if (detail.type === LESSON_EDIT_TYPE.ADD) {
+        options.value.push({
+            name: detail.detail.name,
+            classnums: detail.detail.classnums,
+            weekday: detail.detail.weekday,
+            teacher: detail.detail.teacher,
+            weeks: detail.detail.weeks,
+            room: detail.detail.room
+        })
+    }
+    console.log(options.value)
+}
+
+//删除这个编辑记录
+const removeEdit = async () => {
+    uni.$anydoor_native.Dialog_Module.showMessageDialog({
+        content: '删除后无法恢复，确定删除吗？',
+        title: '提示',
+        okText: '确定',
+        cancelText: '取消',
+    }, (res) => {
+        if (res.data?.type === 'ok') {
+            Lesson.getInstance().then(instance => {
+                instance.removeEdit(semester.value, id.value).then(res => {
+                    res && ToastModule.show({ text: '删除成功!' })
+                    res && linkBack()
+                    !res && ToastModule.show({ text: '删除失败!' })
+                })
+            })
+        }
+    })
+}
+
+</script>

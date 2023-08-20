@@ -6,6 +6,7 @@
 			</template>
 		</tm-navbar>
 		<anydoorDownloadItem v-for="item in dataList" :item-info="item" :key="item.id" />
+		<tm-result v-if="dataList.length <= 0" :showBtn="false" subTitle="暂无数据" title="暂无数据"></tm-result>
 	</tm-app>
 </template>
 
@@ -23,6 +24,7 @@ import { computed } from "vue"
 import fileSize from "@/common/utils/fileSize"
 import { getFiles, requestFilesURLReader } from "@/common/utils/ioUtils"
 import { v4 as uuidv4 } from "uuid"
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
 
 // tab的list
 const tabList = ref([

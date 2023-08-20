@@ -1,6 +1,9 @@
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar ref="navBar" :title="navTitle">
+		<tm-navbar ref="navBar" :title="navTitle" hide-back hide-home>
+			<template v-slot:left>
+				<tm-icon name="tmicon-times" _class="ml-39 mr-39" @click="linkBack"></tm-icon>
+			</template>
 			<template v-slot:right>
 				<view style="padding: 10rpx;" @click="openMenuSheet">
 					<tm-icon rotate :rotate-deg="90" name="tmicon-md-more" _class="mr-39 ml-20"></tm-icon>
@@ -52,7 +55,7 @@ import {
 	cloneDeep,
 	throttle
 } from "lodash"
-import { getHostnameByUrl, linkTo } from "@/common/utils/link"
+import { getHostnameByUrl, linkBack, linkTo } from "@/common/utils/link"
 import { IWebviewItem, IWebviewItemFilter } from "@/common/define/IWebview"
 import { IAnydoorWebviewRef, IDownloadResult, IMessageResult, IOnImageClickResult, IOnImagePressResult, IOnNewWindowResult, IOnSchemeResult, IPageErrorResult, IPageReadyResult, ITitleUpdateResult, IUrlLoadingPaternResult } from "@/common/native/webview/IAnydoorWebview"
 import ToastModule from "@/common/native/toast/ToastModule"
@@ -249,40 +252,38 @@ const onImageClick = (e: IOnImageClickResult) => {
 //图片长按
 const onImagePress = (e: IOnImagePressResult) => {
 	if (webviewConfig.value?.pressSaveImage) {
-		uni.showActionSheet({
-			itemList: ['保存图片'],
-			success: function (sheetResult: any) {
-				if (sheetResult.tapIndex === 0) {
-					//下载
-					uni.downloadFile({
-						url: e.url,
-						success: (downloadResult: any) => {
-							//保存
-							uni.saveImageToPhotosAlbum({
-								filePath: downloadResult.tempFilePath,
-								success: function () {
-									ToastModule.show({
-										text: "成功保存到相册"
-									})
-								},
-								fail: (fail) => {
-									console.log(fail)
-									ToastModule.show({
-										text: "保存失败" + (fail.code === 12 ? ',权限获取失败' : '')
-									})
-								}
-							});
-						},
-						fail: () => {
-							ToastModule.show({
-								text: "保存失败,未能加载图片"
-							})
-						}
-					});
-
-				}
+		uni.$anydoor_native.Dialog_Module.showShareMenuDialog({
+			items: ['保存图片', '取消']
+		}, (res) => {
+			if (res.data?.type === "ok" && res.data?.which === 0) {
+				//下载
+				uni.downloadFile({
+					url: e.url,
+					success: (downloadResult: any) => {
+						//保存
+						uni.saveImageToPhotosAlbum({
+							filePath: downloadResult.tempFilePath,
+							success: function () {
+								ToastModule.show({
+									text: "成功保存到相册"
+								})
+							},
+							fail: (fail) => {
+								console.log(fail)
+								ToastModule.show({
+									text: "保存失败" + (fail.code === 12 ? ',权限获取失败' : '')
+								})
+							}
+						});
+					},
+					fail: () => {
+						ToastModule.show({
+							text: "保存失败,未能加载图片"
+						})
+					}
+				});
 			}
-		});
+		})
 	}
 }
 

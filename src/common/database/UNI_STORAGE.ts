@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-25 18:17:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-16 20:57:19
+ * @LastEditTime: 2023-08-06 21:11:47
  * @FilePath: \anydoor-v2\src\common\database\UNI_STORAGE.ts
  * @Description: 缓存标识
  * 
@@ -45,5 +45,7 @@ export enum UNI_STORAGE {
     //文章分类
     ARTICLE_TYPE_LIST = "article_type_list",
     //更新下载
-    UPDATE_INFO = "app_update_info"
+    UPDATE_INFO = "app_update_info",
+    //搜索关键词
+    SEARCH_KEYWORD_HISTORY = "search_keyword_history"
 }

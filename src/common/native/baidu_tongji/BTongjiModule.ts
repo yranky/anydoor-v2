@@ -2,20 +2,23 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-03 10:02:13
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-23 10:24:06
+ * @LastEditTime: 2023-08-06 20:09:14
  * @FilePath: \anydoor-v2\src\common\native\baidu_tongji\BTongjiModule.ts
  * @Description: 百度统计模块
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+import useConfigStore from "@/store/config";
 import IResult from "../IResult";
 import config from "../config";
 import { debugTool } from "../nativeInit";
 import ToastModule from "../toast/ToastModule";
 
 
+
 export default class BTongjiModule {
     private constructor() {
+        const configStore = useConfigStore()
         //初始化
         uni.$anydoor_native.BTongji_Module && uni.$anydoor_native.BTongji_Module.init({
             appVersion: config.baidu_tongji().appVersion
@@ -26,7 +29,7 @@ export default class BTongjiModule {
                     //允许获取mac地址
                     uni.$anydoor_native.BTongji_Module.setEnableMacId(true, debugTool())
                     //如果全局开启了debug
-                    if (config.global.debug === true) uni.$anydoor_native.BTongji_Module.setDebug(true, debugTool())
+                    if (configStore.debug) uni.$anydoor_native.BTongji_Module.setDebug(true, debugTool())
                     //开始
                     uni.$anydoor_native.BTongji_Module.start(debugTool())
                 }))

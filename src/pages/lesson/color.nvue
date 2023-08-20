@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-06-17 14:43:21
+ * @LastEditTime: 2023-08-12 20:17:34
  * @FilePath: \anydoor-v2\src\pages\lesson\color.nvue
  * @Description: 课程表颜色配置
  * 
@@ -25,6 +25,7 @@
 				</anydoorColorPicker>
 			</anydoorColorPickerGroup>
 		</view>
+		<tm-result v-if="lessonNameList.length <= 0" :showBtn="false" subTitle="暂无数据" title="暂无数据"></tm-result>
 	</tm-app>
 </template>
 
@@ -36,6 +37,7 @@ import { computed, onBeforeMount, ref } from "vue"
 import anydoorColorPicker from "@/components/anydoor-color-picker/anydoor-color-picker.vue"
 import Lesson from "@/common/database/Lesson/Lesson"
 import anydoorColorPickerGroup from "@/components/anydoor-color-picker/anydoor-color-picker-group.vue"
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
 
 interface ILessonNameItem {
 	id: string,

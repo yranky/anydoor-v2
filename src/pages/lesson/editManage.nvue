@@ -2,49 +2,136 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-03-09 21:24:13 
- * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
+ * @LastEditTime: 2023-08-20 07:42:35
+ * @FilePath: \anydoor-v2\src\pages\lesson\editManage.nvue
  * @Description: 已编辑课程
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="已编辑课程"></tm-navbar>
+		<tm-navbar title="已编辑课程" :right-width="300">
+			<template #right>
+				<anydoor-item-picker-group>
+					<anydoor-item-picker :list="semesterList" v-model:value="semesterSelect.value">
+						<anydoor-text class="flex-2" :text="semesterSelect.text" :lines="1"
+							style="margin:0 39rpx;text-align: right;"></anydoor-text>
+					</anydoor-item-picker>
+				</anydoor-item-picker-group>
+			</template>
+		</tm-navbar>
 		<view style="margin: 10rpx 20rpx;">
-			<anydoor-text text="校区" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-radio-group v-model="campus">
-				<tm-radio value="apple" label="苹果基础示例"></tm-radio>
-				<tm-radio value="banner" label="香蕉"></tm-radio>
-				<tm-radio value="test" label="测试项"></tm-radio>
-				<tm-radio value="test1" label="测试项1"></tm-radio>
-				<tm-radio value="test2" label="测试项2"></tm-radio>
-				<tm-radio value="other" label="其它水果"></tm-radio>
-			</tm-radio-group>
-			<anydoor-text text="课程" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="已编辑课程还原"> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="一天课时">
-				<template v-slot:right>
-					<tm-stepper v-model="lessonNum" :defaultValue="20"></tm-stepper>
-				</template>
-			</tm-cell>
-			<anydoor-text text="样式" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程颜色"> </tm-cell>
-			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程表页面背景"> </tm-cell>
+			<template v-if="lessonEditList[LESSON_EDIT_TYPE.ADD].length > 0">
+				<anydoor-text text="新增" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
+				<tm-cell :margin="[0, 0]" :titleFontSize="32" :title="item.name"
+					v-for="item in lessonEditList[LESSON_EDIT_TYPE.ADD]" :key="item.id"
+					@click="toDetail(LESSON_EDIT_TYPE.ADD, item)">
+					<template #rightText>
+						<view class="lesson-color-item-color" :style="{
+							backgroundColor: item.color
+						}"></view>
+					</template>
+				</tm-cell>
+			</template>
 		</view>
+		<tm-result v-if="editResult.length <= 0" :showBtn="false" subTitle="暂无数据" title="暂无数据"></tm-result>
 	</tm-app>
 </template>
 
 <script lang="ts" setup>
 import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import { computed, ref, watch } from "vue"
+import { useLessonStore } from "@/store/lesson"
+import Lesson from "@/common/database/Lesson/Lesson"
+import useJiaowuStore from "@/store/jiaowu"
+import { onLoad, onShow } from "@dcloudio/uni-app"
+import anydoorItemPickerGroup from "@/components/anydoor-item-picker/anydoor-item-picker-group.vue"
+import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-picker.vue"
+import { LESSON_EDIT_TYPE } from "@/common/database/Lesson/ILesson"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
-import tmStepper from "@/tmui/components/tm-stepper/tm-stepper.vue"
-import { ref } from "vue"
-import tmRadio from "@/tmui/components/tm-radio/tm-radio.vue"
-import tmRadioGroup from "@/tmui/components/tm-radio-group/tm-radio-group.vue"
+import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
 
-const lessonNum = ref(0)
+const semesterList = ref([])
+const jiaowuStore = useJiaowuStore()
+const lessonStore = useLessonStore()
+const editResult = ref([])
+//选中的
+const semesterSelect = ref({
+	text: '',
+	value: ''
+})
 
-const campus = ref()
+
+//监听value
+watch(() => [semesterSelect.value.value, semesterList.value], (newValue) => {
+	const text = semesterList.value.find((item: any) => item.value === newValue[0]) || { label: '请选择' }
+	semesterSelect.value.text = text.label
+	getData(semesterSelect.value.value || "")
+})
+
+//编辑列表
+const lessonEditList = computed(() => {
+	const addList = editResult.value.filter((item: any) => item.action === LESSON_EDIT_TYPE.ADD)
+	const editList = editResult.value.filter((item: any) => item.action === LESSON_EDIT_TYPE.EDIT)
+	const reomveList = editResult.value.filter((item: any) => item.action === LESSON_EDIT_TYPE.REMOVE)
+	return {
+		[LESSON_EDIT_TYPE.ADD]: addList.map((item: any) => {
+			const ext: any = JSON.parse(decodeURIComponent(item.ext)) || {}
+			return {
+				...item,
+				...ext.add
+			}
+		}),
+		[LESSON_EDIT_TYPE.EDIT]: editList.map((item: any) => {
+			return {
+				...item,
+			}
+		}),
+		[LESSON_EDIT_TYPE.REMOVE]: reomveList.map((item: any) => {
+			return {
+				...item,
+			}
+		})
+	}
+})
+//跳转修改详情
+const toDetail = (type: LESSON_EDIT_TYPE, detail: any) => {
+	linkTo(ROUTE_PATH.LESSON_SETTING_EDIT_DETAIL, {
+		type,
+		detail,
+		semester: semesterSelect.value.value
+	})
+}
+
+onLoad(() => {
+	semesterSelect.value.value = lessonStore.semester
+})
+onShow(() => {
+	updateSemester()
+})
+
+//获取数据
+const getData = async (semester?: string) => {
+	const lessonInstance = await Lesson.getInstance()
+	editResult.value = (await lessonInstance.getEdit(semester)) || []
+}
+
+//更新学期信息
+const updateSemester = async () => {
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
+	try {
+		const lessonInstance = await Lesson.getInstance()
+		const semesterListResult = (await lessonInstance.getSemester())?.data || []
+		const semesterFilter = semesterListResult.filter((item: any) => item.company_id === jiaowuStore.jiaowuConfig.cid)
+		semesterList.value = semesterFilter.map((item: any) => ({
+			...item,
+			label: item.name,
+			value: item.tag
+		}))
+	} catch { }
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialog({})
+}
 </script>

@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-13 15:49:15
+ * @LastEditTime: 2023-08-19 21:29:40
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -159,8 +159,8 @@ const loadCache = () => {
 		if (score) {
 			status.value.loading = false
 		}
-	} catch{
-	 }
+	} catch {
+	}
 }
 
 //获取成绩
@@ -190,7 +190,7 @@ const getScore = async () => {
 	if (data.code === CODE.SUCCESS) {
 		tags.value = data.data.tag
 		datas.value = data.data.data
-		uni.setStorageSync(UNI_STORAGE.JW_SCORE,{
+		uni.setStorageSync(UNI_STORAGE.JW_SCORE, {
 			"update_time": dayjs().format("YYYY/MM/DD HH:mm:ss"),
 			"tag": data.data.tag || [],
 			"data": data.data.data || []

@@ -8,6 +8,7 @@ import ERROR_TARGET from "../errorHandler/ERROR_TARGET";
 import { insertKeyAndValueDefault } from "../database/tools";
 import ThemeFilter from "./ThemeFilter";
 import ToastModule from "../native/toast/ToastModule";
+import useConfigStore from "@/store/config";
 
 export default class Theme {
     //sqlite对象
@@ -100,8 +101,13 @@ export default class Theme {
             //修改tmui样式
             this.changeTheme(res.current_mode === "dark" ? true : false)
         }
+
         //主题切换监听
         uni.onThemeChange(async (res: OnThemeChangeCallbackResult) => {
+            //显示toast
+            if (useConfigStore().debug) {
+                ToastModule.show({ text: "主题切换" })
+            }
             const currentMode = uni.getSystemInfoSync().theme
             // @ts-ignore
             const mode = res.theme === "auto" ? currentMode : res.theme

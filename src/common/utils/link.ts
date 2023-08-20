@@ -1,10 +1,10 @@
 import qs from "querystringify"
 import { NAVIGATE_TYPE } from "@/common/define/navigateType"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
-import { BASE_LEGO_URL } from "../request/urls"
 import ToastModule from "../native/toast/ToastModule"
 import paramParse, { IParamParse } from "./paramParse"
-import config from "@/common/native/config";
+import useConfigStore from "@/store/config"
+
 
 //链接
 //菜单跳转
@@ -31,9 +31,10 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
 
     //打开微应用
     if (type === NAVIGATE_TYPE.MPROGRAM) {
+        const configStore = useConfigStore()
         uni.$anydoor.MProgram?.open(path, {
             ...option,
-            debug: config.global.debug
+            debug: configStore.debug
         })
     } else if (type === NAVIGATE_TYPE.PAGE) {
         linkTo(path, option, option)
@@ -54,30 +55,38 @@ export async function menuLinkTo(path: string, params: any[], type: NAVIGATE_TYP
     }
 }
 
-
-export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false) {
-    //配置项
+/**
+ * @param {string} path 路径
+ * @param {any} data 传递给页面的数据，用data包裹
+ * @param {any} external 传递给页面的数据，不用data包裹的
+ * @param {boolean} replace 是否替换
+ * @return {*}
+ * @description: 跳转
+ */
+export async function linkTo(path: string, data: any = {}, external: any = {}, replace: boolean = false, linkOption: any = {}): Promise<any> {
     const options: any = {
         ...external,
         data: JSON.stringify(data)
     }
     console.log(options)
-    const result: any = await navigateTo(path, options, replace)
+    const result: any = await navigateTo(path, options, replace, linkOption)
     if (result.success === false) {
         if (result.errMsg.indexOf('fail can not redirectTo a tabbar page') > -1) {
             uni.switchTab({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`
             })
         }
     }
 }
 //跳转
-function navigateTo(path: string, options: any = {}, replace: boolean = false) {
+function navigateTo(path: string, options: any = {}, replace: boolean = false, linkOption: any = {}) {
     return new Promise((resolve) => {
         if (!replace) {
             uni.navigateTo({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`,
-                fail: (err) => {
+                fail: (err: { errMsg: any }) => {
                     resolve({
                         success: false,
                         errMsg: err.errMsg
@@ -92,8 +101,9 @@ function navigateTo(path: string, options: any = {}, replace: boolean = false) {
         } else {
             //跳转
             uni.redirectTo({
+                ...linkOption,
                 url: `${path}?${qs.stringify(options)}`,
-                fail: (err) => {
+                fail: (err: { errMsg: any }) => {
                     resolve({
                         success: false,
                         errMsg: err.errMsg
@@ -110,16 +120,17 @@ function navigateTo(path: string, options: any = {}, replace: boolean = false) {
 }
 
 //返回
-export async function linkBack(de: number = 1) {
+export async function linkBack(de: number = 1, linkOption: any = {}) {
     return new Promise(resolve => {
         uni.navigateBack({
+            ...linkOption,
             delta: de,
             success: () => {
                 resolve({
                     success: true
                 })
             },
-            fail: (err) => {
+            fail: (err: { errMsg: any }) => {
                 resolve({
                     success: false,
                     errMsg: err.errMsg
@@ -130,12 +141,19 @@ export async function linkBack(de: number = 1) {
 }
 
 //参数转换获取
-export function linkOptionsParse(options: any) {
+export function linkOptionsParse(options: any): {
+    [key: string | number | symbol]: any,
+    data: any
+} {
     try {
         const data = JSON.parse(decodeURIComponent(options.data))
         options['data'] = data || {}
     } catch {
-        options['data'] = {}
+        if (options instanceof Object) options['data'] = {}
+        else {
+            options = {}
+            options['data'] = {}
+        }
     }
     return options
 }

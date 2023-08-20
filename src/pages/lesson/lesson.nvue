@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-22 20:56:39
+ * @LastEditTime: 2023-08-13 10:47:11
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -20,13 +20,21 @@
 					<!-- 课程表 -->
 					<tm-navbar transprent hideBack hideHome :leftWidth="250">
 						<template #left>
-							<anydoor-text class="flex-2" text="2023年春季学期" :lines="1"
-								style="margin:0 16rpx;text-align: right;"></anydoor-text>
+							<anydoor-item-picker-group>
+								<anydoor-item-picker :list="semesterList" v-model:value="currentSemester.value"
+									@value-change="updateTimetable">
+									<anydoor-text class="flex-2" :text="currentSemester.text" :lines="1"
+										style="margin:0 16rpx;text-align: right;"></anydoor-text>
+								</anydoor-item-picker>
+							</anydoor-item-picker-group>
 						</template>
 						<template #default>
 							<view class="flex flex-center flex-row">
 								<tm-icon customicon name="tmicon-angle-left" :fontSize="30" @click="preWeek"></tm-icon>
-								<anydoor-text class="flex-2" :text="'第' + currentShowWeeks + '周'" :lines="1" :fontSize="30"
+								<anydoor-text class="flex-2"
+									:text="'第' + currentShowWeeks + '周' + (currentWeeks === currentShowWeeks ? '' : '(非本周)')"
+									:lines="currentWeeks === currentShowWeeks ? 1 : 2"
+									:color="currentWeeks === currentShowWeeks ? '' : redFont" :fontSize="30"
 									style="margin:0 3rpx;text-align: right;"></anydoor-text>
 								<tm-icon customicon name="tmicon-angle-right" :fontSize="30" @click="nextWeek"></tm-icon>
 							</view>
@@ -89,6 +97,9 @@ import AnydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import { cloneDeep } from "lodash"
 import { linkTo } from "@/common/utils/link"
 import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+import theme from "@/tmui/tool/theme/theme"
+import anydoorItemPickerGroup from "@/components/anydoor-item-picker/anydoor-item-picker-group.vue"
+import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-picker.vue"
 const msg = ref<InstanceType<typeof tmMessage> | null>(null)
 const store = useTmpiniaStore()
 
@@ -111,6 +122,13 @@ const refresh = async () => {
 	refreshComplete.value = true
 }
 
+
+//颜色
+const redFont = computed(() => {
+	const color = theme.getColor("redFont")
+	// console.log(colortool.hsvaToRgba(store.tmStore.))
+	return color.csscolor
+})
 
 /**ATART 子页面的配置 */
 //时间栏目高度
@@ -267,6 +285,7 @@ onReady(() => {
 
 onShow(async () => {
 	updateData()
+	updateSemester()
 })
 
 
@@ -281,6 +300,39 @@ watch(() => lessonStore.lessonList, async (val: any[]) => {
 watch(currentWeeks, () => {
 	toCurrentWeek()
 }, { immediate: true })
+
+
+//学期
+const semesterList = ref([])
+const currentSemester = computed(() => {
+	const value = lessonStore.semester
+	const text = semesterList.value.find((item: any) => item.tag === value) || { name: '' }
+	return {
+		value,
+		text: text.name || ""
+	}
+})
+const updateSemester = async () => {
+	const lessonInstance = await Lesson.getInstance()
+	const semesterListResult = (await lessonInstance.getSemester())?.data || []
+	const semesterFilter = semesterListResult.filter((item: any) => item.company_id === jiaowuStore.jiaowuConfig.cid)
+	semesterList.value = semesterFilter.map((item: any) => ({
+		...item,
+		label: item.name,
+		value: item.tag
+	}))
+}
+
+const updateTimetable = async (term: string) => {
+	uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({ title: '请稍等，更新中...' })
+	try {
+		const lessonInstance = await Lesson.getInstance()
+		await lessonInstance.freshTimeTable(term)
+		//更新数据
+		await updateData()
+	} catch { }
+	uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+}
 
 </script>
 

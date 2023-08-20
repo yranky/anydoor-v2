@@ -8,20 +8,24 @@
  * 
  * Copyright (c) 2023 by anydoor.top|douyeblog.top, All Rights Reserved. 
  */
+import useConfigStore from "@/store/config";
 import config from "../config";
 import { debugTool } from "../nativeInit";
 import ToastModule from "../toast/ToastModule";
 import IBuglyModuleNative from "./IBuglyModule";
 
+
+
 export default class BuglyModule {
     //初始化模块
     private constructor() {
+        const configStore = useConfigStore()
         //初始化
         uni.$anydoor_native.Bugly_Module && uni.$anydoor_native.Bugly_Module.init({
             deviceId: config.bugly().deviceId,
             appVersion: config.bugly().appVersion,
             deviceModel: config.bugly().deviceModel,
-            debug: config.global.debug
+            debug: configStore.debug
         }, debugTool((res) => {
             if (!res.success) {
                 ToastModule.show({

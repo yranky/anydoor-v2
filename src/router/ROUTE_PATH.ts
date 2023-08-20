@@ -43,6 +43,8 @@ export enum ROUTE_PATH {
     LESSON_ADD = "/pages/lesson/add",
     //已编辑课程
     LESSON_SETTING_EDIT = "/pages/lesson/editManage",
+    //已编辑课程详情
+    LESSON_SETTING_EDIT_DETAIL = "/pages/lesson/editDetail",
     //webview
     WEBVIEW = "/pages/webview/webview",
     // 学校选择
@@ -55,4 +57,6 @@ export enum ROUTE_PATH {
     APP_DETAIL = "/pages/app/app",
     //扫码结果
     QRCODE_RESULT = "/pages/ext/qresult",
+    //搜索列表
+    SEARCH_LIST = "/pages/search/searchList",
 }

@@ -4,7 +4,7 @@ import ToastModule from "@/common/native/toast/ToastModule"
 import { post } from "@/common/request/http"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 // 获取拼音
-import { pinyin } from 'pinyin-pro';
+import { pinyin } from 'pinyin-pro'
 
 export async function listCompany(formData: any): Promise<restful<any>> {
     const data: any = await post('company_list', formData)

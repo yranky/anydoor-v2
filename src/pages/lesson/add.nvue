@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 15:27:16
+ * @LastEditTime: 2023-08-19 20:58:31
  * @FilePath: \anydoor-v2\src\pages\lesson\add.nvue
  * @Description: 添加/编辑课程
  * 
@@ -10,7 +10,12 @@
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<tm-navbar title="添加课程"></tm-navbar>
+		<tm-navbar title="添加课程">
+			<template #right>
+				<anydoor-text class="flex-2" text="保存" :lines="1" style="margin:0 39rpx;text-align: right;"
+					@click="addLesson"></anydoor-text>
+			</template>
+		</tm-navbar>
 		<anydoor-item-picker-group>
 			<anydoor-item-picker :list="nameList" showInput v-model:value="formData.name">
 				<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程名称"
@@ -35,9 +40,6 @@
 					:rightText="formData.room ? formData.room : '请选择'"></tm-cell>
 			</anydoor-item-picker>
 		</anydoor-item-picker-group>
-		<view style="margin:0 24rpx;">
-			<tm-button block label="保存" @click="addLesson"></tm-button>
-		</view>
 	</tm-app>
 </template>
 
@@ -46,7 +48,6 @@ import tmApp from "@/tmui/components/tm-app/tm-app.vue"
 import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import { ref } from "vue"
-import tmButton from "@/tmui/components/tm-button/tm-button.vue"
 import anydoorItemPickerGroup from "@/components/anydoor-item-picker/anydoor-item-picker-group.vue"
 import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-picker.vue"
 import { CONFIG_TYPE, IListArray } from "@/components/anydoor-item-picker/anydoor-item-picker"
@@ -58,6 +59,9 @@ import { isEmpty } from "lodash"
 import Lesson from "@/common/database/Lesson/Lesson"
 import ToastModule from "@/common/native/toast/ToastModule"
 import { linkBack } from "@/common/utils/link"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+
+
 //课程STORE
 const lessonStore = useLessonStore()
 
