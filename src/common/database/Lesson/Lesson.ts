@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-19 20:54:15
+ * @LastEditTime: 2023-08-20 11:26:58
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -24,6 +24,7 @@ import CODE from "@/common/define/code"
 import { useLessonStore } from "@/store/lesson"
 import dayjs from "dayjs"
 import weekday from "dayjs/plugin/weekday"
+import { getFiles } from "@/common/utils/ioUtils"
 
 export default class Lesson {
     //sqlite对象
@@ -507,6 +508,74 @@ export default class Lesson {
         } catch { }
         uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
         return false
+    }
+
+
+    //新增背景(sql)
+    async addBackground(id: number, path: string, filename: string, thumb: string, url: string): Promise<boolean> {
+        //先删除
+        const removeSql = `
+        delete from ${LESSON_TABLES_NAME.BACKGROUND} where id='${id}'
+        `
+        await this.sql?.executeSql([removeSql], ERROR_TARGET.LESSON_CLASS)
+        //插入表
+        const sql = `
+            insert into ${LESSON_TABLES_NAME.BACKGROUND} (id,path,filename,thumb,url) values ('${id}','${path}','${filename}','${thumb}','${url}')
+            `
+        const res = await this.sql?.executeSql([sql], ERROR_TARGET.LESSON_CLASS)
+        return res?.code === SQLITE_STATUS_CODE.SUCCESS || false
+    }
+    //下载背景
+    async downloadBackground(id: number, thumb: string, url: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            uni.downloadFile({
+                url: url,
+                success: (res) => {
+                    if (res.statusCode === 200) {
+                        uni.saveFile({
+                            tempFilePath: res.tempFilePath,
+                            success: (res) => {
+                                this.addBackground(id, plus.io.convertLocalFileSystemURL(res.savedFilePath), res.savedFilePath, thumb, url)
+                                console.log(res)
+                                resolve(true)
+                            },
+                            fail: () => {
+                                ToastModule.show({ text: '保存失败!' })
+                                reject()
+                            }
+                        })
+                    } else {
+                        ToastModule.show({ text: '下载失败!' })
+                        reject()
+                    }
+                },
+                fail: () => {
+                    ToastModule.show({ text: '下载失败!' })
+                    reject()
+                }
+            })
+        })
+    }
+
+    //获取已下载的列表
+    async getBackgroundList(): Promise<any> {
+        const data = (await this.sql?.selectSql(
+            `select * from ${LESSON_TABLES_NAME.BACKGROUND}`
+            , ERROR_TARGET.LESSON_CLASS))?.data || []
+        const list: any = [];
+
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i].filename)
+            try {
+                const entry = await getFiles(data[i].filename, undefined, plus.io.PUBLIC_DOCUMENTS)
+                console.log(entry, '111111111')
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        return list
     }
 
 }

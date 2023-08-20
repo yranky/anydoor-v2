@@ -106,7 +106,7 @@ export default class Theme {
         uni.onThemeChange(async (res: OnThemeChangeCallbackResult) => {
             //显示toast
             if (useConfigStore().debug) {
-                ToastModule.show({ text: "主题切换" })
+                ToastModule.show({ text: `主题切换 ${uni.$anydoor_native.Tool_Module.checkIsDarkModeSync({}) ? '暗黑模式' : '白天模式'}` })
             }
             const currentMode = uni.getSystemInfoSync().theme
             // @ts-ignore
