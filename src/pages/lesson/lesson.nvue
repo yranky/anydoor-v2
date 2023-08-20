@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-13 10:47:11
+ * @LastEditTime: 2023-08-20 18:15:55
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -60,7 +60,8 @@
 					}" :circular="true" @change="updateSwiper">
 						<swiper-item v-for="page in [0, 1, 2]" :key="page">
 							<anydoorLessonView ref="pageList" :numBase="numBase" :colItemWidth="colItemWidth"
-								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="swiperData[page]" />
+								:rowNum="rowNum" :rowItemHeight="rowItemHeight" :lessons="swiperData[page]"
+								:lessonDateTime="lessonDateTime" />
 						</swiper-item>
 					</swiper>
 				</template>
@@ -108,6 +109,20 @@ const jiaowuStore = useJiaowuStore()
 
 //下拉刷新是否完成
 const refreshComplete = ref<boolean>(true)
+
+
+const lessonDateTime = ref<string[]>([
+	'8:00',
+	'8:55',
+	'10:00',
+	'10:55',
+	'15:00',
+	'15:55',
+	'17:00',
+	'17:55',
+	'20:00',
+	'20:55'
+])
 
 // 页面刷新(刷新课程信息)
 const refresh = async () => {

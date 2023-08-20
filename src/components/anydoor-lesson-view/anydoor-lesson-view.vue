@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:14:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 23:45:08
+ * @LastEditTime: 2023-08-20 18:16:38
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\anydoor-lesson-view.vue
  * @Description: 课程表组件
  * 
@@ -20,9 +20,13 @@
 			height: (rowNum * rowItemHeight) + numBase
 		}">
 			<view v-for="(item, index) in rowNum" :style="{
-				height: rowItemHeight + numBase
+				height: rowItemHeight + numBase,
+				display: 'flex',
+				alignItems: 'center',
+				flexWrap: 'wrap'
 			}">
 				<AnydoorText :text="item + ''" style="text-align: center;" />
+				<AnydoorText :text="lessonDateTime[index] + ''" style="text-align: center;" />
 			</view>
 		</view>
 		<!-- 课程信息 -->
@@ -78,6 +82,10 @@ const props = defineProps({
 		default: 150
 	},
 	lessons: {
+		type: Array,
+		default: () => []
+	},
+	lessonDateTime: {
 		type: Array,
 		default: () => []
 	}

@@ -18,9 +18,9 @@
 								lineHeight: '60rpx'
 							}">{{ jiaowuStore.jiaowuConfig.school_name }}</text>
 							<view class="index-input flex-1">
-								<tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
+								<!-- <tm-input prefix="tmicon-search" searchLabel="" :followTheme="false" transprent :style="{
 									backgroundColor: store.tmStore.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.03)'
-								}" disabled @click="toSearch" class=" round-5"></tm-input>
+								}" disabled @click="toSearch" class=" round-5"></tm-input> -->
 							</view>
 							<view class="index-icons flex flex-row flex-nowrap">
 								<view class="index-icon" @click="Scan.indexScan()">
