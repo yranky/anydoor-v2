@@ -139,6 +139,48 @@ const routes: IRoutes<ROUTE_PATH> = {
         NAME: "应用详情",
         AUTH: [],
         SEARCH: false
+    },
+    [ROUTE_PATH.LESSON_SETTING_COLOR]: {
+        PATH: ROUTE_PATH.LESSON_SETTING_COLOR,
+        NAME: "课程颜色",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.LESSON_SETTING_BACKGROUND]: {
+        PATH: ROUTE_PATH.LESSON_SETTING_BACKGROUND,
+        NAME: "课程背景设置",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.LESSON_ADD]: {
+        PATH: ROUTE_PATH.LESSON_ADD,
+        NAME: "课程添加",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.LESSON_SETTING_EDIT]: {
+        PATH: ROUTE_PATH.LESSON_SETTING_EDIT,
+        NAME: "课程编辑",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.LESSON_SETTING_EDIT_DETAIL]: {
+        PATH: ROUTE_PATH.LESSON_SETTING_EDIT_DETAIL,
+        NAME: "课程编辑详情",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.QRCODE_RESULT]: {
+        PATH: ROUTE_PATH.QRCODE_RESULT,
+        NAME: "扫码结果",
+        AUTH: [],
+        SEARCH: false
+    },
+    [ROUTE_PATH.SEARCH_LIST]: {
+        PATH: ROUTE_PATH.SEARCH_LIST,
+        NAME: "搜索列表",
+        AUTH: [],
+        SEARCH: false
     }
 }
 
