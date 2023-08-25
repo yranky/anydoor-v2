@@ -80,7 +80,7 @@ export default class Update {
         return new Promise(resolve => {
             //上面没有成功打开，进行下载
             this.down(download_link, true, false).then(downloadRes => {
-                plus.runtime.install(downloadRes.savedFilePath, { force }, (res) => {
+                plus.runtime.install(downloadRes.savedFilePath, { force: force ? true : false }, (res) => {
                     console.log(res)
                     //更新成功了!
                     getApp().globalData!['versionCode'] = version_id
