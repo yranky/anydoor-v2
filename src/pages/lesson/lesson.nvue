@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 19:10:44
+ * @LastEditTime: 2023-08-25 21:22:27
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -51,7 +51,8 @@
 						</template>
 					</tm-navbar>
 					<anydoorLessonDate :numBase="numBase" :colItemWidth="colItemWidth" :dateHeight="dateHeight"
-						:currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks">
+						:currentShowWeeks="currentShowWeeks" :currentWeeks="currentWeeks"
+						:show-date="!jiaowuStore.week.holiday">
 					</anydoorLessonDate>
 				</template>
 				<template #content>
@@ -285,18 +286,20 @@ const updateData = async () => {
 }
 
 
-onReady(() => {
-	//监听加载情况
-	watch(() => lessonStore.initing, (val) => {
-		if (val === true) {
-			uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({
-				title: '加载中，请稍等'
-			})
-		} else {
-			uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+
+//监听加载情况
+watch(() => lessonStore.initing, (val) => {
+	if (val === true) {
+		uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({
+			title: '加载中，请稍等'
+		})
+	} else {
+		uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+		if (!jiaowuStore.isLogin) {
+			linkTo(ROUTE_PATH.COMPANY_SELECT, {}, {}, true)
 		}
-	}, { immediate: true })
-})
+	}
+}, { immediate: true })
 
 onShow(async () => {
 	if (jiaowuStore.isLogin) {
@@ -305,7 +308,7 @@ onShow(async () => {
 		//判断是否为空，如果为空，则刷新
 		if (lessonStore.lessonList.length === 0) await refresh()
 	} else {
-		linkTo(ROUTE_PATH.COMPANY_SELECT, {}, {}, true)
+		!lessonStore.initing && linkTo(ROUTE_PATH.COMPANY_SELECT, {}, {}, true)
 	}
 })
 

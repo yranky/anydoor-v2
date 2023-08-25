@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-19 11:55:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-15 16:47:55
+ * @LastEditTime: 2023-08-25 21:50:20
  * @FilePath: \anydoor-v2\src\common\database\user\User.ts
  * @Description: 用户
  * 
@@ -20,6 +20,10 @@ import { isEmpty } from "lodash"
 import { useUserStore } from "@/store/user"
 import { getUserInfoService } from "@/common/service/user"
 import CODE from "@/common/define/code"
+import useJiaowuStore from "@/store/jiaowu"
+import { jwConfig, jwLogin } from "@/common/service/jw"
+import { initUser } from "@/init"
+import useConfigStore from "@/store/config"
 
 export default class User {
     //sqlite对象
@@ -115,6 +119,52 @@ export default class User {
             return true
         }
     }
+
+    //刷新教务信息
+    async freshJiaowuAccount() {
+        const configStore = useConfigStore()
+        if (configStore.debug) ToastModule.show({ text: '更新信息' })
+        console.log('更新信息....')
+        
+        const store = useJiaowuStore()
+        const username = store.jiaowuAccount.username
+        const password = store.jiaowuAccount.password
+        const encrypt = new Encrypt()
+
+        //教务配置重新
+        const jw_config_data = await jwConfig({
+            cid: store.jiaowuConfig.cid
+        })
+        //未成功，终止流程
+        if (jw_config_data.code !== CODE.SUCCESS) {
+            return
+        }
+        encrypt.setPublicKey(jw_config_data.data.public_key)
+        const password_encrypt = encrypt.encrypt(password)
+        //刷新信息
+        const data = await jwLogin({
+            username,
+            password: password_encrypt,
+            cid: store.jiaowuConfig.cid
+        })
+        if (data.stuInfo) {
+            const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
+                ...jw_config_data.data,
+                cid: store.jiaowuConfig.cid,
+                school_name: store.jiaowuConfig.school_name
+            }, data)
+            if (isSuccess === false) {
+                ToastModule.show({ text: "刷新教务信息失败!" })
+            } else {
+                //刷新user
+                initUser(true)
+            }
+        } else {
+            ToastModule.show({ text: "刷新教务信息失败!" })
+        }
+    }
+
+
     //退出登录
     async logoutJiaowuAccount() {
         const current = await this.sql?.executeSql([

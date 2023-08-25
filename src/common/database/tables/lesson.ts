@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:42:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 14:50:39
+ * @LastEditTime: 2023-08-25 21:04:32
  * @FilePath: \anydoor-v2\src\common\database\tables\lesson.ts
  * @Description: 
  * 
@@ -75,10 +75,11 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
     init: `
         CREATE TABLE if not exists '${LESSON_TABLES_NAME.SEMESTER}' (
             'id' INTEGER  NOT NULL primary key autoincrement,
-            'name' text NOT NULL unique,
-            'tag' text NOT NULL unique,
+            'name' text NOT NULL ,
+            'tag' text NOT NULL,
             'company_id' text  NOT NULL,
-            'ext' text
+            'ext' text,
+            UNIQUE('name', 'tag', 'company_id')
           )
           `,
     drop: `

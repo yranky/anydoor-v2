@@ -35,7 +35,8 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
         userInfo.value = {}
         week.value = {
             nowWeek: 0,
-            allWeek: 0
+            allWeek: 0,
+            holiday: false
         }
         updateTime.value = ""
     }
@@ -67,17 +68,21 @@ export const useJiaowuStore = defineStore("jiaowu_store", () => {
     //周次
     const week = ref({
         nowWeek: 0,
-        allWeek: 0
+        allWeek: 0,
+        //是否处于暑假，用于隐藏时间
+        holiday: false
     })
     //设置周次
     const setWeek = (data: {
         nowWeek: number,
-        allWeek: number
+        allWeek: number,
+        holiday?: boolean
     }) => {
         const now = Number(data.nowWeek)
         const all = Number(data.allWeek)
         week.value.nowWeek = isNaN(now) ? 0 : now
         week.value.allWeek = isNaN(all) ? 0 : all
+        week.value.holiday = data.holiday || false
     }
 
     const updateTime = ref<string>("")
