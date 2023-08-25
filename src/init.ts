@@ -55,20 +55,21 @@ export default async function init() {
 }
 
 //初始化用户信息等
-export async function initUser() {
-    //#endregion
-    //#region 用户
-    try {
-        await (await User.getInstance()).freshStoreUser()
-        const userStore = useUserStore()
-        //如果有token说明登录了
-        if (userStore.token) {
-            //刷新用户信息
-            User.getInstance().then((res) => res.refreshUserInfo())
-        }
-    } catch { }
+export async function initUser(fresh: boolean = false) {
+    if (!fresh) {
+        //#region 用户
+        try {
+            await (await User.getInstance()).freshStoreUser()
+            const userStore = useUserStore()
+            //如果有token说明登录了
+            if (userStore.token) {
+                //刷新用户信息
+                User.getInstance().then((res) => res.refreshUserInfo())
+            }
+        } catch { }
 
-    //#endregion
+        //#endregion
+    }
 
 
     //#region 教务用户
@@ -91,11 +92,28 @@ export async function initUser() {
             })
             //教务配置
             store.setJiaowuConfig(jiaowuAccount)
+
             //设置周次
             store.setWeek({
                 nowWeek: (jiaowuAccount.jw_data as any)['nowWeek'],
-                allWeek: (jiaowuAccount.jw_data as any)['allWeek']
+                allWeek: (jiaowuAccount.jw_data as any)['allWeek'],
+                holiday: (jiaowuAccount.jw_data as any)['week'] == '假期中'
             })
+
+            //判断是否需要更新
+            if (!fresh) {
+                //如果是假期中，则必须刷新
+                if ((jiaowuAccount.jw_data as any)['week'] == '假期中') {
+                    (await User.getInstance()).freshJiaowuAccount()
+                } else {
+                    //计算更新时间
+                    const update_time = dayjs((jiaowuAccount as any).update_time)
+                    //更新
+                    if (dayjs().diff(update_time, "day") > store.jiaowuConfig.timetable_temp || !update_time.isValid()) {
+                        (await User.getInstance()).freshJiaowuAccount()
+                    }
+                }
+            }
         } else {
             store.reset()
         }

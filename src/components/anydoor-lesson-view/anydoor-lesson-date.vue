@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:14:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-19 23:56:21
+ * @LastEditTime: 2023-08-25 21:21:40
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\anydoor-lesson-date.vue
  * @Description: 课程表日期组件
  * 
@@ -26,7 +26,7 @@
 				</text>
 				<text class="lesson-item-date-text" :style="{
 					lineHeight: dateHeight / 2 + numBase
-				}">
+				}" v-if="showDate">
 					{{ weekDaysMapper[item - 1] }}
 				</text>
 			</view>
@@ -70,6 +70,11 @@ const props = defineProps({
 	currentShowWeeks: {
 		type: Number,
 		default: 0
+	},
+	//展示日期
+	showDate: {
+		type: Boolean,
+		default: true
 	}
 })
 const {
@@ -100,7 +105,7 @@ const updateWeekDayMapper = () => {
 	const weekFirstDay = lessonStore.weekFirstDay
 	//获取星期天
 	const currentWeekFirstDay: Dayjs = dayjs().weekday(weekFirstDay)
-	
+
 	for (let i = 1; i < weekDaysMapper.value.length; i++) {
 		weekDaysMapper.value[i] = currentWeekFirstDay.add((showWeek - currentWeek) * 7 + i - 1, 'day').format("MM/DD")
 	}
