@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-20 15:50:28
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-12 20:07:27
+ * @LastEditTime: 2023-09-03 10:58:34
  * @FilePath: \anydoor-v2\src\common\database\mprogram\MProgram.ts
  * @Description: 微应用(单例模式)
  * 
@@ -244,12 +244,16 @@ export default class MProgram {
 
     //启动应用
     start(appid: string, option: IMProgramItem = {}): Promise<IMProgramStatusResult> {
+        console.log(option)
         return new Promise((resolve) => {
             uni.$anydoor_native.MP.openUniMP({
                 appid,
-                // ...option,
+                ...option,
                 extraData: {
-                    enableBackground: false
+                    ...option,
+                    enableBackground: false,
+                    hostVersion: getApp().globalData!['versionCode'],
+                    hostVersionName: getApp().globalData!['versionName']
                 }
             }, (e: any) => {
                 //如果是未安装的问题
