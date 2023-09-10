@@ -14,7 +14,7 @@
 			<!-- 背景图片 -->
 			<image class="lesson-bg" :style="{
 				height: lessonStore.lessonBackground.type === LESSON_BACKGROUND_TYPE.IMAGE ? '' : 0
-			}" :src="lessonStore.lessonBackground.fullPath"></image>
+			}" :src="lessonStore.lessonBackground.fullPath" mode="aspectFill"></image>
 			<!-- 背景颜色 -->
 			<view class="lesson-bg" :style="{
 				backgroundColor: lessonStore.lessonBackground.background,
