@@ -12,7 +12,8 @@ import { useUserStore } from "./store/user"
 import { UNI_STORAGE } from "./common/database/UNI_STORAGE"
 import { isEmpty } from "lodash"
 import useDeviceStore from "./store/device"
-import { ILessonTempItemResult } from "./common/database/Lesson/ILesson"
+import { ILessonTempItemResult, LESSON_BACKGROUND_TYPE } from "./common/database/Lesson/ILesson"
+import { getFileInfo } from "./common/utils/ioUtils"
 
 /*
  * @Author: yranky douye@douye.top
@@ -33,6 +34,32 @@ export default async function init() {
 
     try {
         await (await Device.getInstance()).initDeviceId()
+    } catch { }
+
+
+    //初始化课程背景
+    try {
+        const LessonInstance = await Lesson.getInstance()
+        const lessonStore = useLessonStore()
+        const result = await LessonInstance.getBackground()
+        if (!result) {
+            lessonStore.lessonBackground.background = ""
+            lessonStore.lessonBackground.fullPath = "../../static/bg/bg.png"
+            lessonStore.lessonBackground.type = LESSON_BACKGROUND_TYPE.IMAGE
+        } else {
+            let fullPath = result.fullPath
+            //检测文件存不存在
+            if (result.type === LESSON_BACKGROUND_TYPE.IMAGE) {
+                try {
+                    await getFileInfo(result.fullPath || "")
+                } catch {
+                    fullPath = "../../static/bg/bg.png"
+                }
+            }
+            lessonStore.lessonBackground.background = result.background
+            lessonStore.lessonBackground.fullPath = fullPath
+            lessonStore.lessonBackground.type = result.type
+        }
     } catch { }
 
     //初始化用户

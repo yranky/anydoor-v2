@@ -24,7 +24,9 @@ export enum LESSON_TABLES_NAME {
   //时间信息
   TIME = "lesson_time",
   //背景信息
-  BACKGROUND = "lesson_background"
+  BACKGROUND = "lesson_background",
+  //课程表背景信息
+  THEME = "lesson_theme"
 }
 
 const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
@@ -120,6 +122,15 @@ const LESSON_TABLES: ITables<LESSON_TABLES_NAME> = {
       'url' text NULL,
       'ext' text DEFAULT NULL
     )
+    `
+  },
+  [LESSON_TABLES_NAME.THEME]: {
+    init: `
+    CREATE TABLE IF NOT EXISTS ${LESSON_TABLES_NAME.THEME}(
+        'key' text not null,
+        'value' text,
+        primary key ('key')
+    );
     `
   }
 }

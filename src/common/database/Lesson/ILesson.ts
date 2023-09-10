@@ -69,3 +69,10 @@ export enum LESSON_EDIT_TYPE {
     EDIT = "edit",
     REMOVE = "remove"
 }
+
+//背景类型
+export enum LESSON_BACKGROUND_TYPE {
+    COLOR = "color",
+    IMAGE = "image",
+    NULL = "null"
+}

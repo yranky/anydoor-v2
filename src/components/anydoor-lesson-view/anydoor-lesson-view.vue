@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-01-17 17:14:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 18:16:38
+ * @LastEditTime: 2023-09-10 10:51:07
  * @FilePath: \anydoor-v2\src\components\anydoor-lesson-view\anydoor-lesson-view.vue
  * @Description: 课程表组件
  * 
@@ -59,7 +59,9 @@ import {
 	toRefs
 } from 'vue'
 import IAnydoorLesson from './IAnydoorLesson'
-import AnydoorText from '../anydoor-text/anydoor-text.vue'
+import AnydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import { useTmpiniaStore } from '@/tmui/tool/lib/tmpinia'
+const store = useTmpiniaStore()
 const props = defineProps({
 	numBase: {
 		type: String,
