@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 11:01:53
+ * @LastEditTime: 2023-09-10 11:34:39
  * @FilePath: \anydoor-v2\src\pages\lesson\background.nvue
  * @Description: 课程表背景
  * 
@@ -19,15 +19,14 @@
 					<view :style="{
 						width: itemInfo.width + 'rpx',
 						height: itemInfo.height + 'rpx',
-						backgroundColor: color
+						backgroundColor: (lessonStore.lessonBackground.type === LESSON_BACKGROUND_TYPE.COLOR ? lessonStore.lessonBackground.background : '')
 					}">
-						<image
-							src="https://img1.baidu.com/it/u=4049022245,514596079&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"
-							mode="aspectFill" />
+						<image v-if="lessonStore.lessonBackground.type === LESSON_BACKGROUND_TYPE.IMAGE"
+							:src="lessonStore.lessonBackground.fullPath" mode="aspectFill" />
 					</view>
 					<anydoor-text text="纯色背景" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 					<anydoorColorPickerGroup>
-						<anydoorColorPicker v-model:color="color">
+						<anydoorColorPicker v-model:color="color" @color-change="setBackgroundFromColor($event)">
 							<tm-button block label="选择颜色"></tm-button>
 						</anydoorColorPicker>
 					</anydoorColorPickerGroup>
@@ -37,24 +36,26 @@
 							width: itemInfo.width + 'rpx',
 							height: itemInfo.height + 'rpx',
 							backgroundColor: 'rgba(0,0,0,.2)'
-						}">
+						}" @click="setBackgroundFromLocal">
 							<anydoorText text="自定义" color="whiteBg" />
 						</view>
-						<view class="background-item" :style="{
-							width: itemInfo.width + 'rpx',
-							height: itemInfo.height + 'rpx',
-							backgroundColor: color,
-							position: 'relative'
-						}" v-for="(item, index) in wallpaperList" :key="index">
-							<image :src="item.thumb" mode="aspectFill" />
-							<!-- 背景 -->
-							<view class="background-mask" :style="{
+						<template v-if="completed">
+							<view class="background-item" :style="{
 								width: itemInfo.width + 'rpx',
-								height: itemInfo.height + 'rpx'
-							}" @click="download(item)">
-								<anydoorText text="点击下载" color="whiteBg" />
+								height: itemInfo.height + 'rpx',
+								backgroundColor: color,
+								position: 'relative'
+							}" v-for="(item, index) in wallpaperList" :key="index" @click="setBackgroundFromUrl(item)">
+								<image :src="item.thumb" mode="aspectFill" />
+								<!-- 背景 -->
+								<view class="background-mask" :style="{
+									width: itemInfo.width + 'rpx',
+									height: itemInfo.height + 'rpx'
+								}" @click.stop="download(item)" v-if="!existBackgroundId.includes(item.id) || item.downloading">
+									<anydoorText :text="item.downloading ? '下载中' : '点击下载'" color="whiteBg" />
+								</view>
 							</view>
-						</view>
+						</template>
 					</view>
 				</view>
 			</template>
@@ -75,12 +76,26 @@ import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
 import { onMounted } from "vue"
 import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
 import Lesson from "@/common/database/Lesson/Lesson"
+import DialogModule from "@/common/native/dialog/DialogModule"
+import ToastModule from "@/common/native/toast/ToastModule"
+import { copyTo, deleteFileByFullPath, getDirectory, getFiles } from "@/common/utils/ioUtils"
+import { useLessonStore } from "@/store/lesson"
+import { LESSON_BACKGROUND_TYPE } from "@/common/database/Lesson/ILesson"
 
 //宽高比
 const scale = ref<number>(3)
 
+//是否加载已经下载的内容完成
+const completed = ref<boolean>(false)
+
 //选中的颜色
 const color = ref<string>("#fff")
+//已经存在的
+const existData = ref([])
+
+//背景store
+const lessonStore = useLessonStore()
+
 
 //加载大小
 onLoad(() => {
@@ -103,14 +118,145 @@ onLoad(() => {
 	getBackgroundList()
 })
 
-//下载
-const download = async (item: any) => {
-	(await Lesson.getInstance()).downloadBackground(item.id, item.thumb, item.url)
+//设置背景
+const setBackgroundFromLocal = async () => {
+	uni.chooseImage({
+		count: 1,
+		sourceType: ['album'],
+		success(res) {
+			//先转成相对路径 /storage
+			const path = plus.io.convertAbsoluteFileSystem(res.tempFilePaths[0])
+			//新路径
+			const newPath: string = `lesson_bg_${Math.random()}_${Date.now()}.bg`
+			let toEntryObj: PlusIoDirectoryEntry
+			//获取文件夹entry
+			getDirectory("lesson/resource", plus.io.PUBLIC_DOCUMENTS, true).then(toEntry => {
+				toEntryObj = toEntry
+				return getDirectory(path)
+			}).then(async fileEntry => {
+				//首先删除已经有的
+				try {
+					await deleteFileByFullPath(lessonStore.lessonBackground.fullPath || "")
+				} catch { }
+				//复制
+				return copyTo(fileEntry, toEntryObj, newPath)
+			}).then(() => {
+				return Lesson.getInstance()
+				//获取lesson实例
+			}).then(lesson => {
+				//成功
+				lesson.setBackground('-1', LESSON_BACKGROUND_TYPE.IMAGE, toEntryObj.fullPath + newPath)
+			}).then(() => {
+				ToastModule.show({ text: "设置成功!" })
+			}).catch(err => {
+				ToastModule.show({ text: '设置失败!' + err })
+			})
+		}
+	})
 }
 
+//设置背景
+const setBackgroundFromUrl = async (item: any) => {
+	try {
+		uni.$anydoor_native.Dialog_Module.showMessageDialog({
+			title: '提示',
+			content: '确定设置背景吗?',
+			okText: '确定',
+			cancelText: '取消'
+		}, (res) => {
+			if (res.data?.type == "ok") {
+				//确定
+				uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({})
+				const newPath: string = `lesson_bg_${Math.random()}_${Date.now()}.bg`
+				try {
+					//遍历找到那个item
+					const wallpaper: any = existData.value.find((exist: any) => exist.id == item.id)
+					let toEntryObj: PlusIoDirectoryEntry
+					if (wallpaper) {
+						//获取目的目录
+						getDirectory("lesson/resource", plus.io.PUBLIC_DOCUMENTS, true).then(toEntry => {
+							toEntryObj = toEntry
+							return getDirectory(wallpaper.filename)
+							//源文件
+						}).then(async fileEntry => {
+							//首先删除已经有的
+							try {
+								await deleteFileByFullPath(lessonStore.lessonBackground.fullPath || "")
+							} catch { }
+							//复制
+							return copyTo(fileEntry, toEntryObj, newPath)
+							//成功
+						}).then(() => {
+							return Lesson.getInstance()
+							//获取lesson实例
+						}).then(lesson => {
+							//成功
+							lesson.setBackground(wallpaper.id, LESSON_BACKGROUND_TYPE.IMAGE, toEntryObj.fullPath + newPath)
+						}).then(() => {
+							ToastModule.show({ text: "设置成功!" })
+						}).catch(err => {
+							console.log(err)
+							ToastModule.show({ text: err })
+						}).finally(() => {
+							uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+						})
+					} else {
+						ToastModule.show({ text: '设置失败!背景不存在' })
+					}
+				} catch {
+					uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+				}
+			}
+		})
+	} catch { }
+}
+//从颜色设置背景
+const setBackgroundFromColor = async (item: string) => {
+	uni.$anydoor_native.Dialog_Module.showMessageDialog({
+		title: '提示',
+		content: '确定设置背景吗?',
+		okText: '确定',
+		cancelText: '取消'
+	}, (res) => {
+		if (res.data?.type == "ok") {
+			uni.$anydoor_native.Dialog_Module.showWaitingDialogSync({});
+			//设置color背景
+			Lesson.getInstance().then(lesson => {
+				return lesson.setBackground(item, LESSON_BACKGROUND_TYPE.COLOR)
+			}).then(() => {
+
+				ToastModule.show({ text: "设置成功!" })
+			}).finally(() => {
+				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
+			})
+		}
+	})
+}
+
+
+
+//已经存在的背景的id
+const existBackgroundId = computed(() => {
+	return existData.value.map((item: any) => {
+		return Number(item.id || -1)
+	})
+})
+
+//下载
+const download = async (item: any) => {
+	if (item.downloading) return
+	item.downloading = true;
+	//执行下载并加入数据库操作
+	await (await Lesson.getInstance()).downloadBackground(item.id, item.thumb, item.url)
+	//更新下载的列表
+	getBackgroundList()
+}
+
+//获取下载的列表
 const getBackgroundList = async () => {
-	const data =await (await Lesson.getInstance()).getBackgroundList()
-	console.log(data)
+	existData.value = await (await Lesson.getInstance()).getBackgroundList() || []
+	console.log(existData.value)
+	completed.value = true
 }
 
 

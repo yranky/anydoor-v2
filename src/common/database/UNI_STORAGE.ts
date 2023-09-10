@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-25 18:17:37
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-06 21:11:47
+ * @LastEditTime: 2023-09-09 20:44:18
  * @FilePath: \anydoor-v2\src\common\database\UNI_STORAGE.ts
  * @Description: 缓存标识
  * 
@@ -47,5 +47,7 @@ export enum UNI_STORAGE {
     //更新下载
     UPDATE_INFO = "app_update_info",
     //搜索关键词
-    SEARCH_KEYWORD_HISTORY = "search_keyword_history"
+    SEARCH_KEYWORD_HISTORY = "search_keyword_history",
+    //课程表背景
+    LESSON_BACKGROUNF_CONFIG = "lesson_background_config"
 }

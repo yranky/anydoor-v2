@@ -1,4 +1,4 @@
-import { ILessonTempItemResult } from "@/common/database/Lesson/ILesson"
+import { ILessonTempItemResult, LESSON_BACKGROUND_TYPE } from "@/common/database/Lesson/ILesson"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
@@ -16,11 +16,23 @@ export const useLessonStore = defineStore("lesson_store", () => {
 
     //当前的周次
     const currentWeek = ref<number>(0)
+
+    //当前背景
+    const lessonBackground = ref<{
+        type: LESSON_BACKGROUND_TYPE,
+        background: string,
+        fullPath?: string
+    }>({
+        type: LESSON_BACKGROUND_TYPE.NULL,
+        background: ''
+    })
+
     return {
         lessonList,
         weekFirstDay,
         currentWeek,
         initing,
-        semester
+        semester,
+        lessonBackground
     }
 })

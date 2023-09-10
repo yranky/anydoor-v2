@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-28 07:24:55
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-25 21:22:27
+ * @LastEditTime: 2023-09-10 10:47:30
  * @FilePath: \anydoor-v2\src\pages\lesson\lesson.nvue
  * @Description: 课程表
  * 
@@ -10,9 +10,22 @@
 -->
 <template>
 	<tm-app ref="app" color="whiteBg">
-		<view class="lesson-bg">
-			<image class="lesson-bg" src="../../static/bg/bg.png"></image>
-			<view class="lesson-bg" :style="{ backgroundColor: 'rgba(0,0,0,.3)' }" v-if="store.tmStore.dark"></view>
+		<view class="lesson-bg-container">
+			<!-- 背景图片 -->
+			<image class="lesson-bg" :style="{
+				height: lessonStore.lessonBackground.type === LESSON_BACKGROUND_TYPE.IMAGE ? '' : 0
+			}" :src="lessonStore.lessonBackground.fullPath"></image>
+			<!-- 背景颜色 -->
+			<view class="lesson-bg" :style="{
+				backgroundColor: lessonStore.lessonBackground.background,
+				height: lessonStore.lessonBackground.type === LESSON_BACKGROUND_TYPE.COLOR ? '' : 0
+			}">
+			</view>
+			<!-- 暗黑模式 -->
+			<view class="lesson-bg" :style="{
+				height: store.tmStore.dark ? '' : 0,
+				backgroundColor: 'rgba(0,0,0,.3)'
+			}"></view>
 		</view>
 		<view style="position:fixed;">
 			<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
@@ -88,7 +101,7 @@ import {
 import IAnydoorLesson from '@/components/anydoor-lesson-view/IAnydoorLesson'
 import Lesson from "@/common/database/Lesson/Lesson"
 import {
-	ILessonTempItemResult
+	ILessonTempItemResult, LESSON_BACKGROUND_TYPE
 } from "@/common/database/Lesson/ILesson"
 import { useTmpiniaStore } from "@/tmui/tool/lib/tmpinia"
 import { onLoad, onReady, onShow } from "@dcloudio/uni-app"
@@ -361,11 +374,21 @@ const updateTimetable = async (term: string) => {
 </script>
 
 <style lang="scss" scoped>
-.lesson-bg {
+.lesson-bg-container {
 	position: fixed;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
+	z-index: -1;
+
+	.lesson-bg {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: -100;
+	}
 }
 </style>

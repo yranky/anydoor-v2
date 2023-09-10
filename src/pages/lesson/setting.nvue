@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-09 21:10:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 12:50:39
+ * @LastEditTime: 2023-09-09 18:05:42
  * @FilePath: \anydoor-v2\src\pages\lesson\setting.nvue
  * @Description: 课程表设置
  * 
@@ -32,8 +32,8 @@
 			<anydoor-text text="样式" color="grey" margin="30rpx 5rpx 5rpx 5rpx"></anydoor-text>
 			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程颜色" @click="linkTo(ROUTE_PATH.LESSON_SETTING_COLOR)">
 			</tm-cell>
-			<!-- <tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程表页面背景"
-				@click="linkTo(ROUTE_PATH.LESSON_SETTING_BACKGROUND)"> </tm-cell> -->
+			<tm-cell :margin="[0, 0]" :titleFontSize="32" title="课程表页面背景"
+				@click="linkTo(ROUTE_PATH.LESSON_SETTING_BACKGROUND)"> </tm-cell>
 		</view>
 	</tm-app>
 </template>

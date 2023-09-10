@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-20 11:26:58
+ * @LastEditTime: 2023-09-10 11:00:39
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -13,7 +13,7 @@ import ERROR_TARGET from "../../errorHandler/ERROR_TARGET"
 import SQLite, { SQLITE_STATUS_CODE } from "../../sql/SQLite"
 import databases, { DATA } from "../database"
 import { LESSON_TABLES_NAME } from "../tables/lesson"
-import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem, LESSON_EDIT_TYPE } from "./ILesson"
+import { ILessonItemsResult, ILessonNameItem, ILessonTempItemResult, ISemesterItem, LESSON_BACKGROUND_TYPE, LESSON_EDIT_TYPE } from "./ILesson"
 import { Filter_ILessonName, Filter_ILessonTempResult, Filter_ISemester, mergeItem } from "./lesson_filters"
 import { classnumsToArray, rangeToSequence, sequenceToRange, weeksToArray } from "./lesson_temp_utils"
 import ToastModule from "@/common/native/toast/ToastModule"
@@ -24,7 +24,9 @@ import CODE from "@/common/define/code"
 import { useLessonStore } from "@/store/lesson"
 import dayjs from "dayjs"
 import weekday from "dayjs/plugin/weekday"
-import { getFiles } from "@/common/utils/ioUtils"
+import { getFiles, getFileInfo } from "@/common/utils/ioUtils"
+import SETTING_TABLES, { SETTING_TABLES_NAME } from "../tables/setting"
+import { UNI_STORAGE } from "../UNI_STORAGE"
 
 export default class Lesson {
     //sqlite对象
@@ -53,7 +55,8 @@ export default class Lesson {
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.SEMESTER].init,
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.TIME].init,
             databases[DATA.LESSON].tables[LESSON_TABLES_NAME.EDIT].init,
-            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.BACKGROUND].init
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.BACKGROUND].init,
+            databases[DATA.LESSON].tables[LESSON_TABLES_NAME.THEME].init
         ], ERROR_TARGET.LESSON_CLASS)
     }
 
@@ -535,13 +538,15 @@ export default class Lesson {
                         uni.saveFile({
                             tempFilePath: res.tempFilePath,
                             success: (res) => {
-                                this.addBackground(id, plus.io.convertLocalFileSystemURL(res.savedFilePath), res.savedFilePath, thumb, url)
-                                console.log(res)
-                                resolve(true)
+                                this.addBackground(id, plus.io.convertLocalFileSystemURL(res.savedFilePath), res.savedFilePath, thumb, url).then(res => {
+                                    resolve(true)
+                                }).catch(e => {
+                                    ToastModule.show({ text: '保存失败!' + e })
+                                    reject()
+                                })
                             },
                             fail: () => {
                                 ToastModule.show({ text: '保存失败!' })
-                                reject()
                             }
                         })
                     } else {
@@ -564,18 +569,46 @@ export default class Lesson {
             , ERROR_TARGET.LESSON_CLASS))?.data || []
         const list: any = [];
 
-        console.log(data)
         for (let i = 0; i < data.length; i++) {
-            console.log(data[i].filename)
             try {
-                const entry = await getFiles(data[i].filename, undefined, plus.io.PUBLIC_DOCUMENTS)
-                console.log(entry, '111111111')
-            } catch (e) {
-                console.log(e)
-            }
+                await getFileInfo(data[i].path)
+                list.push(data[i])
+            } catch { }
         }
 
         return list
+    }
+    //设置背景颜色
+    async setBackground(background: string, type: LESSON_BACKGROUND_TYPE, fullPath?: string): Promise<any> {
+        const config = { background, type, fullPath }
+        //从unistorge里面获取
+        uni.setStorageSync(UNI_STORAGE.LESSON_BACKGROUNF_CONFIG, config)
+        //加入store
+        const lessonStore = useLessonStore()
+        lessonStore.lessonBackground.background = background
+        lessonStore.lessonBackground.type = type
+        lessonStore.lessonBackground.fullPath = fullPath
+
+        //数据库操作
+        const removeSql = `
+        delete from ${LESSON_TABLES_NAME.THEME} where key='${UNI_STORAGE.LESSON_BACKGROUNF_CONFIG}'
+        `
+        await this.sql?.executeSql([removeSql], ERROR_TARGET.LESSON_CLASS)
+        //插入表
+        const sql = `
+            insert into ${LESSON_TABLES_NAME.THEME} (key,value) values ('${UNI_STORAGE.LESSON_BACKGROUNF_CONFIG}','${encodeURIComponent(JSON.stringify(config))}')
+            `
+        return await this.sql?.executeSql([sql], ERROR_TARGET.LESSON_CLASS)
+    }
+
+
+    //获取背景颜色
+    async getBackground(): Promise<{
+        background: string,
+        type: LESSON_BACKGROUND_TYPE,
+        fullPath?: string
+    }> {
+        return await uni.getStorageSync(UNI_STORAGE.LESSON_BACKGROUNF_CONFIG)
     }
 
 }
