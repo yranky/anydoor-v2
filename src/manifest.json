@@ -10,6 +10,10 @@
         {
             "id" : "debug",
             "name" : "调试"
+        },
+        {
+            "id" : "anydoor",
+            "name" : "任意门官网"
         }
     ],
     /* 5+App特有相关 */
@@ -144,8 +148,8 @@
         },
         "nativePlugins" : {
             "anydoor_ui_tool" : {
-                "BTongji_appid" : "c41d788dc4",
-                "Bugly_appid" : "6c3a24368a",
+                "BTongji_appid" : "f99ed9807c",
+                "Bugly_appid" : "ac9df7385d",
                 "__plugin_info__" : {
                     "name" : "任意门原生插件",
                     "description" : "任意门原生插件",
