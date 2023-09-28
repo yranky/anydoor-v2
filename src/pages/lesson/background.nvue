@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-06-13 23:55:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-09-10 13:08:13
+ * @LastEditTime: 2023-09-28 18:44:42
  * @FilePath: \anydoor-v2\src\pages\lesson\background.nvue
  * @Description: 课程表背景
  * 
@@ -148,7 +148,17 @@ const setBackgroundFromLocal = async () => {
 			}).then(() => {
 				ToastModule.show({ text: "设置成功!" })
 			}).catch(err => {
-				ToastModule.show({ text: '设置失败!' + err })
+				const errStr = (typeof err !== "object" ? err : JSON.stringify(err));
+				//上报错误
+				uni.$anydoor_native.Tool_Module.postErrorSync({
+					content: errStr
+				})
+				//打标记
+				uni.$anydoor_native.Bugly_Module.pushDataSync({
+					key: "setBackground error",
+					value: errStr
+				})
+				ToastModule.show({ text: '设置失败!' + errStr })
 			})
 		}
 	})
@@ -194,7 +204,18 @@ const setBackgroundFromUrl = async (item: any) => {
 						}).then(() => {
 							ToastModule.show({ text: "设置成功!" })
 						}).catch(err => {
-							console.log(err)
+
+							const errStr = (typeof err !== "object" ? err : JSON.stringify(err));
+							//上报错误
+							uni.$anydoor_native.Tool_Module.postErrorSync({
+								content: errStr
+							})
+							//打标记
+							uni.$anydoor_native.Bugly_Module.pushDataSync({
+								key: "setBackground error",
+								value: errStr
+							})
+
 							ToastModule.show({ text: err })
 						}).finally(() => {
 							uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
@@ -223,7 +244,6 @@ const setBackgroundFromColor = async (item: string) => {
 			Lesson.getInstance().then(lesson => {
 				return lesson.setBackground(item, LESSON_BACKGROUND_TYPE.COLOR)
 			}).then(() => {
-
 				ToastModule.show({ text: "设置成功!" })
 			}).finally(() => {
 				uni.$anydoor_native.Dialog_Module.hideWaitingDialogSync({})
