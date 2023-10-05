@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-10-05 16:29:36
+ * @LastEditTime: 2023-10-05 16:46:59
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -15,7 +15,7 @@
 		<view style="margin: 10rpx 40rpx;">
 			<view style="margin: 60rpx 0;">
 				<template v-if="tabActive === 4">
-					<tm-button :width="670" label="使用QQ账号一键登录" :margin="[0, 20]" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)"
+					<tm-button :width="670" label="使用QQ一键登录" :margin="[0, 20]" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)"
 						icon="tmicon-QQ"></tm-button>
 				</template>
 				<template v-if="tabActive !== 4">
