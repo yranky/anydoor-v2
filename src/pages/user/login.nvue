@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-06 07:05:05
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-05-12 14:13:52
+ * @LastEditTime: 2023-10-05 16:29:36
  * @FilePath: \anydoor-v2\src\pages\user\login.nvue
  * @Description: 登录
  * 
@@ -13,29 +13,34 @@
 		<tm-message ref="msg"></tm-message>
 		<tm-navbar title=""></tm-navbar>
 		<view style="margin: 10rpx 40rpx;">
-			<!-- <tm-tabs v-model:active-name="tabActive" :itemFontSize="30" :activeFontSize="50" :itemHeight="80"
-				:list="loginTab" :height="80" :default-name="1" :style="{
-					margin: '0 10rpx'
-				}">
-			</tm-tabs> -->
 			<view style="margin: 60rpx 0;">
-				<tm-input v-model="form.user" :placeholder="tabActive === 2 ? '手机号' : '用户名/邮箱'" transprent
-					:margin="[0, 20]"></tm-input>
-				<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
-				<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
-				<view class="flex flex-row flex-between">
-					<anydoor-text text="忘记密码" color="grey" @click="findPassword"></anydoor-text>
-					<anydoor-text text="注册" color="primary" @click="register"></anydoor-text>
-				</view>
+				<template v-if="tabActive === 4">
+					<tm-button :width="670" label="使用QQ账号一键登录" :margin="[0, 20]" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)"
+						icon="tmicon-QQ"></tm-button>
+				</template>
+				<template v-if="tabActive !== 4">
+					<tm-input v-model="form.user" :placeholder="tabActive === 2 ? '手机号' : '用户名/邮箱'" transprent
+						:margin="[0, 20]"></tm-input>
+					<tm-input v-model="form.password" password placeholder="密码" :margin="[0, 20]" transprent></tm-input>
+					<tm-button :width="670" label="登录" :margin="[0, 20]" @click="doLogin"></tm-button>
+					<view class="flex flex-row flex-between">
+						<anydoor-text text="忘记密码" color="grey" @click="findPassword"></anydoor-text>
+						<anydoor-text text="注册" color="primary" @click="register"></anydoor-text>
+					</view>
+				</template>
 			</view>
 			<tm-divider align="center" label="其它登录方式"></tm-divider>
 			<view class="login-items">
+				<view class="login-item" @click="tabActive = 1" v-if="tabActive === 4">
+					<tm-icon :font-size="60" name="tmicon-md-mail-open" _class="pl-16 pr-16" color="primary"></tm-icon>
+					<anydoor-text text="账号" color="primary" lineHeight="50rpx"></anydoor-text>
+				</view>
 				<view class="login-item" @click="tabActive === 2 ? tabActive = 1 : tabActive = 2">
 					<tm-icon :font-size="60" :name="tabActive === 2 ? 'tmicon-md-mail-open' : 'tmicon-md-phone-portrait'"
 						_class="pl-16 pr-16" color="primary"></tm-icon>
 					<anydoor-text :text="tabActive === 2 ? '账号' : '手机号'" color="primary" lineHeight="50rpx"></anydoor-text>
 				</view>
-				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)">
+				<view class="login-item" @click="loginByUnion(LOGIN_UNION_TYPE.QQ)" v-if="tabActive !== 4">
 					<tm-icon :font-size="60" name="tmicon-QQ" _class="pl-16 pr-16" color="#368afe"></tm-icon>
 					<anydoor-text text="QQ" color="#368afe" lineHeight="50rpx"></anydoor-text>
 				</view>
@@ -124,12 +129,19 @@ const loginTab = ref([{
 	key: 2,
 	title: "手机号"
 },
-	// {
-	// 	key: 3,
-	// 	title: "验证码"
-	// }
+// {
+// 	key: 3,
+// 	title: "验证码"
+// }
+{
+	key: 4,
+	title: "QQ"
+}, {
+	key: 5,
+	title: "WEIBO"
+}
 ])
-const tabActive = ref<number>(1)
+const tabActive = ref<number>(4)
 
 //登录操作
 const doLogin = (): void => {
