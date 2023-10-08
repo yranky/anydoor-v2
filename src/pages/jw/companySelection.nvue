@@ -71,7 +71,9 @@ const companyList = ref<any>([])
 
 //获取机构列表
 const getCompanyList = async () => {
-	companyList.value = await listCompany({})
+	try {
+		companyList.value = await listCompany({})
+	} catch { }
 	// console.log(companyList.value)
 }
 

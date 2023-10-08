@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-03-11 21:36:01
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-09-09 18:01:13
+ * @LastEditTime: 2023-10-05 16:43:31
  * @FilePath: \anydoor-v2\src\common\request\urls.ts
  * @Description: 链接
  * 
@@ -11,7 +11,7 @@
 import url from './model/url'
 import { isUndefined, truncate } from 'lodash'
 
-const BASE_URL = process.env.NODE_ENV === "production" ? 'https://api.anydoor.douyeblog.top' : 'http://192.168.0.97:10001'
+const BASE_URL = process.env.NODE_ENV === "production" ? 'https://api.anydoor.douyeblog.top' : 'http://192.168.0.158:10001'
 //乐高平台地址
 export const BASE_LEGO_URL = 'http://192.168.124.9:9000/lowcode/editor/preview.html?id='
 // export const UCENTER_BASE_URL = 'http://test.anydoor.douyeblog.top:10000'

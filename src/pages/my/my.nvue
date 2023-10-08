@@ -61,6 +61,12 @@
 						<anydoor-text text="粉丝" :fontSize="25" :lines="1" lineHeight="40" color="grey"
 							style="text-align: center;"></anydoor-text>
 					</view>
+					<view class="user-community-itme flex-1">
+						<anydoor-text text="0" :fontSize="35" :lines="1" lineHeight="40" bold style="text-align: center;">
+						</anydoor-text>
+						<anydoor-text text="收藏" :fontSize="25" :lines="1" lineHeight="40" color="grey"
+							style="text-align: center;"></anydoor-text>
+					</view>
 				</view> -->
 				<!-- 账户登录信息 -->
 				<view class="user-account-login">
