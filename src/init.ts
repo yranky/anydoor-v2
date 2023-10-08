@@ -14,6 +14,10 @@ import { isEmpty } from "lodash"
 import useDeviceStore from "./store/device"
 import { ILessonTempItemResult, LESSON_BACKGROUND_TYPE } from "./common/database/Lesson/ILesson"
 import { getFileInfo } from "./common/utils/ioUtils"
+import Encrypt from "./common/encrypt/Encrypt"
+import { jwConfig, jwLogin } from "./common/service/jw"
+import ToastModule from "./common/native/toast/ToastModule"
+import CODE from "./common/define/code"
 
 /*
  * @Author: yranky douye@douye.top
@@ -183,6 +187,47 @@ export async function initLesson() {
                 }
             }
         }
+
+        //#endregion 临时解决
+        //更新周次
+        const username = jiaowuStore.jiaowuAccount.username
+        const password = jiaowuStore.jiaowuAccount.password
+
+        const encrypt = new Encrypt()
+
+        //教务配置重新护球
+        const jw_config_data = await jwConfig({
+            cid: jiaowuStore.jiaowuConfig.cid
+        })
+        //未成功，终止流程
+        if (jw_config_data.code !== CODE.SUCCESS) {
+            return
+        }
+        encrypt.setPublicKey(jw_config_data.data.public_key)
+        const password_encrypt = encrypt.encrypt(password)
+        //刷新信息
+        const dataJW = await jwLogin({
+            username,
+            password: password_encrypt,
+            cid: jiaowuStore.jiaowuConfig.cid
+        })
+        if (dataJW.stuInfo) {
+            const isSuccess: boolean = await (await User.getInstance()).insertJiaowuAccount(username, password, {
+                ...jw_config_data.data,
+                cid: jiaowuStore.jiaowuConfig.cid,
+                school_name: jiaowuStore.jiaowuConfig.school_name
+            }, data)
+            if (isSuccess === false) {
+                ToastModule.show({ text: "刷新失败!" })
+            } else {
+                //刷新user
+                initUser()
+            }
+        } else {
+            ToastModule.show({ text: "刷新失败!" })
+        }
+        //#endregion 临时解决
+
     } catch { }
 }
 
