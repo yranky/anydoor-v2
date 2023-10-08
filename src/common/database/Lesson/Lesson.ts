@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2023-02-07 13:14:20
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-09-10 11:00:39
+ * @LastEditTime: 2023-10-08 20:56:13
  * @FilePath: \anydoor-v2\src\common\database\Lesson\Lesson.ts
  * @Description: 课程数据获取类
  * 
@@ -392,10 +392,10 @@ export default class Lesson {
         //每周的第一天
         const weekFirstDay = lessonStore.weekFirstDay
         //更新时间
-        const updateTime = dayjs(store.updateTime).isValid() ? dayjs(store.updateTime).weekday(weekFirstDay) : dayjs().weekday(weekFirstDay)
+        const updateTime = dayjs(store.updateTime).isValid() ? dayjs(store.updateTime).weekday(weekFirstDay).startOf('D') : dayjs().weekday(weekFirstDay).startOf('D')
         if (week !== 0) {
             //计算相差了多少天
-            const currentTime = dayjs().weekday(weekFirstDay)
+            const currentTime = dayjs().weekday(weekFirstDay).startOf('D')
             //相差了多少周
             const diff = currentTime.diff(updateTime, "week")
             //计算出了周次
