@@ -31,6 +31,8 @@ export enum ROUTE_PATH {
     JIAOWU_SCORE = "/pages/more/score",
     // 考试
     JIAOWU_EXAM = "/pages/more/exam",
+    //详情
+    COMMON_DETAIL = "/pages/more/detail",
     //lesson
     LESSON = "/pages/lesson/lesson",
     //课程表设置

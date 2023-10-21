@@ -1,0 +1,48 @@
+<template>
+	<tm-app ref="app" color="whiteBg">
+		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
+			<template #navBar>
+				<tm-navbar title="详情"></tm-navbar>
+			</template>
+			<template #content>
+				<!-- 列表-详情 -->
+				<view style="margin: 10rpx 20rpx;">
+					<tm-cell :margin="[0, 0]" v-for="(item, index) in keys" :key="item" :titleFontSize="32" :title="item"
+						:rightText="values[index]" rightIcon=""> </tm-cell>
+				</view>
+			</template>
+		</anydoorPage>
+	</tm-app>
+</template>
+
+<script lang="ts" setup>
+import tmApp from "@/tmui/components/tm-app/tm-app.vue"
+import tmNavbar from "@/tmui/components/tm-navbar/tm-navbar.vue"
+import anydoorPage from "@/components/anydoor-page/anydoor-page.vue"
+import { ref } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
+import { linkOptionsParse } from "@/common/utils/link"
+import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
+
+const keys = ref<string[]>([])
+const values = ref<string[]>([])
+
+onLoad((options) => {
+	const data = linkOptionsParse(options)
+	keys.value = data.data.tag || []
+	values.value = data.data.item || []
+})
+
+//下拉刷新是否完成
+const refreshComplete = ref<boolean>(true)
+// 页面刷新
+const refresh = async () => {
+	refreshComplete.value = false
+	await new Promise((resolve) => setTimeout(resolve, 200))
+	refreshComplete.value = true
+}
+
+
+</script>
+
+<style lang="scss" scoped></style>

@@ -181,6 +181,12 @@ const routes: IRoutes<ROUTE_PATH> = {
         NAME: "搜索列表",
         AUTH: [],
         SEARCH: false
+    },
+    [ROUTE_PATH.COMMON_DETAIL]: {
+        PATH: ROUTE_PATH.COMMON_DETAIL,
+        NAME: "详情",
+        AUTH: [],
+        SEARCH: false
     }
 }
 

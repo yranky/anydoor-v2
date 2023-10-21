@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-07-18 20:24:23
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-07-30 10:10:12
+ * @LastEditTime: 2023-10-21 21:40:40
  * @FilePath: \anydoor-v2\src\App.vue
  * @Description: 主入口文件
  * 
@@ -35,6 +35,7 @@ onLaunch(async function () {
 			const info: any = uni.getAppBaseInfo()
 			plus.navigator.setUserAgent(userAgent + ` anydoor${info.appVersion}-${info.appVersionCode}`, false)
 		}
+
 		// plus.navigator.setLogs(true)
 		//从storage初始化
 		initFromStorageSync()
