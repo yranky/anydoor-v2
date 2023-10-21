@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-08-19 21:29:40
+ * @LastEditTime: 2023-10-21 23:07:48
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -12,34 +12,50 @@
 	<tm-app ref="app" color="whiteBg">
 		<anydoorPage v-model:refresh-complete="refreshComplete" @refresh="refresh">
 			<template #navBar>
-				<tm-navbar title="我的成绩"></tm-navbar>
-				<tm-filter-menu :fixed="false" ref="filter">
-					<tm-filter-menu-item :title="semesterSelect">
-						<tm-radio-group direction='customCol' v-model="semesterSelect" :default-value="0">
-							<tm-radio :value="item" v-for="(item, index) in semester" :key="index" :custom="false">
-								<template v-slot:default="{ checked }">
-									<view :userInteractionEnabled="false" hover-class="opactiy-7"
-										class="flex-1 flex-row flex flex-row-center-between" style="height: 76rpx;">
-										<tm-text :color="checked.checked ? 'primary' : ''" :label="item"></tm-text>
-										<tm-icon :font-size="24" color="primary" v-if="checked.checked"
-											name="tmicon-check"></tm-icon>
-									</view>
-								</template>
-							</tm-radio>
-						</tm-radio-group>
-					</tm-filter-menu-item>
-				</tm-filter-menu>
+				<tm-navbar title="我的成绩" :right-width="300">
+					<template #right>
+						<anydoor-item-picker-group>
+							<anydoor-item-picker :list="semester" v-model:value="semesterSelect">
+								<anydoor-text class="flex-2" :text="semesterSelect" :lines="1"
+									style="margin:0 39rpx;text-align: right;"></anydoor-text>
+							</anydoor-item-picker>
+						</anydoor-item-picker-group>
+					</template>
+				</tm-navbar>
 			</template>
 			<template #content>
 				<!-- 加载中提示 -->
 				<tm-icon name="tmicon-shuaxin" :spin="true" v-if="status.loading"></tm-icon>
-				<tm-modal v-for="item in dataFilter" :key="item[0]" :height="800" okText="确认">
+				<!-- <tm-modal v-for="item in dataFilter" :key="item[0]" :height="800" okText="确认">
 					<template v-slot:trigger>
 						<tm-card status="" :title="item[lessonNameIndex]"></tm-card>
 					</template>
 					<tm-cell v-for="(value, index) in tags" :key="value" :margin="[0, 0]" :rightText="item[index]"
 						:titleFontSize="32" :title="value" rightIcon=""> </tm-cell>
-				</tm-modal>
+				</tm-modal> -->
+
+
+				<view class="score-item" v-for="item in dataFilter" :key="item[0]" @click="linkTo(ROUTE_PATH.COMMON_DETAIL, {
+					item: item,
+					tag: tags.slice(0, tags.length - 1)
+				})">
+					<view class="score-item-num">
+						<anydoor-text :text="item[lessonScoreIndex]" :color="getScoreColor(item[lessonScoreIndex])"
+							:fontSize="39" :lines="1"></anydoor-text>
+					</view>
+					<view class="score-item-title">
+						<anydoor-text :text="item[lessonNameIndex]" :fontSize="30" :lines="1"></anydoor-text>
+						<view class="score-item-tags">
+							<template v-for="tagItem in lessonTagsIndex" :key="tagItem.index" >
+								<tm-tag text outlined :shadow="0" :color="tagItem.color" size="xs" v-if="item[tagItem.index]" :label="item[tagItem.index]"></tm-tag>
+							</template>
+						</view>
+					</view>
+					<view class="score-item-next">
+						<tm-icon name="tmicon-angle-right" color="grey" :font-size="26"></tm-icon>
+					</view>
+				</view>
+
 				<tm-result v-if="dataFilter.length === 0 && !status.loading" :showBtn="false" subTitle="上方可切换学期"
 					title="暂无数据"></tm-result>
 			</template>
@@ -63,14 +79,19 @@ import CODE from "@/common/define/code"
 import { UNI_STORAGE } from "@/common/database/UNI_STORAGE"
 import { onLoad } from "@dcloudio/uni-app"
 import { computed } from "vue"
-import tmRadioGroup from "@/tmui/components/tm-radio-group/tm-radio-group.vue"
-import tmRadio from "@/tmui/components/tm-radio/tm-radio.vue"
 import tmIcon from "@/tmui/components/tm-icon/tm-icon.vue"
 import { watch } from "vue"
 import tmModal from "@/tmui/components/tm-modal/tm-modal.vue"
 import tmCell from "@/tmui/components/tm-cell/tm-cell.vue"
 import tmResult from "@/tmui/components/tm-result/tm-result.vue"
+import anydoorItemPickerGroup from "@/components/anydoor-item-picker/anydoor-item-picker-group.vue"
+import anydoorItemPicker from "@/components/anydoor-item-picker/anydoor-item-picker.vue"
+import anydoorText from "@/components/anydoor-text/anydoor-text.vue"
+import tmTag from '@/tmui/components/tm-tag/tm-tag.vue'
 import dayjs from "dayjs"
+import { linkTo } from "@/common/utils/link"
+import { ROUTE_PATH } from "@/router/ROUTE_PATH"
+
 const store = useJiaowuStore()
 
 const filter = ref(null)
@@ -122,8 +143,53 @@ const semester = computed(() => {
 
 //课程名称的索引
 const lessonNameIndex = computed(() => {
+	console.log(tags.value)
 	return tags.value.findIndex((item: any) => item.indexOf("名称") > -1) || 0
 })
+//成绩索引
+const lessonScoreIndex = computed(() => {
+	return tags.value.findIndex((item: any) => item.indexOf("成绩") > -1) || 0
+})
+
+//tag
+const lessonTagsIndex = computed(() => {
+	const tagsIndex: {
+		index: number,
+		color: string
+	}[] = [];
+
+	// 课程性质
+	const lessonTypeExam = tags.value.findIndex((item: any) => item.indexOf("课程性质") > -1) || -1
+	if (lessonTypeExam > -1) tagsIndex.push({
+		index: lessonTypeExam,
+		color: 'primary2'
+	})
+	//考核方式
+	const lessonExamType = tags.value.findIndex((item: any) => item.indexOf("考核方式") > -1) || -1
+	if (lessonExamType > -1) tagsIndex.push({
+		index: lessonExamType,
+		color: 'primary2'
+	})
+	//课程属性
+	const lessonType = tags.value.findIndex((item: any) => item.indexOf("课程属性") > -1) || -1
+	if (lessonType > -1) tagsIndex.push({
+		index: lessonType,
+		color: 'primary3'
+	})
+
+	return tagsIndex
+})
+
+//获取成绩应该展示的颜色
+const getScoreColor = (score: number | string) => {
+	const scoreNum = Number(score)
+	if (isNaN(scoreNum)) {
+		if (typeof score === 'string' && score.indexOf('不及格') > -1) return "red"
+	} else {
+		if (scoreNum < 60) return "red"
+	}
+	return 'primary'
+}
 
 onLoad(() => {
 	loadCache()
@@ -202,4 +268,33 @@ const getScore = async () => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.score-item {
+	display: flex;
+	flex-direction: row;
+	margin: 10rpx 30rpx;
+	padding: 10rpx 0;
+	align-items: center;
+
+	.score-item-num {
+		display: flex;
+		flex-direction: row;
+		margin: 0 10rpx;
+		width: 130rpx;
+	}
+
+	.score-item-title {
+		flex: 1;
+		margin: 0 10rpx;
+
+		.score-item-tags {
+			display: flex;
+			flex-direction: row;
+		}
+	}
+
+	.score-item-next {
+		width: 80rpx;
+	}
+}
+</style>
