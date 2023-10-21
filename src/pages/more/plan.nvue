@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-10-21 23:01:36
+ * @LastEditTime: 2023-10-21 23:07:35
  * @FilePath: \anydoor-v2\src\pages\more\plan.nvue
  * @Description: 教学计划
  * 
@@ -41,8 +41,9 @@
 					<view class="plan-item-title">
 						<anydoor-text :text="item[lessonNameIndex]" :fontSize="30" :lines="1"></anydoor-text>
 						<view class="plan-item-tags">
-							<tm-tag text outlined :shadow="0" :color="tagItem.color" size="xs" :label="item[tagItem.index]"
-								v-for="tagItem in lessonTagsIndex" :key="tagItem.index"></tm-tag>
+							<template v-for="tagItem in lessonTagsIndex" :key="tagItem.index" >
+								<tm-tag text outlined :shadow="0" :color="tagItem.color" size="xs" v-if="item[tagItem.index]" :label="item[tagItem.index]"></tm-tag>
+							</template>
 						</view>
 					</view>
 					<view class="plan-item-next">

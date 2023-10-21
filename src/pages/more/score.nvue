@@ -2,7 +2,7 @@
  * @Author: yranky douye@douye.top
  * @Date: 2022-08-08 10:12:17
  * @LastEditors: yranky douye@douye.top
- * @LastEditTime: 2023-10-21 22:44:03
+ * @LastEditTime: 2023-10-21 23:07:48
  * @FilePath: \anydoor-v2\src\pages\more\score.nvue
  * @Description: 我的成绩
  * 
@@ -46,8 +46,9 @@
 					<view class="score-item-title">
 						<anydoor-text :text="item[lessonNameIndex]" :fontSize="30" :lines="1"></anydoor-text>
 						<view class="score-item-tags">
-							<tm-tag text outlined :shadow="0" :color="tagItem.color" size="xs" :label="item[tagItem.index]"
-								v-for="tagItem in lessonTagsIndex" :key="tagItem.index"></tm-tag>
+							<template v-for="tagItem in lessonTagsIndex" :key="tagItem.index" >
+								<tm-tag text outlined :shadow="0" :color="tagItem.color" size="xs" v-if="item[tagItem.index]" :label="item[tagItem.index]"></tm-tag>
+							</template>
 						</view>
 					</view>
 					<view class="score-item-next">
